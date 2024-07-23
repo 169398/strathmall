@@ -1,82 +1,129 @@
-import Link from "next/link";
-import Image from "next/image";
-import MaxWidthWrapper from "./MaxWidthWrapper";
-import { buttonVariants } from "../ui/button";
-import CartButton from "./header/cart-button";
-import Search from "./header/search";
-import UserButton from "./header/user-button";
-import Header from "./header";
-import { auth } from "@/auth";
+"use client";
 
-export default async function Navbar() {
-  const session = await auth();
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Sheet,
+  SheetContent,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { useToast } from "@/components/ui/use-toast";
+import { addItemToCart, removeItemFromCart } from "@/lib/actions/cart.actions";
+import { formatCurrency } from "@/lib/utils";
+import { Cart } from "@/types";
+import { ArrowRight, Loader, Minus, Plus, ShoppingCart } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+// import { useRouter } from 'next/navigation'
+import { useEffect, useState, useTransition } from "react";
+import CartItem from "./CartItem";
+import { Separator } from "@/components/ui/separator";
+
+export default function CartForm({ cart }: { cart?: Cart }) {
+  // const router = useRouter();
+  const itemCount = cart?.items.reduce((a, c) => a + c.qty, 0) || 0;
+  const [isMounted, setIsMounted] = useState<boolean>(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // const { toast } = useToast();
+  // const [isPending, startTransition] = useTransition();
 
   return (
-    <div className="sticky inset-x-0 top-0 z-50 bg-white">
-      <header className="relative bg-white">
-        <MaxWidthWrapper>
-          <div className="border-b border-gray-200">
-            <div className="flex h-16 items-center justify-between sm:justify-start">
-              <div className="flex items-center sm:ml-4 lg:ml-0">
-                <Link href="/">
-                  <Image
-                    src="/logo.png"
-                    alt="strathmall logo"
-                    width={100}
-                    height={100}
-                    className="h-16 w-16 sm:h-24 sm:w-24 lg:h-30 lg:w-30"
-                  />
-                </Link>
-                <div className="ml-2 lg:hidden">{/* Mobile Menu Icon */}</div>
-              </div>
+    <>
+      <Sheet>
+        <SheetTrigger className="group -m-2 flex items-center p-2">
+          <ShoppingCart
+            aria-hidden="true"
+            className="h-6 w-6 flex-shrink-0 text-gray-400 group-hover:text-gray-800"
+          />
+          <span className="ml-2 text-sm font-medium text-gray-700 group-hover:text-gray-800">
+            {isMounted ? itemCount : 0}
+          </span>
+        </SheetTrigger>
 
-              <div className="block flex-1 ml-1 lg:ml-4">
-                <Header />
+        <SheetContent className="flex w-full flex-col pr-0 sm:max-w-lg">
+          <SheetHeader className="space-y-2.5 pr-6">
+            <SheetTitle>Cart ({itemCount})</SheetTitle>
+          </SheetHeader>
+          {itemCount > 0 ? (
+            <>
+              <div className="flex w-full flex-col pr-6">
+                <ScrollArea>
+                  {cart?.items.map((item) => (
+                    <CartItem cart={cart} key={item.productId} />
+                  ))}
+                </ScrollArea>
               </div>
-
-              <div className="h-8 w-full max-w-xs text-sm">
-                <Search />
-              </div>
-
-              <div className="ml-auto flex items-center space-x-2 sm:space-x-4 lg:space-x-6">
-                {session ? (
-                  <div className="h-8 w-8 sm:h-10 sm:w-10 lg:h-12 lg:w-12">
-                    <UserButton />
+              <div className="space-y-4 pr-6">
+                <Separator />
+                <div className="space-y-1.5 text-sm">
+                  <div className="flex">
+                    <span className="flex-1">Quantity</span>
+                    <span>{itemCount}</span>
                   </div>
-                ) : (
-                  <>
-                    <Link
-                      href="/sign-in"
-                      className={buttonVariants({
-                        variant: "secondary",
-                        className: "text-xs sm:text-sm lg:text-base",
-                      })}
-                    >
-                      Sign in
-                    </Link>
-                    <span
-                      className="h-4 w-px bg-gray-200 sm:h-6"
-                      aria-hidden="true"
-                    />
-                    <Link
-                      href="/sign-in"
-                      className={buttonVariants({
-                        variant: "default",
-                        className: "text-xs sm:text-sm lg:text-base",
-                      })}
-                    >
-                      Create account
-                    </Link>
-                  </>
-                )}
-                <div className="h-8 w-8  lg:h-12 lg:w-12">
-                  <CartButton />
+                  <div className="flex">
+                    <span className="flex-1">Price</span>
+                    <span>{formatCurrency(item.price)}</span>
+                  </div>
+                  <div className="flex">
+                    <span className="flex-1">Total</span>
+                    <span>{formatCurrency()}</span>
+                  </div>
                 </div>
+                <SheetFooter>
+                  <SheetTrigger asChild>
+                    <Link
+                      href="/shipping-address"
+                      className={buttonVariants({
+                        className: "w-full",
+                      })}
+                    >
+                      Continue to Checkout
+                    </Link>
+                  </SheetTrigger>
+                </SheetFooter>
               </div>
+            </>
+          ) : (
+            <div className="flex h-full flex-col items-center justify-center space-y-1">
+              <div
+                aria-hidden="true"
+                className="relative mb-4 h-60 w-60 text-muted-foreground"
+              >
+                <Image src="/emptycart.png" fill alt="Empty Cart" />
+              </div>
+              <div className="text-xl font-semibold">Your cart is empty</div>
+              <SheetTrigger asChild>
+                <Link
+                  href="/search"
+                  className={buttonVariants({
+                    variant: "link",
+                    size: "sm",
+                    className: "text-sm text-muted-foreground",
+                  })}
+                >
+                  Add to your cart to checkout
+                </Link>
+              </SheetTrigger>
             </div>
-          </div>
-        </MaxWidthWrapper>
-      </header>
-    </div>
+          )}
+        </SheetContent>
+      </Sheet>
+    </>
   );
 }

@@ -15,7 +15,7 @@ const Footer = () => {
       <MaxWidthWrapper>
         <div className="border-t border-gray-200">
           {pathsToMinimize.includes(pathname) ? null : (
-            <div className="pb-4 pt-8">
+            <div className="pb-2 pt-2">
               <div className="flex justify-center">
                 <Image
                   src="/logo.png"
