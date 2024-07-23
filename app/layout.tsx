@@ -7,7 +7,7 @@ import { Toaster } from '@/components/ui/toaster'
 import React from 'react'
 import Navbar from '@/components/shared/Navbar'
 import { constructMetadata } from '@/lib/paypal'
-
+import { Analytics } from "@vercel/analytics/react";
 const fontSans = FontSans({
   subsets: ['latin'],
   weight: ['400', '600'],
@@ -37,6 +37,7 @@ export default function RootLayout({
         > */}
           <Navbar/>
           {children}
+          <Analytics/>
           <Toaster />
         {/* </ThemeProvider> */}
       </body>
