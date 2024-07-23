@@ -1,3 +1,5 @@
+import { Metadata } from "next"
+
 const base = process.env.PAYPAL_API_URL || 'https://api-m.sandbox.paypal.com'
 
 export const paypal = {
@@ -64,3 +66,48 @@ async function handleResponse(response: any) {
   const errorMessage = await response.text()
   throw new Error(errorMessage)
 }
+
+export function constructMetadata({
+  title = "StrathMall - The marketplace for all university and local sellers",
+  description = "Strathmall is an open-source marketplace for high-quality  goods.",
+  image = "/logo.png",
+  icons = "/favicon.ico",
+  noIndex = false,
+}: {
+  title?: string;
+  description?: string;
+  image?: string;
+  icons?: string;
+  noIndex?: boolean;
+} = {}): Metadata {
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: [
+        {
+          url: image,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [image],
+      creator: "idriskulubi",
+    },
+    icons,
+    metadataBase: new URL("https://strathmall.com/"),
+    ...(noIndex && {
+      robots: {
+        index: false,
+        follow: false,
+      },
+    }),
+  
+  };
+}
+

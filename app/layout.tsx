@@ -5,8 +5,8 @@ import { Poppins as FontSans } from 'next/font/google'
 import { cn } from '@/lib/utils'
 import { Toaster } from '@/components/ui/toaster'
 import React from 'react'
-import { APP_DESCRIPTION, APP_NAME } from '@/lib/constants'
 import Navbar from '@/components/shared/Navbar'
+import { constructMetadata } from '@/lib/paypal'
 
 const fontSans = FontSans({
   subsets: ['latin'],
@@ -14,9 +14,7 @@ const fontSans = FontSans({
   variable: '--font-sans',
 })
 
-export const metadata: Metadata = {
-  title: `${APP_NAME} - ${APP_DESCRIPTION}`,
-}
+export const metadata: Metadata = constructMetadata()
 
 export default function RootLayout({
   children,
