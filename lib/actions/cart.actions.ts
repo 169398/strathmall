@@ -1,6 +1,5 @@
 'use server'
 
-import { auth } from '@/auth'
 import db from '@/db/drizzle'
 import { carts, products } from '@/db/schema'
 import { eq } from 'drizzle-orm'
@@ -9,6 +8,7 @@ import { cartItemSchema } from '../validator'
 import { formatError, round2 } from '../utils'
 import { CartItem } from '@/types'
 import { revalidatePath } from 'next/cache'
+import { auth } from '@/auth'
 
 const calcPrice = (items: CartItem[]) => {
   const itemsPrice = round2(

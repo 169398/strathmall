@@ -10,7 +10,7 @@ const EcommerceFeatures = () => {
             <ShoppingBag />
             <div className="text-sm font-bold">Free Shipping</div>
             <div className="text-sm text-muted-foreground">
-              Free shipping for order above $100
+              Free shipping for order above ksh 999
             </div>
           </div>
           <div className="space-y-2">
@@ -31,7 +31,7 @@ const EcommerceFeatures = () => {
 
           <div className="space-y-2">
             <Headset />
-            <div className="text-sm font-bold">724 Support</div>
+            <div className="text-sm font-bold">247 Support</div>
             <div className="text-sm text-muted-foreground">
               support customers
             </div>

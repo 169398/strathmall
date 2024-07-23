@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import { auth } from '@/auth'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -9,7 +8,9 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { SignOut } from '@/lib/actions/user.actions'
-import ModeToggle from './mode-toggle'
+import { UserAvatar } from '../UserAvatar'
+import { auth } from '@/auth'
+
 
 export default async function UserButton() {
   const session = await auth()
@@ -23,14 +24,14 @@ export default async function UserButton() {
     <div className="flex gap-2 items-center">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <div className="flex items-center">
-            <Button
-              variant="ghost"
-              className="relative w-8 h-8 rounded-full ml-2"
-            >
-              {session.user.name}
-            </Button>
-          </div>
+          <UserAvatar
+            user={{
+              name: session?.user.name || null,
+              image:
+                session?.user.image ?? "https://avatar.vercel.sh/${user.name}",
+            }}
+            className="h-8 w-8 cursor-pointer"
+          />
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56" align="end" forceMount>
           <DropdownMenuLabel className="font-normal">
@@ -56,7 +57,7 @@ export default async function UserButton() {
             </Link>
           </DropdownMenuItem>
 
-          {session.user.role === 'admin' && (
+          {session.user.role === "admin" && (
             <DropdownMenuItem>
               <Link className="w-full" href="/admin/overview">
                 Admin
@@ -70,13 +71,13 @@ export default async function UserButton() {
                 className="w-full py-4 px-2 h-4 justify-start"
                 variant="ghost"
               >
-                Sign Out
+                Log out
               </Button>
             </form>
           </DropdownMenuItem>
-          <ModeToggle />
+          {/* <ModeToggle /> */}
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
-  )
+  );
 }

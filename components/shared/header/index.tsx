@@ -1,7 +1,4 @@
-import Image from 'next/image'
 import Link from 'next/link'
-import { APP_NAME } from '@/lib/constants'
-import Menu from './menu'
 
 import {
   Drawer,
@@ -14,13 +11,12 @@ import {
 import { Button } from '@/components/ui/button'
 import { MenuIcon } from 'lucide-react'
 import { getAllCategories } from '@/lib/actions/product.actions'
-import Search from './search'
 
 const Header = async () => {
   const categories = await getAllCategories()
 
   return (
-    <header className="w-full border-b">
+    <header>
       <div className="wrapper flex-between">
         <div className="flex-start">
           <Drawer direction="left">
@@ -51,24 +47,12 @@ const Header = async () => {
               </DrawerHeader>
             </DrawerContent>
           </Drawer>
-          <Link href="/" className="flex-start">
-            <Image
-              src="/assets/icons/logo.svg"
-              width={48}
-              height={48}
-              alt={`${APP_NAME} logo`}
-            />
-            {APP_NAME}
-          </Link>
+
         </div>
-        <div className="hidden md:block">
-          <Search />
-        </div>
-        <Menu />
+        
       </div>
-      <div className="md:hidden block   px-5 pb-2">
-        <Search />
-      </div>
+      
+      
     </header>
   )
 }
