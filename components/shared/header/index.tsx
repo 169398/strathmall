@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import Link from 'next/link';
 
 import {
   Drawer,
@@ -7,13 +7,13 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from '@/components/ui/drawer'
-import { Button } from '@/components/ui/button'
-import { MenuIcon } from 'lucide-react'
-import { getAllCategories } from '@/lib/actions/product.actions'
+} from '@/components/ui/drawer';
+import { Button } from '@/components/ui/button';
+import { MenuIcon, XIcon } from 'lucide-react'; // Import XIcon
+import { getAllCategories } from '@/lib/actions/product.actions';
 
 const Header = async () => {
-  const categories = await getAllCategories()
+  const categories = await getAllCategories();
 
   return (
     <header>
@@ -25,10 +25,17 @@ const Header = async () => {
                 <MenuIcon />
               </Button>
             </DrawerTrigger>
-            <DrawerContent className="h-full max-w-sm">
+            <DrawerContent className="h-full max-w-xs  ">
               <DrawerHeader>
-                <DrawerTitle>Select a category</DrawerTitle>
-                <div className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <DrawerTitle>Select a category</DrawerTitle>
+                  <DrawerClose asChild>
+                    <Button variant="outline" className="p-1">
+                      <XIcon className="h-6 w-6" />
+                    </Button>
+                  </DrawerClose>
+                </div>
+                <div className="space-y-1 mt-4">
                   {categories.map((category: { name: string }) => (
                     <Button
                       className="w-full justify-start"
@@ -47,14 +54,10 @@ const Header = async () => {
               </DrawerHeader>
             </DrawerContent>
           </Drawer>
-
         </div>
-        
       </div>
-      
-      
     </header>
-  )
+  );
 }
 
-export default Header
+export default Header;

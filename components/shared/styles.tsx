@@ -69,7 +69,7 @@ export default async function Navbar() {
                     </Link>
                   </>
                 )}
-                <div className="h-8 w-8 sm:h-10 sm:w-10 lg:h-12 lg:w-12">
+                <div className="h-8 w-8  lg:h-12 lg:w-12">
                   <CartButton />
                 </div>
               </div>
