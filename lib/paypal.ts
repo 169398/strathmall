@@ -70,7 +70,7 @@ async function handleResponse(response: any) {
 export function constructMetadata({
   title = "StrathMall - The marketplace for all university and local sellers",
   description = "Strathmall is an open-source marketplace for high-quality  goods.",
-  image = "/logo.png",
+  image = "/thumbnail.png",
   icons = "/favicon.ico",
   noIndex = false,
 }: {
