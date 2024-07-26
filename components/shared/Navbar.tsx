@@ -53,6 +53,7 @@ export default async function Navbar() {
                         variant: "secondary",
                         className: "text-xs sm:text-sm lg:text-base",
                       })}
+
                       >
                       Log in
                     
