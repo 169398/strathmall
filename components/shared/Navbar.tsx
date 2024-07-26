@@ -54,7 +54,7 @@ export default async function Navbar() {
                         className: "text-xs sm:text-sm lg:text-base",
                       })}
                     >
-                      Sign in
+                      Log in
                     </Link>
                     <span
                       className="h-4 w-px bg-gray-200 sm:h-6"
