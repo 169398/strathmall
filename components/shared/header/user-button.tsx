@@ -17,7 +17,7 @@ export default async function UserButton() {
   if (!session)
     return (
       <Link href="/api/auth/signin">
-        <Button>Sign In</Button>
+        <Button>Log in</Button>
       </Link>
     )
   return (
