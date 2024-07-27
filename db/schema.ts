@@ -36,6 +36,21 @@ export const users = pgTable(
   }
 )
 
+
+//seller shops 
+export const sellers = pgTable("sellerShop", {
+  id: uuid("id").defaultRandom().primaryKey().notNull(),
+  userId: uuid("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  shopName: text("shopName").notNull(),
+  email: text("email").notNull(),
+  phoneNumber: text("phoneNumber").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+
+
 export const accounts = pgTable(
   'account',
   {

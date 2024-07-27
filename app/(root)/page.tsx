@@ -26,8 +26,8 @@ export default async function Home() {
           </p>
 
           <div className="mt-6 flex flex-col gap-4 sm:flex-row">
-            <Link href="/search " className={buttonVariants()}>
-              Browse Trending
+            <Link href="/seller "   className={buttonVariants({variant:"default"} )}>
+              Start selling
             </Link>
           </div>
         </div>

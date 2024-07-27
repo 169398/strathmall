@@ -8,6 +8,13 @@
       "when": 1721603548699,
       "tag": "0000_dizzy_the_santerians",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1722107704524,
+      "tag": "0001_talented_vector",
+      "breakpoints": true
     }
   ]
 }
