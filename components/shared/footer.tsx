@@ -46,7 +46,7 @@ const Footer = () => {
                     If you&apos;d like to sell high-quality products, you can do
                     so in minutes.{" "}
                     <Link
-                      href="/sign-in?as=seller"
+                      href="/seller"
                       className="whitespace-nowrap font-medium text-black hover:text-zinc-900"
                     >
                       Get started &rarr;

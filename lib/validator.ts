@@ -119,15 +119,7 @@ export const insertOrderItemSchema = createInsertSchema(orderItems, {
 export const createSellerSchema = z.object({
   shopName: z.string().min(3, "Shop name must be at least 3 characters"),
   email: z.string().email("Invalid email address"),
-  phoneNumber: z
-    .string()
-    .regex(
-      /^\+?[1-9]\d{1,14}$/, // Matches phone numbers like +254712345678
-      "Invalid phone number format"
-    )
-    .transform((phoneNumber) => {
-      return phoneNumber.replace(/\D/g, "");
-    }),
+  phoneNumber: z.string().min(10, "Phone number must be at least 10 digits"),
 });
 
 export const updateSellerSchema = createSellerSchema.extend({
