@@ -124,7 +124,6 @@ export const createOrder = async () => {
       paymentMethod: user.paymentMethod,
       itemsPrice: cart.itemsPrice,
       shippingPrice: cart.shippingPrice,
-      taxPrice: cart.taxPrice,
       totalPrice: cart.totalPrice,
     })
     const insertedOrderId = await db.transaction(async (tx) => {
@@ -142,7 +141,6 @@ export const createOrder = async () => {
           items: [],
           totalPrice: '0',
           shippingPrice: '0',
-          taxPrice: '0',
           itemsPrice: '0',
         })
         .where(eq(carts.id, cart.id))
