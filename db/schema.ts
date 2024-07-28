@@ -161,7 +161,6 @@ export const carts = pgTable('cart', {
     precision: 12,
     scale: 2,
   }).notNull(),
-  taxPrice: numeric('taxPrice', { precision: 12, scale: 2 }).notNull(),
   totalPrice: numeric('totalPrice', { precision: 12, scale: 2 }).notNull(),
   createdAt: timestamp('createdAt').notNull().defaultNow(),
 })

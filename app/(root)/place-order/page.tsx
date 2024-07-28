@@ -115,10 +115,7 @@ export default async function PlaceOrderPage() {
                 <div>Items</div>
                 <div>{formatCurrency(cart.itemsPrice)}</div>
               </div>
-              <div className="flex justify-between">
-                <div>Tax</div>
-                <div>{formatCurrency(cart.taxPrice)}</div>
-              </div>
+             
               <div className="flex justify-between">
                 <div>Shipping</div>
                 <div>{formatCurrency(cart.shippingPrice)}</div>
