@@ -3,7 +3,7 @@ export const APP_DESCRIPTION =
   process.env.NEXT_PUBLIC_APP_DESCRIPTION ||
   'An Amazon clone built with Next.js, Postgres, Shadcn'
 
-export const SENDER_EMAIL = process.env.SENDER_EMAIL || 'onboarding@resend.dev'
+export const SENDER_EMAIL = process.env.SENDER_EMAIL || 'strathmall.com'
 
 export const PAGE_SIZE = Number(process.env.PAGE_SIZE) || 3
 
@@ -15,7 +15,7 @@ export const DEFAULT_PAYMENT_METHOD =
 
 export const USER_ROLES = process.env.USER_ROLES
   ? process.env.USER_ROLES.split(', ')
-  : ['admin', 'user']
+  : ['admin', 'user', 'seller']
 
 export const signInDefaultValues = {
   email: '',
@@ -52,8 +52,30 @@ export const productDefaultValues = {
   banner: null,
 }
 
+export const sellerProductDefaultValues = {
+  name: '',
+  slug: '',
+  category: '',
+  images: [],
+  brand: '',
+  description: '',
+  price: '0',
+  stock: 0,
+  rating: '0',
+  numReviews: 0,
+  isFeatured: false,
+  banner: null,
+  sellerId: '',
+}
 export const reviewFormDefaultValues = {
   title: '',
   comment: '',
   rating: 0,
+}
+export const reviewSellerFormDefaultValues = {
+  title: '',
+  comment: '',
+  rating: 0,
+  
+
 }

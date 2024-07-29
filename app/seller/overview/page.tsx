@@ -1,9 +1,9 @@
 import { auth } from '@/auth'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { getOrderSummary } from '@/lib/actions/order.actions'
+import { getSellerOrderSummary } from '@/lib/actions/sellerorder.actions'
 import { APP_NAME } from '@/lib/constants'
 import { formatCurrency, formatDateTime, formatNumber } from '@/lib/utils'
-import { BadgeDollarSign, Barcode, CreditCard, Users } from 'lucide-react'
+import { BadgeDollarSign, Barcode, CreditCard } from 'lucide-react'
 import { Metadata } from 'next'
 import Charts from './charts'
 import {
@@ -25,7 +25,9 @@ export default async function DashboardPage() {
   if (session?.user.role !== 'seller')
     throw new Error('Seller permission required')
 
-  const summary = await getOrderSummary()
+  const sellerId = session.user.id || ''
+
+  const summary = await getSellerOrderSummary(sellerId)
 
   return (
     <div className="space-y-4">
@@ -54,17 +56,7 @@ export default async function DashboardPage() {
             </div>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Customers</CardTitle>
-            <Users />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {summary.usersCount[0].count}
-            </div>
-          </CardContent>
-        </Card>
+       
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -106,19 +98,19 @@ export default async function DashboardPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {summary.latestOrders.map((order) => (
-                  <TableRow key={order.id}>
+                {summary.latestOrders.map((sellerOrder) => (
+                  <TableRow key={sellerOrder.id}>
                     <TableCell>
-                      {order.user?.name ? order.user.name : 'Deleted user'}
+                      {sellerOrder.user?.name ? sellerOrder.user.name : 'Deleted user'}
                     </TableCell>
 
                     <TableCell>
-                      {formatDateTime(order.createdAt).dateOnly}
+                      {formatDateTime(sellerOrder.createdAt).dateOnly}
                     </TableCell>
-                    <TableCell>{formatCurrency(order.totalPrice)}</TableCell>
+                    <TableCell>{formatCurrency(sellerOrder.totalPrice)}</TableCell>
 
                     <TableCell>
-                      <Link href={`/order/${order.id}`}>
+                      <Link href={`/sellerOrder/${sellerOrder.id}`}>
                         <span className="px-2">Details</span>
                       </Link>
                     </TableCell>
