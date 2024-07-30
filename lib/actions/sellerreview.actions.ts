@@ -26,7 +26,7 @@ export async function createUpdateReview(
     });
     if (!product) throw new Error("Product not found");
 
-    const reviewExists = await db.query.reviews.findFirst({
+    const reviewExists = await db.query.sellerReviews.findFirst({
       where: and(
         eq(sellerReviews.sellerProductId, review.sellerProductId),
         eq(sellerReviews.userId, review.userId)
