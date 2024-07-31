@@ -46,7 +46,6 @@ export default function OrderDetailsForm({
     shippingAddress,
     orderItems,
     itemsPrice,
-    taxPrice,
     shippingPrice,
     totalPrice,
     paymentMethod,
@@ -224,10 +223,7 @@ export default function OrderDetailsForm({
                 <div>Items</div>
                 <div>{formatCurrency(itemsPrice)}</div>
               </div>
-              <div className="flex justify-between">
-                <div>Tax</div>
-                <div>{formatCurrency(taxPrice)}</div>
-              </div>
+              
               <div className="flex justify-between">
                 <div>Shipping</div>
                 <div>{formatCurrency(shippingPrice)}</div>
