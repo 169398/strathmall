@@ -1,6 +1,5 @@
 import { auth } from '@/auth'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { getOrderSummary } from '@/lib/actions/order.actions'
 import { APP_NAME } from '@/lib/constants'
 import { formatCurrency, formatDateTime, formatNumber } from '@/lib/utils'
 import { BadgeDollarSign, Barcode, CreditCard, Users } from 'lucide-react'
@@ -15,6 +14,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import Link from 'next/link'
+import { getOrderSummary } from '@/lib/actions/adminorder.action'
 
 export const metadata: Metadata = {
   title: `Admin Dashboard - ${APP_NAME}`,

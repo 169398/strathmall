@@ -1,11 +1,10 @@
-import { auth } from '@/auth'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { getSellerOrderSummary } from '@/lib/actions/sellerorder.actions'
-import { APP_NAME } from '@/lib/constants'
-import { formatCurrency, formatDateTime, formatNumber } from '@/lib/utils'
-import { BadgeDollarSign, Barcode, CreditCard } from 'lucide-react'
-import { Metadata } from 'next'
-import Charts from './charts'
+import { auth } from "@/auth";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { APP_NAME } from "@/lib/constants";
+import { formatCurrency, formatDateTime, formatNumber } from "@/lib/utils";
+import { BadgeDollarSign, Barcode, CreditCard} from "lucide-react";
+import { Metadata } from "next";
+import Charts from "./charts";
 import {
   Table,
   TableBody,
@@ -13,21 +12,21 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
-import Link from 'next/link'
+} from "@/components/ui/table";
+import Link from "next/link";
+import { getSellerOrderSummary } from "@/lib/actions/sellerorder.actions";
 
 export const metadata: Metadata = {
   title: `Seller Dashboard - ${APP_NAME}`,
-}
+};
 
 export default async function DashboardPage() {
-  const session = await auth()
-  if (session?.user.role !== 'seller')
-    throw new Error('Seller permission required')
+  const session = await auth();
+  if (session?.user.role !== "seller")
+    throw new Error("admin permission required");
+  const sellerId = session.user.id || "";
 
-  const sellerId = session.user.id || ''
-
-  const summary = await getSellerOrderSummary(sellerId)
+  const summary = await getSellerOrderSummary(sellerId);
 
   return (
     <div className="space-y-4">
@@ -98,19 +97,19 @@ export default async function DashboardPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {summary.latestOrders.map((sellerOrder) => (
-                  <TableRow key={sellerOrder.id}>
+                {summary.latestOrders.map((order) => (
+                  <TableRow key={order.id}>
                     <TableCell>
-                      {sellerOrder.user?.name ? sellerOrder.user.name : 'Deleted user'}
+                      {order.user?.name ? order.user.name : "Deleted user"}
                     </TableCell>
 
                     <TableCell>
-                      {formatDateTime(sellerOrder.createdAt).dateOnly}
+                      {formatDateTime(order.createdAt).dateOnly}
                     </TableCell>
-                    <TableCell>{formatCurrency(sellerOrder.totalPrice)}</TableCell>
+                    <TableCell>{formatCurrency(order.totalPrice)}</TableCell>
 
                     <TableCell>
-                      <Link href={`/sellerOrder/${sellerOrder.id}`}>
+                      <Link href={`/order/${order.id}`}>
                         <span className="px-2">Details</span>
                       </Link>
                     </TableCell>
@@ -122,5 +121,5 @@ export default async function DashboardPage() {
         </Card>
       </div>
     </div>
-  )
+  );
 }

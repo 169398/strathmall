@@ -21,12 +21,13 @@ import { formatCurrency, formatDateTime, formatId } from '@/lib/utils'
 import { sellerOrder } from '@/types/sellerindex'
 import Image from 'next/image'
 import Link from 'next/link'
+import { OnApproveData } from "@paypal/paypal-js";
 import {
-  approvePayPalOrder,
-  createPayPalOrder,
-  deliverOrder,
-  updateOrderToPaidByCOD,
-} from '@/lib/actions/order.actions'
+  approvePayPalSellerOrder,
+  createPayPalSellerOrder,
+  deliverSellerOrder,
+  updateSellerOrderToPaidByCOD,
+} from '@/lib/actions/sellerorder.actions'
 import { useTransition } from 'react'
 import { Button } from '@/components/ui/button'
 import StripePayment from './stripe-payment'
@@ -35,11 +36,13 @@ export default function OrderDetailsForm({
   order,
   paypalClientId,
   isAdmin,
+  seller,
   stripeClientSecret,
 }: {
   order: sellerOrder
   paypalClientId: string
   isAdmin: boolean
+  seller: boolean
   stripeClientSecret: string | null
 }) {
   const {
@@ -68,7 +71,7 @@ export default function OrderDetailsForm({
     return status
   }
   const handleCreatePayPalOrder = async () => {
-    const res = await createPayPalOrder(order.id)
+    const res = await createPayPalSellerOrder(order.id,order.sellerId)
     if (!res.success)
       return toast({
         description: res.message,
@@ -76,13 +79,25 @@ export default function OrderDetailsForm({
       })
     return res.data
   }
-  const handleApprovePayPalOrder = async (data: { orderID: string }) => {
-    const res = await approvePayPalOrder(order.id, data)
-    toast({
-      description: res.message,
-      variant: res.success ? 'default' : 'destructive',
-    })
-  }
+  const handleApprovePayPalOrder = async (data: OnApproveData) => {
+
+    try {
+      const orderId = order.id;
+      const sellerId = order.sellerId;
+      const res = await approvePayPalSellerOrder(orderId, sellerId, data);
+
+      toast({
+        description: res.message,
+        variant: res.success ? "default" : "destructive",
+      });
+    } catch (error) {
+      console.error("Error approving PayPal order:", error);
+      toast({
+        description: "An error occurred while approving the order.",
+        variant: "destructive",
+      });
+    }
+  };
 
   const MarkAsPaidButton = () => {
     const [isPending, startTransition] = useTransition()
@@ -93,7 +108,7 @@ export default function OrderDetailsForm({
         disabled={isPending}
         onClick={() =>
           startTransition(async () => {
-            const res = await updateOrderToPaidByCOD(order.id)
+            const res = await updateSellerOrderToPaidByCOD(order.id,order.sellerId)
             toast({
               variant: res.success ? 'default' : 'destructive',
               description: res.message,
@@ -115,7 +130,7 @@ export default function OrderDetailsForm({
         disabled={isPending}
         onClick={() =>
           startTransition(async () => {
-            const res = await deliverOrder(order.id)
+            const res = await deliverSellerOrder(order.id, order.sellerId)
             toast({
               variant: res.success ? 'default' : 'destructive',
               description: res.message,
@@ -250,10 +265,10 @@ export default function OrderDetailsForm({
                   clientSecret={stripeClientSecret}
                 />
               )}
-              {isAdmin && !isPaid && paymentMethod === 'CashOnDelivery' && (
+              {isAdmin ||seller && !isPaid && paymentMethod === 'CashOnDelivery' && (
                 <MarkAsPaidButton />
               )}
-              {isAdmin && isPaid && !isDelivered && <MarkAsDeliveredButton />}
+              {isAdmin || seller && isPaid && !isDelivered && <MarkAsDeliveredButton />}
             </CardContent>
           </Card>
         </div>

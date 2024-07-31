@@ -1,4 +1,5 @@
 "use server";
+
 import { auth } from "@/auth";
 import { getMyCart } from "./sellercart.actions";
 import { getUserById } from "./user.actions";
@@ -11,9 +12,9 @@ import {
   sellerOrderItems,
   sellerOrders,
   sellerProducts,
-  
+  users,
 } from "@/db/schema";
-import { count, desc, eq, sql, sum,and } from "drizzle-orm";
+import { count, desc, eq, sql, sum, } from "drizzle-orm";
 import { isRedirectError } from "next/dist/client/components/redirect";
 import { formatError } from "../utils";
 import { paypal } from "../paypal";
@@ -23,12 +24,10 @@ import { PAGE_SIZE } from "../constants";
 import { sendPurchaseReceipt } from "@/emails";
 
 // GET
-export async function getSellerOrderById(orderId: string, sellerId: string) {
+export async function getOrderById(orderId: string) {
   try {
     const order = await db.query.sellerOrders.findFirst({
-      where: and(
-        eq(sellerOrders.id, orderId),
-      ),
+      where: eq(sellerOrders.id, orderId),
       with: {
         sellerOrderItems: true,
         user: { columns: { name: true, email: true } },
@@ -36,11 +35,11 @@ export async function getSellerOrderById(orderId: string, sellerId: string) {
     });
 
     if (!order) {
-      console.log(` ${sellerId} not found.`);
+      console.log(`Order ${orderId} not found.`);
       return null;
     }
 
-    console.log( 'url');
+    console.log(order);
     return order;
   } catch (error) {
     console.error(`Error fetching order:`, error);
@@ -48,25 +47,19 @@ export async function getSellerOrderById(orderId: string, sellerId: string) {
   }
 }
 
-export async function getMySellerOrders({
+export async function getMyOrders({
   limit = PAGE_SIZE,
   page,
-  sellerId,
 }: {
   limit?: number;
   page: number;
-  sellerId: string;
 }) {
   const data = await db.query.sellerOrders.findMany({
-    where: eq(sellerOrders.sellerId, sellerId),
     orderBy: [desc(sellerOrders.createdAt)],
     limit,
     offset: (page - 1) * limit,
   });
-  const dataCount = await db
-    .select({ count: count() })
-    .from(sellerOrders)
-    .where(eq(sellerOrders.sellerId, sellerId));
+  const dataCount = await db.select({ count: count() }).from(sellerOrders);
 
   return {
     data,
@@ -74,19 +67,16 @@ export async function getMySellerOrders({
   };
 }
 
-export async function getSellerOrderSummary(sellerId: string) {
-  const ordersCount = await db
-    .select({ count: count() })
-    .from(sellerOrders)
-    .where(eq(sellerOrders.sellerId, sellerId));
+export async function getOrderSummary() {
+  const ordersCount = await db.select({ count: count() }).from(sellerOrders);
+    const usersCount = await db.select({ count: count() }).from(users);
+
   const productsCount = await db
     .select({ count: count() })
-    .from(sellerProducts)
-    .where(eq(sellerProducts.sellerId, sellerId));
+    .from(sellerProducts);
   const ordersPrice = await db
     .select({ sum: sum(sellerOrders.totalPrice) })
-    .from(sellerOrders)
-    .where(eq(sellerOrders.sellerId, sellerId));
+    .from(sellerOrders);
 
   const salesData = await db
     .select({
@@ -94,11 +84,9 @@ export async function getSellerOrderSummary(sellerId: string) {
       totalSales: sql<number>`sum(${sellerOrders.totalPrice})`.mapWith(Number),
     })
     .from(sellerOrders)
-    .where(eq(sellerOrders.sellerId, sellerId))
     .groupBy(sql`1`);
 
   const latestOrders = await db.query.sellerOrders.findMany({
-    where: eq(sellerOrders.sellerId, sellerId),
     orderBy: [desc(sellerOrders.createdAt)],
     with: {
       user: { columns: { name: true } },
@@ -109,36 +97,28 @@ export async function getSellerOrderSummary(sellerId: string) {
     ordersCount,
     productsCount,
     ordersPrice,
+    usersCount,
     salesData,
     latestOrders,
+
   };
 }
 
-export async function getAllSellerOrders({
+export async function getAllOrders({
   limit = PAGE_SIZE,
   page,
-  
 }: {
   limit?: number;
   page: number;
-
-}) 
-
-
-{
+}) {
   const data = await db.query.sellerOrders.findMany({
-    where: eq(sellerOrders.sellerId, sellerOrders.sellerId),
     orderBy: [desc(sellerOrders.createdAt)],
     limit,
     offset: (page - 1) * limit,
     with: { user: { columns: { name: true } } },
   });
 
-  
-  const dataCount = await db
-    .select({ count: count() })
-    .from(sellerOrders)
-    .where(eq(sellerOrders.sellerId, sellerOrders.sellerId));
+  const dataCount = await db.select({ count: count() }).from(sellerOrders);
 
   return {
     data,
@@ -146,12 +126,8 @@ export async function getAllSellerOrders({
   };
 }
 
-
-
-
-
 // CREATE
-export const createSellerOrder = async (sellerId: string) => {
+export const createOrder = async () => {
   try {
     const session = await auth();
     if (!session) throw new Error("User is not authenticated");
@@ -168,13 +144,12 @@ export const createSellerOrder = async (sellerId: string) => {
       itemsPrice: cart.itemsPrice,
       shippingPrice: cart.shippingPrice,
       totalPrice: cart.totalPrice,
-      sellerId: user.id,
     });
     const insertedOrderId = await db.transaction(async (tx) => {
       const insertedOrder = await tx
-                    .insert(sellerOrders)
-                    .values({ ...order, sellerId })
-                    .returning();
+        .insert(sellerOrders)
+        .values({ ...order })
+        .returning();
       for (const item of cart.items) {
         await tx.insert(sellerOrderItems).values({
           ...item,
@@ -204,14 +179,14 @@ export const createSellerOrder = async (sellerId: string) => {
 };
 
 // DELETE
-export async function deleteSellerOrder(id: string, sellerId: string) {
+export async function deleteOrder(id: string) {
   try {
     const orderExists = await db.query.sellerOrders.findFirst({
-      where: and(eq(sellerOrders.id, id), eq(sellerOrders.sellerId, sellerId)),
+      where: eq(sellerOrders.id, id),
     });
     if (!orderExists) throw new Error("Order not found");
     await db.delete(sellerOrders).where(eq(sellerOrders.id, id));
-    revalidatePath("/seller/orders");
+    revalidatePath("/admin/orders");
     return {
       success: true,
       message: "Order deleted successfully",
@@ -222,16 +197,10 @@ export async function deleteSellerOrder(id: string, sellerId: string) {
 }
 
 // UPDATE
-export async function createPayPalSellerOrder(
-  orderId: string,
-  sellerId: string
-) {
+export async function createPayPalOrder(orderId: string) {
   try {
     const order = await db.query.sellerOrders.findFirst({
-      where: and(
-        eq(sellerOrders.id, orderId),
-        eq(sellerOrders.sellerId, sellerId)
-      ),
+      where: eq(sellerOrders.id, orderId),
     });
     if (order) {
       const paypalOrder = await paypal.createOrder(Number(order.totalPrice));
@@ -259,17 +228,13 @@ export async function createPayPalSellerOrder(
   }
 }
 
-export async function approvePayPalSellerOrder(
+export async function approvePayPalOrder(
   orderId: string,
-  sellerId: string,
   data: { orderID: string }
 ) {
   try {
     const order = await db.query.sellerOrders.findFirst({
-      where: and(
-        eq(sellerOrders.id, orderId),
-        eq(sellerOrders.sellerId, sellerId)
-      ),
+      where: eq(sellerOrders.id, orderId),
     });
     if (!order) throw new Error("Order not found");
 
@@ -280,9 +245,8 @@ export async function approvePayPalSellerOrder(
       captureData.status !== "COMPLETED"
     )
       throw new Error("Error in PayPal payment");
-    await updateSellerOrderToPaid({
+    await updateOrderToPaid({
       orderId,
-      sellerId,
       paymentResult: {
         id: captureData.id,
         status: captureData.status,
@@ -301,28 +265,16 @@ export async function approvePayPalSellerOrder(
   }
 }
 
- export const handleDeleteOrder = async (id: string) => {
-const session = await auth();
-
-   const sellerId = session?.user.id || "";
-   return deleteSellerOrder(id, sellerId);
- };
-
-export const updateSellerOrderToPaid = async ({
+export const updateOrderToPaid = async ({
   orderId,
-  sellerId,
   paymentResult,
 }: {
   orderId: string;
-  sellerId: string;
   paymentResult?: PaymentResult;
 }) => {
   const order = await db.query.sellerOrders.findFirst({
     columns: { isPaid: true },
-    where: and(
-      eq(sellerOrders.id, orderId),
-      eq(sellerOrders.sellerId, sellerId)
-    ),
+    where: eq(sellerOrders.id, orderId),
     with: { sellerOrderItems: true },
   });
   if (!order) throw new Error("Order not found");
@@ -346,24 +298,23 @@ export const updateSellerOrderToPaid = async ({
       .where(eq(sellerOrders.id, orderId));
   });
   const updatedOrder = await db.query.sellerOrders.findFirst({
-    where: and(
-      eq(sellerOrders.id, orderId),
-      eq(sellerOrders.sellerId, sellerId)
-    ),
-    with: { sellerOrderItems: true, user: { columns: { name: true, email: true } } },
+    where: eq(sellerOrders.id, orderId),
+    with: {
+      sellerOrderItems: true,
+      user: { columns: { name: true, email: true } },
+    },
   });
   if (!updatedOrder) {
     throw new Error("Order not found");
   }
-  await sendPurchaseReceipt({ sellerOrder: { ...updatedOrder, sellerOrderItems: [] } });
+  await sendPurchaseReceipt({
+    sellerOrder: { ...updatedOrder, sellerOrderItems: [] },
+  });
 };
 
-export async function updateSellerOrderToPaidByCOD(
-  orderId: string,
-  sellerId: string
-) {
+export async function updateOrderToPaidByCOD(orderId: string) {
   try {
-    await updateSellerOrderToPaid({ orderId, sellerId });
+    await updateOrderToPaid({ orderId });
     revalidatePath(`/order/${orderId}`);
     return { success: true, message: "Order paid successfully" };
   } catch (err) {
@@ -371,13 +322,10 @@ export async function updateSellerOrderToPaidByCOD(
   }
 }
 
-export async function deliverSellerOrder(orderId: string, sellerId: string) {
+export async function deliverOrder(orderId: string) {
   try {
     const order = await db.query.sellerOrders.findFirst({
-      where: and(
-        eq(sellerOrders.id, orderId),
-        eq(sellerOrders.sellerId, sellerId)
-      ),
+      where: eq(sellerOrders.id, orderId),
     });
     if (!order) throw new Error("Order not found");
     if (!order.isPaid) throw new Error("Order is not paid");

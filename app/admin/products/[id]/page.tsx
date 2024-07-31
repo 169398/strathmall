@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
 import ProductForm from '@/components/shared/admin/product-form'
-import { getProductById } from '@/lib/actions/product.actions'
+import { getProductById } from '@/lib/actions/adminproduct.action'
 import { APP_NAME } from '@/lib/constants'
 
 export const metadata: Metadata = {

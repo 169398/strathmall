@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { deleteProduct, getAllProducts } from '@/lib/actions/product.actions'
+import { deleteProduct, getAllProducts } from '@/lib/actions/adminproduct.action'
 import { APP_NAME } from '@/lib/constants'
 import { formatCurrency, formatId } from '@/lib/utils'
 import { Metadata } from 'next'
