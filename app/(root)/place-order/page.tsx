@@ -26,6 +26,7 @@ export const metadata = {
 export default async function PlaceOrderPage() {
   const cart = await getMyCart()
   const session = await auth()
+  const sellerId = session?.user.id || ''
   const user = await getUserById(session?.user.id!)
   if (!cart || cart.items.length === 0) redirect('/cart')
   if (!user.address) redirect('/shipping-address')
@@ -124,7 +125,7 @@ export default async function PlaceOrderPage() {
                 <div>Total</div>
                 <div>{formatCurrency(cart.totalPrice)}</div>
               </div>
-              <PlaceOrderForm />
+              <PlaceOrderForm sellerId={sellerId}/>
             </CardContent>
           </Card>
         </div>
