@@ -16,7 +16,6 @@ import { APP_NAME } from '@/lib/constants'
 import CredentialsSignInForm from './credentials-signin-form'
 import EmailSigninForm from './email-signin-form'
 import SeparatorWithOr from '@/components/shared/separator-or'
-import GoogleSignInForm from './google-signin-form'
 
 export const metadata: Metadata = {
   title: `Sign In - ${APP_NAME}`,
@@ -52,7 +51,7 @@ export default async function SignIn({
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <GoogleSignInForm />
+          {/* <GoogleSignInForm /> */}
           <SeparatorWithOr />
           <EmailSigninForm />
           <SeparatorWithOr />
