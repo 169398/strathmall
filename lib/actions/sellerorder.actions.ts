@@ -174,7 +174,7 @@ export const createSellerOrder = async (sellerId: string) => {
           shippingPrice: "0",
           itemsPrice: "0",
         })
-        .where(eq(sellerCarts.id, cart.id));
+        .where(eq(sellerCarts.id, sellerCarts.id));
       return insertedOrder[0].id;
     });
     if (!insertedOrderId) throw new Error("Order not created");
