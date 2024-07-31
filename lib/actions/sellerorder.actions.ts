@@ -25,16 +25,28 @@ import { sendPurchaseReceipt } from "@/emails";
 
 // GET
 export async function getSellerOrderById(orderId: string, sellerId: string) {
-  return await db.query.sellerOrders.findFirst({
-    where: and(
-      eq(sellerOrders.id, orderId),
-      eq(sellerOrders.sellerId, sellerId)
-    ),
-    with: {
-      sellerOrderItems: true,
-      user: { columns: { name: true, email: true } },
-    },
-  });
+  try {
+    const order = await db.query.sellerOrders.findFirst({
+      where: and(
+        eq(sellerOrders.id, orderId),
+      ),
+      with: {
+        sellerOrderItems: true,
+        user: { columns: { name: true, email: true } },
+      },
+    });
+
+    if (!order) {
+      console.log(` ${sellerId} not found.`);
+      return null;
+    }
+
+    console.log( order);
+    return order;
+  } catch (error) {
+    console.error(`Error fetching order:`, error);
+    throw error;
+  }
 }
 
 export async function getMySellerOrders({
@@ -332,7 +344,7 @@ export const updateSellerOrderToPaid = async ({
   if (!updatedOrder) {
     throw new Error("Order not found");
   }
-  await sendPurchaseReceipt({ sellerOrder: { ...updatedOrder, orderItems: [] } });
+  await sendPurchaseReceipt({ sellerOrder: { ...updatedOrder, sellerOrderItems: [] } });
 };
 
 export async function updateSellerOrderToPaidByCOD(

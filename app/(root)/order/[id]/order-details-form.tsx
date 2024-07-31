@@ -44,7 +44,7 @@ export default function OrderDetailsForm({
 }) {
   const {
     shippingAddress,
-    orderItems,
+    sellerOrderItems,
     itemsPrice,
     shippingPrice,
     totalPrice,
@@ -186,7 +186,7 @@ export default function OrderDetailsForm({
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {orderItems.map((item) => (
+                  {sellerOrderItems.map((item) => (
                     <TableRow key={item.slug}>
                       <TableCell>
                         <Link
