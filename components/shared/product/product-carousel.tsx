@@ -6,12 +6,12 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel'
+import { sellerProduct } from '@/types/sellerindex'
 import Autoplay from 'embla-carousel-autoplay'
-import { Product } from '@/types'
 import Image from 'next/image'
 import Link from 'next/link'
 
-export default function ProductCarousel({ data }: { data: Product[] }) {
+export default function ProductCarousel({ data }: { data: sellerProduct[] }) {
   return (
     <Carousel
       className="w-full mb-12"
@@ -27,13 +27,13 @@ export default function ProductCarousel({ data }: { data: Product[] }) {
       ]}
     >
       <CarouselContent>
-        {data.map((product: Product) => (
-          <CarouselItem key={product.id}>
-            <Link href={`/product/${product.slug}`}>
+        {data.map((sellerProduct: sellerProduct) => (
+          <CarouselItem key={sellerProduct.id}>
+            <Link href={`/sellerProduct/${sellerProduct.slug}`}>
               <div className="relative   mx-auto  ">
                 <Image
-                  alt={product.name}
-                  src={product.banner!}
+                  alt={sellerProduct.name}
+                  src={sellerProduct.banner!}
                   width="0"
                   height="0"
                   sizes="100vw"
@@ -41,7 +41,7 @@ export default function ProductCarousel({ data }: { data: Product[] }) {
                 />
                 <div className="absolute inset-0 flex items-end justify-center">
                   <h2 className="bg-gray-900 bg-opacity-50 text-2xl font-bold px-2 text-white  ">
-                    {product.name}
+                    {sellerProduct.name}
                   </h2>
                 </div>
               </div>

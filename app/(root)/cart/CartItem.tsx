@@ -1,16 +1,16 @@
 import { formatCurrency } from "@/lib/utils";
-import { removeItemFromCart } from "@/lib/actions/cart.actions";
+import { removeItemFromSellerCart } from "@/lib/actions/sellercart.actions";
 import Image from "next/image";
-import { Cart } from "@/types";
+import { sellerCart } from "@/types/sellerindex";
 import { X } from "lucide-react";
 import Link from "next/link";
 
-const CartItem = ({ cart }: { cart?: Cart }) => {
+const CartItem = ({ cart }: { cart?: sellerCart }) => {
 
   // Handle item removal
   const removeItem = async (productId: string) => {
    
-      const res = await removeItemFromCart(productId);
+      const res = await removeItemFromSellerCart(productId);
       if (res) {
         // Handle successful removal
       } else {

@@ -39,11 +39,11 @@ import {
   createUpdateReview,
   getReviews,
   getUserReviewByProductId,
-} from '@/lib/actions/review.actions'
+} from '@/lib/actions/sellerreview.actions'
 import { reviewFormDefaultValues } from '@/lib/constants'
 import { formatDateTime } from '@/lib/utils'
-import { insertReviewSchema } from '@/lib/validator'
-import { Review } from '@/types'
+import { insertSellerReviewSchema } from '@/lib/validator'
+import { Review } from '@/types/sellerindex'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Calendar, Check, StarIcon, User } from 'lucide-react'
 import Link from 'next/link'
@@ -54,12 +54,13 @@ import { z } from 'zod'
 
 export default function ReviewList({
   userId,
-  productId,
-  productSlug,
+  sellerProductId,
+  sellerProductSlug,
+
 }: {
   userId: string
-  productId: string
-  productSlug: string
+  sellerProductId: string
+  sellerProductSlug: string
 }) {
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(0)
@@ -67,7 +68,7 @@ export default function ReviewList({
   const { ref, inView } = useInView()
   const reload = async () => {
     try {
-      const res = await getReviews({ productId, page: 1 })
+      const res = await getReviews({ sellerProductId, page: 1 })
       setReviews([...res.data])
       setTotalPages(res.totalPages)
     } catch (err) {
@@ -80,7 +81,7 @@ export default function ReviewList({
   useEffect(() => {
     const loadMoreReviews = async () => {
       if (page === totalPages) return
-      const res = await getReviews({ productId, page })
+      const res = await getReviews({ sellerProductId, page })
       setReviews([...reviews, ...res.data])
       setTotalPages(res.totalPages)
       if (page < res.totalPages) {
@@ -93,17 +94,17 @@ export default function ReviewList({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inView])
 
-  type CustomerReview = z.infer<typeof insertReviewSchema>
+  type CustomerReview = z.infer<typeof insertSellerReviewSchema>
 
   const form = useForm<CustomerReview>({
-    resolver: zodResolver(insertReviewSchema),
+    resolver: zodResolver(insertSellerReviewSchema),
     defaultValues: reviewFormDefaultValues,
   })
   const [open, setOpen] = useState(false)
   const { toast } = useToast()
 
   const onSubmit: SubmitHandler<CustomerReview> = async (values) => {
-    const res = await createUpdateReview({ ...values, productId })
+    const res = await createUpdateReview({ ...values, sellerProductId })
     if (!res.success)
       return toast({
         variant: 'destructive',
@@ -117,9 +118,10 @@ export default function ReviewList({
   }
 
   const handleOpenForm = async () => {
-    form.setValue('productId', productId)
+    form.setValue('sellerProductId', sellerProductId)
     form.setValue('userId', userId)
-    const review = await getUserReviewByProductId({ productId })
+    form.setValue('sellerId', userId)
+    const review = await getUserReviewByProductId({ sellerProductId })
     if (review) {
       form.setValue('title', review.title)
       form.setValue('description', review.description)
@@ -235,7 +237,7 @@ export default function ReviewList({
           Please
           <Link
             className="text-primary px-2"
-            href={`/api/auth/signin?callbackUrl=/product/${productSlug}`}
+            href={`/api/auth/signin?callbackUrl=/product/${sellerProductSlug}`}
           >
             sign in
           </Link>

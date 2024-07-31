@@ -4,13 +4,13 @@ import ProductList from '@/components/shared/product/product-list'
 import ProductPromotion from '@/components/shared/product/product-promotion'
 import {
 
-  getLatestProducts,
-} from '@/lib/actions/product.actions'
+  getSellerLatestProducts,
+} from '@/lib/actions/sellerproduct.actions'
 import {  buttonVariants } from '@/components/ui/button'
 import Link from 'next/link'
 
 export default async function Home() {
-  const latestProducts = await getLatestProducts()
+  const latestProducts = await getSellerLatestProducts()
   return (
     <div>
       <MaxWidthWrapper>

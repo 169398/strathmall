@@ -3,8 +3,8 @@
 import { Button } from '@/components/ui/button'
 import { ToastAction } from '@/components/ui/toast'
 import { useToast } from '@/components/ui/use-toast'
-import { addItemToCart, removeItemFromCart } from '@/lib/actions/cart.actions'
-import { Cart, CartItem } from '@/types'
+import { addItemToSellerCart, removeItemFromSellerCart } from '@/lib/actions/sellercart.actions'
+import { sellerCart, sellerCartItem } from '@/types/sellerindex'
 import { Loader, Minus, Plus } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useTransition } from 'react'
@@ -13,14 +13,14 @@ export default function AddToCart({
   cart,
   item,
 }: {
-  cart?: Cart
-  item: Omit<CartItem, 'cartId'>
+  cart?: sellerCart
+  item: Omit<sellerCartItem, 'cartId'>
 }) {
   const router = useRouter()
   const { toast } = useToast()
   const [isPending, startTransition] = useTransition()
   const existItem =
-    cart && cart.items.find((x) => x.productId === item.productId)
+    cart && cart.items.find((x) => x.productId === item.sellerProductId)
   return existItem ? (
     <div>
       <Button
@@ -29,7 +29,7 @@ export default function AddToCart({
         disabled={isPending}
         onClick={() => {
           startTransition(async () => {
-            const res = await removeItemFromCart(item.productId)
+            const res = await removeItemFromSellerCart(item.sellerProductId)
             toast({
               variant: res.success ? 'default' : 'destructive',
               description: res.message,
@@ -51,7 +51,7 @@ export default function AddToCart({
         disabled={isPending}
         onClick={() => {
           startTransition(async () => {
-            const res = await addItemToCart(item)
+            const res = await addItemToSellerCart(item)
             toast({
               variant: res.success ? 'default' : 'destructive',
               description: res.message,
@@ -74,7 +74,7 @@ export default function AddToCart({
       disabled={isPending}
       onClick={() => {
         startTransition(async () => {
-          const res = await addItemToCart(item)
+          const res = await addItemToSellerCart(item)
           if (!res.success) {
             toast({
               variant: 'destructive',

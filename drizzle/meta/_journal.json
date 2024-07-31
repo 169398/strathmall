@@ -15,6 +15,27 @@
       "when": 1722107704524,
       "tag": "0001_talented_vector",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1722204465667,
+      "tag": "0002_easy_hannibal_king",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1722332383504,
+      "tag": "0003_dry_lady_ursula",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1722394241845,
+      "tag": "0004_real_quicksilver",
+      "breakpoints": true
     }
   ]
 }

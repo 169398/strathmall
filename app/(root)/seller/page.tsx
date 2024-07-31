@@ -16,13 +16,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { createSeller } from "@/lib/actions/selleractions";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Accordion, AccordionDetails, AccordionSummary, Stack } from "@mui/material";
 import { UserCard } from "@/components/shared/card";
 import { CardHover } from "@/components/shared/WhyStrathCard";
+import { createSeller } from "@/lib/actions/selleractions";
 
 const  OnboardingForm = () => {
   const form = useForm<z.infer<typeof createSellerSchema>>({
@@ -205,7 +205,7 @@ const FAQ = () => {
           <AccordionDetails id="panel1-content">
             <span className="text-xs">
               StrathMall pricing has two parts. A one-time activation fee sets
-              shop up with a and professional photo shoot. A service fee is
+              shop up  and a professional photo shoot. A service fee is
               calculated as a percentage of each shop order made through
               StrathMall. Want more details? Email kulubiidris@gmail.com and
               we&apos;ll get back to you.

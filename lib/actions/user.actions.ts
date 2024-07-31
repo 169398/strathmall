@@ -117,7 +117,7 @@ export async function getUserById(userId: string) {
 export async function deleteUser(id: string) {
   try {
     await db.delete(users).where(eq(users.id, id))
-    revalidatePath('/admin/users')
+    revalidatePath('/admin/users/seller')
     return {
       success: true,
       message: 'User deleted successfully',
