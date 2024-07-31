@@ -7,7 +7,8 @@ export const metadata = {
 }
 
 export default async function CartPage() {
-  const cart = await getMyCart()
+  const sellerCart = await getMyCart()
 
-  return <CartForm cart={cart} />
+  return <CartForm cart={sellerCart} />
 }
+

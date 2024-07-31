@@ -8,16 +8,16 @@ const EcommerceFeatures = () => {
         <CardContent className="grid gap-4 md:grid-cols-4 p-4 ">
           <div className="space-y-2">
             <ShoppingBag />
-            <div className="text-sm font-bold">Free Shipping</div>
+            <div className="text-sm font-bold">Faster Shipping</div>
             <div className="text-sm text-muted-foreground">
-              Free shipping for order above ksh 999
+              Shipping within 24 hours
             </div>
           </div>
           <div className="space-y-2">
             <DollarSign />
             <div className="text-sm font-bold">Money Guarantee</div>
             <div className="text-sm text-muted-foreground">
-              Within 30 days for an exchange
+              Within 7 days for an exchange
             </div>
           </div>
 
