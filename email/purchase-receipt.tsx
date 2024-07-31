@@ -38,7 +38,6 @@ PurchaseReceiptEmail.PreviewProps = {
     },
     createdAt: new Date(),
     totalPrice: '110',
-    taxPrice: '10',
     shippingPrice: '20',
     itemsPrice: '80',
     orderItems: sampleData.products.map((x) => ({
@@ -127,7 +126,6 @@ export default function PurchaseReceiptEmail({ order }: OrderInformationProps) {
               ))}
               {[
                 { name: 'Items', price: order.itemsPrice },
-                { name: 'Tax', price: order.taxPrice },
                 { name: 'Shipping', price: order.shippingPrice },
                 { name: 'Total', price: order.totalPrice },
               ].map(({ name, price }) => (
