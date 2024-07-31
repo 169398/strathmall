@@ -66,6 +66,71 @@ export async function updateSellerProduct(
   }
 }
 
+export async function getAllSearchProducts({
+  query,
+  limit = PAGE_SIZE,
+  page,
+  category,
+  price,
+  rating,
+  sort,
+}: {
+  query: string;
+  category: string;
+  limit?: number;
+  page: number;
+  price?: string;
+  rating?: string;
+  sort?: string;
+}) {
+  const queryFilter =
+    query && query !== "all"
+      ? ilike(sellerProducts.name, `%${query}%`)
+      : undefined;
+  const categoryFilter =
+    category && category !== "all"
+      ? eq(sellerProducts.category, category)
+      : undefined;
+  const ratingFilter =
+    rating && rating !== "all"
+      ? sql`${sellerProducts.rating} >= ${rating}`
+      : undefined;
+  const priceFilter =
+    price && price !== "all"
+      ? sql`${sellerProducts.price} >= ${price.split("-")[0]} AND ${
+          sellerProducts.price
+        } <= ${price.split("-")[1]}`
+      : undefined;
+  const order =
+    sort === "lowest"
+      ? sellerProducts.price
+      : sort === "highest"
+      ? desc(sellerProducts.price)
+      : sort === "rating"
+      ? desc(sellerProducts.rating)
+      : desc(sellerProducts.createdAt);
+
+  const condition = and(queryFilter, categoryFilter, ratingFilter, priceFilter);
+
+  const data = await db
+    .select()
+    .from(sellerProducts)
+    .where(condition)
+    .orderBy(order)
+    .offset((page - 1) * limit)
+    .limit(limit);
+
+  const dataCount = await db
+    .select({ count: count() })
+    .from(sellerProducts)
+    .where(condition);
+
+  return {
+    data,
+    totalPages: Math.ceil(dataCount[0].count / limit),
+  };
+}
+
 // GET
 export async function getSellerProductById(sellerProductId: string) {
   return await db.query.sellerProducts.findFirst({
@@ -105,7 +170,6 @@ export async function getAllSellerProducts({
   price?: string;
   rating?: string;
   sort?: string;
-  userId: string;
 }) {
   const queryFilter =
     query && query !== "all"
@@ -135,7 +199,7 @@ export async function getAllSellerProducts({
       : desc(sellerProducts.createdAt);
 
   const condition = and(
-    eq(sellerProducts.sellerId,'userId'),
+    eq(sellerProducts.sellerId,sellerProducts.sellerId),
     queryFilter,
     categoryFilter,
     ratingFilter,
