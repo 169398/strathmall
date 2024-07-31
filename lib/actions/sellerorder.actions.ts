@@ -37,11 +37,11 @@ export async function getSellerOrderById(orderId: string, sellerId: string) {
     });
 
     if (!order) {
-      console.log(`Order with ID ${orderId} for seller ${sellerId} not found.`);
+      console.log(` ${sellerId} not found.`);
       return null;
     }
 
-    console.log(`Order found:`, order);
+    console.log( order);
     return order;
   } catch (error) {
     console.error(`Error fetching order:`, error);
