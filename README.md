@@ -1,8 +1,8 @@
 # Welcome to the StrathMall 🫠 
 Here you'll find all the documentation related to the StrathMall project.
 
+## Table of Contents 📑
 
-## Table of Contents 📑 
 - [Introduction](#introduction) 
 - [Getting Started](#getting-started)
 - [Project Structure](#project-structure)
@@ -103,5 +103,5 @@ Thank you for considering contributing to StrathMall! We welcome contributions f
    git checkout -b feature/your-feature-name
 
 ```
-
+Worn out🥵
 //TO DO 😫  :Continue the documentation **APIs**  ❗ 
