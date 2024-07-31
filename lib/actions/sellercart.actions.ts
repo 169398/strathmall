@@ -4,13 +4,13 @@ import db from "@/db/drizzle";
 import { sellerCarts, sellerProducts } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
-import { cartItemSchema } from "../validator";
+import { sellerCartItemSchema } from "../validator";
 import { formatError, round2 } from "../utils";
-import { CartItem } from "@/types";
+import { sellerCartItem } from "@/types/sellerindex";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 
-const calcPrice = (items: CartItem[]) => {
+const calcPrice = (items: sellerCartItem[]) => {
   const itemsPrice = round2(
       items.reduce((acc, item) => acc + item.price * item.qty, 0)
     ),
@@ -23,23 +23,23 @@ const calcPrice = (items: CartItem[]) => {
   };
 };
 
-export const addItemToCart = async (data: CartItem) => {
+export const addItemToSellerCart = async (data: sellerCartItem) => {
   try {
     const sessionCartId = cookies().get("sessionCartId")?.value;
     if (!sessionCartId) throw new Error("Cart Session not found");
     const session = await auth();
     const userId = session?.user.id as string | undefined;
     const cart = await getMyCart();
-    const item = cartItemSchema.parse(data);
+    const item = sellerCartItemSchema.parse(data);
     const product = await db.query.sellerProducts.findFirst({
-      where: eq(sellerProducts.id, item.productId),
+      where: eq(sellerProducts.id, item.sellerProductId),
     });
     if (!product) throw new Error("Product not found");
     if (!cart) {
       if (product.stock < 1) throw new Error("Not enough stock");
       await db.insert(sellerCarts).values({
         userId: userId,
-        items: [item],
+        items: [{...item,productId:item.sellerProductId,}],
         sessionCartId: sessionCartId,
         ...calcPrice([item]),
       });
@@ -49,21 +49,21 @@ export const addItemToCart = async (data: CartItem) => {
         message: "Item added to cart successfully",
       };
     } else {
-      const existItem = cart.items.find((x) => x.productId === item.productId);
+      const existItem = cart.items.find((x) => x.productId === item.sellerProductId);
       if (existItem) {
         if (product.stock < existItem.qty + 1)
           throw new Error("Not enough stock");
-        cart.items.find((x) => x.productId === item.productId)!.qty =
+        cart.items.find((x) => x.productId === item.sellerProductId)!.qty =
           existItem.qty + 1;
       } else {
         if (product.stock < 1) throw new Error("Not enough stock");
-        cart.items.push(item);
+        cart.items.push({...item,productId:item.sellerProductId,});
       }
       await db
         .update(sellerCarts)
         .set({
           items: cart.items,
-          ...calcPrice(cart.items),
+          ...calcPrice([{...item,sellerProductId:item.sellerProductId}]),
         })
         .where(eq(sellerCarts.id, cart.id));
 
@@ -85,15 +85,15 @@ export async function getMyCart() {
   if (!sessionCartId) return undefined;
   const session = await auth();
   const userId = session?.user.id;
+  if (!userId) throw new Error("User not authenticated");
+
   const cart = await db.query.sellerCarts.findFirst({
-    where: userId
-      ? eq(sellerCarts.userId, userId)
-      : eq(sellerCarts.sessionCartId, sessionCartId),
+    where: eq(sellerCarts.userId, userId),
   });
   return cart;
 }
 
-export const removeItemFromCart = async (productId: string) => {
+export const removeItemFromSellerCart = async (productId: string) => {
   try {
     const sessionCartId = cookies().get("sessionCartId")?.value;
     if (!sessionCartId) throw new Error("Cart Session not found");
@@ -103,29 +103,29 @@ export const removeItemFromCart = async (productId: string) => {
     });
     if (!product) throw new Error("Product not found");
 
-    const cart = await getMyCart();
-    if (!cart) throw new Error("Cart not found");
+    const sellerCart = await getMyCart();
+    if (!sellerCart) throw new Error("Cart not found");
 
-    const exist = cart.items.find((x) => x.productId === productId);
+    const exist = sellerCart.items.find((x) => x.productId === productId);
     if (!exist) throw new Error("Item not found");
 
     if (exist.qty === 1) {
-      cart.items = cart.items.filter((x) => x.productId !== exist.productId);
+      sellerCart.items = sellerCart.items.filter((x) => x.productId !== exist.productId);
     } else {
-      cart.items.find((x) => x.productId === productId)!.qty = exist.qty - 1;
+      sellerCart.items.find((x) => x.productId === productId)!.qty = exist.qty - 1;
     }
     await db
       .update(sellerCarts)
       .set({
-        items: cart.items,
-        ...calcPrice(cart.items),
+        items: sellerCart.items,
+        ...calcPrice(sellerCart.items.map(i=>({...i,sellerProductId:i.productId}))),
       })
-      .where(eq(sellerCarts.id, cart.id));
+      .where(eq(sellerCarts.id, sellerCart.id));
     revalidatePath(`/product/${product.slug}`);
     return {
       success: true,
       message: `${product.name}  ${
-        cart.items.find((x) => x.productId === productId)
+        sellerCart.items.find((x) => x.productId === productId)
           ? "updated in"
           : "removed from"
       } cart successfully`,

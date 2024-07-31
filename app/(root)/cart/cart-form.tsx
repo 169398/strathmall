@@ -12,16 +12,16 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { useToast } from '@/components/ui/use-toast'
-import { addItemToCart, removeItemFromCart } from '@/lib/actions/cart.actions'
+import { addItemToSellerCart, removeItemFromSellerCart } from '@/lib/actions/sellercart.actions'
 import { formatCurrency } from '@/lib/utils'
-import { Cart } from '@/types'
+import { sellerCart } from '@/types/sellerindex'
 import { ArrowRight, Loader, Minus, Plus } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useTransition } from 'react'
 
-export default function CartForm({ cart }: { cart?: Cart }) {
+export default function CartForm({ cart }: { cart?: sellerCart }) {
   const router = useRouter()
 
   const { toast } = useToast()
@@ -92,7 +92,7 @@ export default function CartForm({ cart }: { cart?: Cart }) {
                             type="button"
                             onClick={() =>
                               startTransition(async () => {
-                                const res = await removeItemFromCart(
+                                const res = await removeItemFromSellerCart(
                                   item.productId
                                 );
                                 if (!res.success) {
@@ -117,7 +117,7 @@ export default function CartForm({ cart }: { cart?: Cart }) {
                             type="button"
                             onClick={() =>
                               startTransition(async () => {
-                                const res = await addItemToCart(item);
+                                const res = await addItemToSellerCart({...item,sellerProductId:item.productId});
                                 if (!res.success) {
                                   toast({
                                     variant: "destructive",

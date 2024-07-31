@@ -72,6 +72,7 @@ export const updateSellerProductSchema = createSelectSchema(sellerProducts, {
   stock: z.coerce.number().min(0, 'Stock must be at least 0'),
  
 }).omit({
+  sellerId: true,
   rating: true,
   numReviews: true,
   createdAt: true,

@@ -1,4 +1,4 @@
-import { getMyCart } from '@/lib/actions/cart.actions'
+import { getMyCart } from '@/lib/actions/sellercart.actions'
 import CartForm from './cart-form'
 import { APP_NAME } from '@/lib/constants'
 

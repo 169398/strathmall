@@ -67,22 +67,22 @@ export default async function AdminProductsPage({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {products?.data.map((sellerProduct) => (
-              <TableRow key={sellerProduct.id}>
-                <TableCell>{formatId(sellerProduct.id)}</TableCell>
-                <TableCell>{sellerProduct.name}</TableCell>
+            {products?.data.map((product) => (
+              <TableRow key={product.id}>
+                <TableCell>{formatId(product.id)}</TableCell>
+                <TableCell>{product.name}</TableCell>
                 <TableCell className="text-right">
-                  {formatCurrency(sellerProduct.price)}
+                  {formatCurrency(product.price)}
                 </TableCell>
-                <TableCell>{sellerProduct.category}</TableCell>
-                <TableCell>{sellerProduct.stock}</TableCell>
-                <TableCell>{sellerProduct.rating}</TableCell>
+                <TableCell>{product.category}</TableCell>
+                <TableCell>{product.stock}</TableCell>
+                <TableCell>{product.rating}</TableCell>
                 <TableCell className="flex gap-1">
                   <Button asChild variant="outline" size="sm">
-                    <Link href={`/seller/sellerProducts/${sellerProduct.id}`}>Edit</Link>
+                    <Link href={`/seller/products/${product.id}`}>Edit</Link>
                   </Button>
                   
-                  <DeleteDialog id={sellerProduct.id} action={ deleteSellerProduct} />
+                  <DeleteDialog id={product.id} action={ deleteSellerProduct} />
                 </TableCell>
               </TableRow>
             ))}

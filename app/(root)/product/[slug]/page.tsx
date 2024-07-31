@@ -94,7 +94,7 @@ const ProductDetails = async ({
                     <AddToCart
                       cart={cart}
                       item={{
-                        productId: product.id,
+                        sellerProductId: product.id,
                         name: product.name,
                         slug: product.slug,
                         price: round2(product.price),

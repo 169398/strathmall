@@ -78,7 +78,6 @@ export default function SellerProductForm({
       const res = await updateSellerProduct(
         {
           ...values, id: sellerProductId,
-          sellerId: ""
         },
       
       );

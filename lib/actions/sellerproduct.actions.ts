@@ -48,7 +48,7 @@ export async function updateSellerProduct(
     const productExists = await db.query.sellerProducts.findFirst({
       where: and(
         eq(sellerProducts.id, sellerProduct.id),
-        eq(sellerProducts.sellerId, sellerProduct.sellerId)
+        eq(sellerProducts.id, sellerProduct.id)
       ),
     });
     if (!productExists) throw new Error("Product not found");
@@ -90,7 +90,6 @@ export async function getSellerProductBySlug(slug: string) {
 }
 
 export async function getAllSellerProducts({
-  userId,
   query,
   limit = PAGE_SIZE,
   page,
@@ -99,7 +98,6 @@ export async function getAllSellerProducts({
   rating,
   sort,
 }: {
-  userId: string;
   query: string;
   category: string;
   limit?: number;
@@ -107,6 +105,7 @@ export async function getAllSellerProducts({
   price?: string;
   rating?: string;
   sort?: string;
+  userId: string;
 }) {
   const queryFilter =
     query && query !== "all"
@@ -136,7 +135,7 @@ export async function getAllSellerProducts({
       : desc(sellerProducts.createdAt);
 
   const condition = and(
-    eq(sellerProducts.sellerId, userId),
+    eq(sellerProducts.sellerId,'userId'),
     queryFilter,
     categoryFilter,
     ratingFilter,

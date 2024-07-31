@@ -1,7 +1,7 @@
 import Pagination from '@/components/shared/pagination'
 import ProductCard from '@/components/shared/product/product-card'
 import { Button } from '@/components/ui/button'
-import { getAllCategories, getAllProducts } from '@/lib/actions/product.actions'
+import { getAllSellerCategories, getAllSellerProducts } from '@/lib/actions/sellerproduct.actions'
 import { APP_NAME } from '@/lib/constants'
 import Link from 'next/link'
 
@@ -96,14 +96,15 @@ export default async function SearchPage({
     if (s) params.sort = s
     return `/search?${new URLSearchParams(params).toString()}`
   }
-  const categories = await getAllCategories()
-  const products = await getAllProducts({
+  const categories = await getAllSellerCategories()
+  const products = await getAllSellerProducts({
     category,
     query: q,
     price,
     rating,
     page: Number(page),
     sort,
+    userId: 'userId',
   })
   return (
     <div className="grid md:grid-cols-5 md:gap-5">
