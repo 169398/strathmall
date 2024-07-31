@@ -16,26 +16,23 @@ export default async function Home() {
       <MaxWidthWrapper>
         <div className="mx-auto flex max-w-3xl flex-col items-center py-20 text-center">
           <h1 className="tranking-tight text-4xl font-bold text-gray-950 sm:text-6xl">
-            Your marketplace for high-quality{" "}
-            <span className="text-blue-700">products</span>.
+            Welcome to StrathMall: Where Quality Meets
+            <span className="text-blue-700">Community</span>.
           </h1>
           <p className="mt-6 max-w-prose text-lg text-muted-foreground">
-            Welcome to StrathMall.Every product on this platform is verified by
-            our team to ensure our highest quality standards.
-            <span className="text-blue-400">
-              Buy Strathmore Build Strathmore{" "}
-            </span>
+            Shop with confidence, support local sellers, and contribute to the
+            vibrant Strathmore community. Together, we buy better and build
+            stronger.
+            
           </p>
 
           <div className="mt-6 flex flex-col gap-4 sm:flex-row">
-          
-              <Link
-                href="/seller "
-                className={buttonVariants({ variant: "default" })}
-              >
-                Start selling
-              </Link>
-            
+            <Link
+              href="/seller "
+              className={buttonVariants({ variant: "default" })}
+            >
+              Start selling
+            </Link>
           </div>
         </div>
       </MaxWidthWrapper>
