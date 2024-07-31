@@ -27,21 +27,21 @@ PurchaseReceiptEmail.PreviewProps = {
     userId: '123',
     user: {
       name: 'John Doe',
-      email: 'bS8Rn@example.com',
+      email: 'email@example.com',
     },
     paymentMethod: 'Stripe',
     shippingAddress: {
       fullName: 'John Doe',
       streetAddress: '123 Main St',
-      city: 'New York',
+      city: 'Nairobi',
       postalCode: '10001',
-      country: 'US',
+      country: 'Kenya',
     },
     createdAt: new Date(),
     totalPrice: '110',
     shippingPrice: '20',
     itemsPrice: '80',
-    orderItems: sampleData.products.map((x) => ({
+    sellerOrderItems: sampleData.products.map((x) => ({
       name: x.name,
       orderId: '123',
       productId: '123',
@@ -58,7 +58,7 @@ PurchaseReceiptEmail.PreviewProps = {
       id: '123',
       status: 'succeeded',
       pricePaid: '12',
-      email_address: 'bS8Rn@example.com',
+      email_address: 'email@example.com',
     },
   },
 } satisfies OrderInformationProps
@@ -101,7 +101,7 @@ export default function PurchaseReceiptEmail({ sellerOrder }: OrderInformationPr
               </Row>
             </Section>
             <Section className="border border-solid border-gray-500 rounded-lg p-4 md:p-6 my-4">
-              {sellerOrder.orderItems.map((item) => (
+              {sellerOrder.sellerOrderItems.map((item) => (
                 <Row key={item.productId} className="mt-8">
                   <Column className="w-20">
                     <Img
