@@ -4,13 +4,19 @@ import { Check, Loader } from 'lucide-react'
 import { useFormState, useFormStatus } from 'react-dom'
 
 import { Button } from '@/components/ui/button'
-import { createOrder } from '@/lib/actions/order.actions'
+
+
+
 
 export default function PlaceOrderForm() {
-  const [data, action] = useFormState(createOrder, {
+
+
+
+
+  const [data, action] = useFormState((state) => ({ success: state.success, message: state.message }), {
     success: false,
     message: '',
-  })
+  });
 
   const PlaceOrderButton = () => {
     const { pending } = useFormStatus()

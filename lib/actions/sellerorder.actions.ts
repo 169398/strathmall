@@ -1,15 +1,15 @@
 "use server";
 
 import { auth } from "@/auth";
-import { getMyCart } from "./cart.actions";
+import { getMyCart } from "./sellercart.actions";
 import { getUserById } from "./user.actions";
 import { redirect } from "next/navigation";
-import { insertOrderSchema } from "../validator";
+import { insertSellerOrderSchema } from "../validator";
 
 import db from "@/db/drizzle";
 import {
-  carts,
-  orderItems,
+  sellerCarts,
+  sellerOrderItems,
   sellerOrders,
   sellerProducts,
   
@@ -141,7 +141,7 @@ export const createSellerOrder = async (sellerId: string) => {
     if (!user.address) redirect("/shipping-address");
     if (!user.paymentMethod) redirect("/payment-method");
 
-    const order = insertOrderSchema.parse({
+    const order = insertSellerOrderSchema.parse({
       userId: user.id,
       shippingAddress: user.address,
       paymentMethod: user.paymentMethod,
@@ -156,21 +156,21 @@ export const createSellerOrder = async (sellerId: string) => {
                     .values({ ...order, sellerId })
                     .returning();
       for (const item of cart.items) {
-        await tx.insert(orderItems).values({
+        await tx.insert(sellerOrderItems).values({
           ...item,
           price: item.price.toFixed(2),
           orderId: insertedOrder[0].id,
         });
       }
       await db
-        .update(carts)
+        .update(sellerCarts)
         .set({
           items: [],
           totalPrice: "0",
           shippingPrice: "0",
           itemsPrice: "0",
         })
-        .where(eq(carts.id, cart.id));
+        .where(eq(sellerCarts.id, cart.id));
       return insertedOrder[0].id;
     });
     if (!insertedOrderId) throw new Error("Order not created");
