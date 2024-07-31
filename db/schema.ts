@@ -341,7 +341,7 @@ export const sellerOrderItems = pgTable(
       .references(() => sellerOrders.id, { onDelete: 'cascade' }),
     productId: uuid('productId')
       .notNull()
-      .references(() => products.id, { onDelete: 'cascade' }),
+      .references(() => sellerProducts.id, { onDelete: 'cascade' }),
     qty: integer('qty').notNull(),
     price: numeric('price', { precision: 12, scale: 2 }).notNull(),
     name: text('name').notNull(),

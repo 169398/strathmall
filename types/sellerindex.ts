@@ -24,7 +24,7 @@ export type PaymentResult = z.infer<typeof paymentResultSchema>;
 // ORDERS
 
 export type sellerOrder = InferSelectModel<typeof sellerOrders> & {
-  orderItems: sellerOrderItem[];
+  sellerOrderItems: sellerOrderItem[];
   user: { name: string | null; email: string };
 };
 export type sellerOrderItem = InferSelectModel<typeof sellerOrderItems>;
