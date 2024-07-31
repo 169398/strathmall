@@ -28,9 +28,11 @@ export default async function OrdersPage({
   const session = await auth();
   if (session?.user.role !== "seller")
     throw new Error("seller permission required");
-
+const sellerId = session.user.id || "";
   const orders = await getAllSellerOrders({
     page: Number(page),
+    sellerId,
+    
   });
 
   

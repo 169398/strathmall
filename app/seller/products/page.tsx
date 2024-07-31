@@ -1,3 +1,4 @@
+import { auth } from '@/auth'
 import DeleteDialog from '@/components/shared/delete-dialog'
 import Pagination from '@/components/shared/pagination'
 import { Button } from '@/components/ui/button'
@@ -34,11 +35,13 @@ export default async function AdminProductsPage({
   const page = Number(searchParams.page) || 1
   const searchText = searchParams.query || ''
   const category = searchParams.category || ''
-
+const session = await auth()
+const sellerId = session?.user.id || ""
   const products = await getAllSellerProducts({
     query: searchText,
     category,
     page,
+    sellerId,
 
   })
   return (
