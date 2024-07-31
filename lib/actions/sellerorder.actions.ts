@@ -117,34 +117,31 @@ export async function getSellerOrderSummary(sellerId: string) {
 export async function getAllSellerOrders({
   limit = PAGE_SIZE,
   page,
-  
+  sellerId,
 }: {
   limit?: number;
   page: number;
-
-}) 
-
-
-{
+  sellerId: string;
+}) {
   const data = await db.query.sellerOrders.findMany({
-    where: eq(sellerOrders.sellerId, sellerOrders.sellerId),
+    where: eq(sellerOrders.sellerId, sellerId),
     orderBy: [desc(sellerOrders.createdAt)],
     limit,
     offset: (page - 1) * limit,
     with: { user: { columns: { name: true } } },
   });
 
-  
   const dataCount = await db
     .select({ count: count() })
     .from(sellerOrders)
-    .where(eq(sellerOrders.sellerId, sellerOrders.sellerId));
+    .where(eq(sellerOrders.sellerId, sellerId));
 
   return {
     data,
     totalPages: Math.ceil(dataCount[0].count / limit),
   };
 }
+
 
 
 

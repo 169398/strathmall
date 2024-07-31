@@ -85,13 +85,16 @@ export async function getMyCart() {
   if (!sessionCartId) return undefined;
   const session = await auth();
   const userId = session?.user.id;
-  if (!userId) throw new Error("User not authenticated");
 
   const cart = await db.query.sellerCarts.findFirst({
-    where: eq(sellerCarts.userId, userId),
+    where:userId? eq(sellerCarts.userId, userId):eq(sellerCarts.sessionCartId, sessionCartId),
   });
   return cart;
 }
+
+
+
+
 
 export const removeItemFromSellerCart = async (productId: string) => {
   try {

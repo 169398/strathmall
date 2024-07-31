@@ -63,7 +63,7 @@ export default async function Navbar() {
                       aria-hidden="true"
                     />
                     <Link
-                      href="/sign-in"
+                      href="/sign-up"
                       className={buttonVariants({
                         variant: "default",
                         className: "text-xs sm:text-sm lg:text-base",

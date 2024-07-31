@@ -49,7 +49,7 @@ export async function signUp(prevState: unknown, formData: FormData) {
       message: formatError(error).includes(
         'duplicate key value violates unique constraint "user_email_idx"'
       )
-        ? 'Email is already exist'
+        ? 'Email  already exist'
         : formatError(error),
     }
   }

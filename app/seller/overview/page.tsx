@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 export default async function DashboardPage() {
   const session = await auth();
   if (session?.user.role !== "seller")
-    throw new Error("admin permission required");
+    throw new Error("Seller permission required");
   const sellerId = session.user.id || "";
 
   const summary = await getSellerOrderSummary(sellerId);

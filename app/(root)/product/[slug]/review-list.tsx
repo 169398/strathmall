@@ -237,7 +237,7 @@ export default function ReviewList({
           Please
           <Link
             className="text-primary px-2"
-            href={`/api/auth/signin?callbackUrl=/product/${sellerProductSlug}`}
+            href={`/api/auth/signup?callbackUrl=/product/${sellerProductSlug}`}
           >
             sign in
           </Link>

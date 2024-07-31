@@ -155,6 +155,7 @@ export async function getSellerProductBySlug(slug: string) {
 }
 
 export async function getAllSellerProducts({
+  sellerId,
   query,
   limit = PAGE_SIZE,
   page,
@@ -163,6 +164,7 @@ export async function getAllSellerProducts({
   rating,
   sort,
 }: {
+  sellerId: string;
   query: string;
   category: string;
   limit?: number;
@@ -199,7 +201,7 @@ export async function getAllSellerProducts({
       : desc(sellerProducts.createdAt);
 
   const condition = and(
-    eq(sellerProducts.sellerId,sellerProducts.sellerId),
+    eq(sellerProducts.sellerId, sellerId),
     queryFilter,
     categoryFilter,
     ratingFilter,
