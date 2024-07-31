@@ -135,6 +135,7 @@ export default function PurchaseReceiptEmail({ sellerOrder }: OrderInformationPr
                   <Column align="right" width={70} className="align-top">
                     <Text className="m-0">{formatCurrency(price)}</Text>
                   </Column>
+                  
                 </Row>
               ))}
             </Section>
