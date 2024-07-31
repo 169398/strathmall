@@ -4,7 +4,7 @@ import { notFound, redirect } from 'next/navigation'
 import Stripe from 'stripe'
 
 import { Button } from '@/components/ui/button'
-import { getOrderById } from '@/lib/actions/order.actions'
+import { getSellerOrderById } from '@/lib/actions/sellerorder.actions'
 import { APP_NAME } from '@/lib/constants'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string)
@@ -15,14 +15,15 @@ export const metadata: Metadata = {
 
 export default async function SuccessPage({
   searchParams,
-  params: { id },
+  params: { id ,sellerId},
 }: {
   params: {
     id: string
+    sellerId:string
   }
   searchParams: { payment_intent: string }
 }) {
-  const order = await getOrderById(id)
+  const order = await getSellerOrderById(id,sellerId)
   if (!order) notFound()
 
   const paymentIntent = await stripe.paymentIntents.retrieve(

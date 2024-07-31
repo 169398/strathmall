@@ -18,7 +18,7 @@ import {
 } from '@/components/ui/table'
 import { useToast } from '@/components/ui/use-toast'
 import { formatCurrency, formatDateTime, formatId } from '@/lib/utils'
-import { Order } from '@/types'
+import { sellerOrder } from '@/types/sellerindex'
 import Image from 'next/image'
 import Link from 'next/link'
 import {
@@ -37,7 +37,7 @@ export default function OrderDetailsForm({
   isAdmin,
   stripeClientSecret,
 }: {
-  order: Order
+  order: sellerOrder
   paypalClientId: string
   isAdmin: boolean
   stripeClientSecret: string | null
