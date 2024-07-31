@@ -7,7 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { getMyOrders } from '@/lib/actions/order.actions'
+import { getMySellerOrders } from '@/lib/actions/sellerorder.actions'
 import { APP_NAME } from '@/lib/constants'
 import { formatCurrency, formatDateTime } from '@/lib/utils'
 import { Metadata } from 'next'
@@ -22,8 +22,9 @@ export default async function OrdersPage({
   searchParams: { page: string }
 }) {
   const page = Number(searchParams.page) || 1
-  const orders = await getMyOrders({
+  const orders = await getMySellerOrders({
     page,
+    sellerId:'',
     limit: 6,
   })
   return (
