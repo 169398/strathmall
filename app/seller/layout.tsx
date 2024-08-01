@@ -22,7 +22,7 @@ export default async function AdminLayout({
 
          <ThemeProvider
             attribute="class"
-            defaultTheme="system"
+            defaultTheme="light"
             enableSystem
             disableTransitionOnChange
           >
