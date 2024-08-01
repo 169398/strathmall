@@ -1,6 +1,7 @@
 
 import React from 'react'
 import MainNav from './main-nav'
+import { ThemeProvider } from '@/components/shared/theme-provider';
 
 export default async function AdminLayout({
   children,
@@ -12,14 +13,19 @@ export default async function AdminLayout({
       <div className="flex flex-col">
         <div className="border-b">
           <div className="flex h-16 items-center px-4">
-            
             <MainNav className="mx-6" />
-            <div className="ml-auto flex items-center space-x-4">
-            </div>
+            <div className="ml-auto flex items-center space-x-4"></div>
           </div>
         </div>
-        <div className="flex-1 space-y-4 p-8 pt-6">{children}</div>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <div className="flex-1 space-y-4 p-8 pt-6">{children}</div>
+        </ThemeProvider>
       </div>
     </>
-  )
+  );
 }
