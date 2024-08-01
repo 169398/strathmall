@@ -21,7 +21,7 @@ import { useRouter } from "next/navigation";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Accordion, AccordionDetails, AccordionSummary, Stack } from "@mui/material";
 import { UserCard } from "@/components/shared/card";
-import { CardHover } from "@/components/shared/WhyStrathCard";
+import { UserCard2 } from "@/components/shared/WhyStrathCard";
 import { createSeller } from "@/lib/actions/selleractions";
 
 const  OnboardingForm = () => {
@@ -207,8 +207,7 @@ const FAQ = () => {
               StrathMall pricing has two parts. A one-time activation fee sets
               shop up  and a professional photo shoot. A service fee is
               calculated as a percentage of each shop order made through
-              StrathMall. Want more details? Email kulubiidris@gmail.com and
-              we&apos;ll get back to you.
+              StrathMall. W
             </span>
           </AccordionDetails>
         </Accordion>
@@ -240,7 +239,7 @@ const WhyStrathmall = () => (
     
       <h2 className="relative text-3xl font-bold mb-8">Why Strathmall?</h2>
 
-        <CardHover/>
+        <UserCard2/>
     </div>
   
 );
