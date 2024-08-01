@@ -16,8 +16,8 @@ export default async function Home() {
       <MaxWidthWrapper>
         <div className="mx-auto flex max-w-3xl flex-col items-center py-20 text-center">
           <h1 className="tranking-tight text-4xl font-bold text-gray-950 sm:text-6xl">
-            Your marketplace for high-quality{" "}
-            <span className="text-blue-700">products</span>.
+            Your marketplace where  quality finds {" "}
+            <span className="text-blue-700">you</span>.
           </h1>
           <p className="mt-6 max-w-prose text-lg text-muted-foreground">
             Welcome to StrathMall.Every product on this platform is verified by
