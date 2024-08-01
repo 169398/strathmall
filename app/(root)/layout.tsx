@@ -13,7 +13,7 @@ export default function RootLayout({
     <div className="flex h-screen flex-col">
       <ThemeProvider
         attribute="class"
-        defaultTheme="system"
+        defaultTheme="light"
         enableSystem
         disableTransitionOnChange
       >
