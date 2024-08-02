@@ -82,7 +82,10 @@ export default function OrderDetailsForm({
     return res.data;
   };
   const handleApprovePayPalOrder = async (data: { orderID: string }) => {
-    const res = await approvePayPalOrder(order.id, data,);
+   
+
+    const res = await approvePayPalOrder( sellerId, data.orderID,data
+   );
     toast({
       description: res.message,
       variant: res.success ? "default" : "destructive",
@@ -98,7 +101,7 @@ export default function OrderDetailsForm({
         disabled={isPending}
         onClick={() =>
           startTransition(async () => {
-            const res = await updateOrderToPaidByCOD(order.id, );
+            const res = await updateOrderToPaidByCOD(order.id,sellerId );
             toast({
               variant: res.success ? "default" : "destructive",
               description: res.message,
