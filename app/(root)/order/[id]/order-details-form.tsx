@@ -35,11 +35,9 @@ export default function OrderDetailsForm({
   order,
   paypalClientId,
   isAdmin,
-  sellerId,
   stripeClientSecret,
 }: {
   order: sellerOrder;
-  sellerId: string;
   paypalClientId: string;
   isAdmin: boolean;
   stripeClientSecret: string | null;
@@ -73,7 +71,7 @@ export default function OrderDetailsForm({
   const handleCreatePayPalOrder = async () => {
 
     
-    const res = await createPayPalOrder(order.id,sellerId);
+    const res = await createPayPalOrder(order.id,);
     if (!res.success)
       return toast({
         description: res.message,
@@ -84,7 +82,7 @@ export default function OrderDetailsForm({
   const handleApprovePayPalOrder = async (data: { orderID: string }) => {
    
 
-    const res = await approvePayPalOrder( sellerId, data.orderID,data
+    const res = await approvePayPalOrder(  data.orderID,data
    );
     toast({
       description: res.message,
@@ -101,7 +99,7 @@ export default function OrderDetailsForm({
         disabled={isPending}
         onClick={() =>
           startTransition(async () => {
-            const res = await updateOrderToPaidByCOD(order.id,sellerId );
+            const res = await updateOrderToPaidByCOD(order.id, );
             toast({
               variant: res.success ? "default" : "destructive",
               description: res.message,
@@ -123,7 +121,7 @@ export default function OrderDetailsForm({
         disabled={isPending}
         onClick={() =>
           startTransition(async () => {
-            const res = await deliverOrder(order.id, sellerId);
+            const res = await deliverOrder(order.id);
             toast({
               variant: res.success ? "default" : "destructive",
               description: res.message,
