@@ -1,13 +1,13 @@
-'use client'
+"use client";
 
 import {
   PayPalButtons,
   PayPalScriptProvider,
   usePayPalScriptReducer,
-} from '@paypal/react-paypal-js'
+} from "@paypal/react-paypal-js";
 
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent } from '@/components/ui/card'
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -15,39 +15,38 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
-import { useToast } from '@/components/ui/use-toast'
-import { formatCurrency, formatDateTime, formatId } from '@/lib/utils'
-import { sellerOrder } from '@/types/sellerindex'
-import Image from 'next/image'
-import Link from 'next/link'
-import { OnApproveData } from "@paypal/paypal-js";
+} from "@/components/ui/table";
+import { useToast } from "@/components/ui/use-toast";
+import { formatCurrency, formatDateTime, formatId } from "@/lib/utils";
+import { Order } from "@/types";
+import Image from "next/image";
+import Link from "next/link";
 import {
-  approvePayPalSellerOrder,
-  createPayPalSellerOrder,
-  deliverSellerOrder,
-  updateSellerOrderToPaidByCOD,
-} from '@/lib/actions/sellerorder.actions'
-import { useTransition } from 'react'
-import { Button } from '@/components/ui/button'
-import StripePayment from './stripe-payment'
+  approvePayPalOrder,
+  createPayPalOrder,
+  deliverOrder,
+  updateOrderToPaidByCOD,
+} from "@/lib/actions/sellerorder.actions";
+import { useTransition } from "react";
+import { Button } from "@/components/ui/button";
+import StripePayment from "./stripe-payment";
 
 export default function OrderDetailsForm({
   order,
   paypalClientId,
   isAdmin,
-  seller,
+  sellerId,
   stripeClientSecret,
 }: {
-  order: sellerOrder
-  paypalClientId: string
-  isAdmin: boolean
-  seller: boolean
-  stripeClientSecret: string | null
+  order: Order;
+  sellerId: string;
+  paypalClientId: string;
+  isAdmin: boolean;
+  stripeClientSecret: string | null;
 }) {
   const {
     shippingAddress,
-    sellerOrderItems,
+    orderItems,
     itemsPrice,
     shippingPrice,
     totalPrice,
@@ -56,92 +55,83 @@ export default function OrderDetailsForm({
     paidAt,
     isDelivered,
     deliveredAt,
-  } = order
+  } = order;
 
-  const { toast } = useToast()
+  const { toast } = useToast();
+
 
   function PrintLoadingState() {
-    const [{ isPending, isRejected }] = usePayPalScriptReducer()
-    let status = ''
+    const [{ isPending, isRejected }] = usePayPalScriptReducer();
+    let status = "";
     if (isPending) {
-      status = 'Loading PayPal...'
+      status = "Loading PayPal...";
     } else if (isRejected) {
-      status = 'Error in loading PayPal.'
+      status = "Error in loading PayPal.";
     }
-    return status
+    return status;
   }
   const handleCreatePayPalOrder = async () => {
-    const res = await createPayPalSellerOrder(order.id,order.sellerId)
+
+    
+    const res = await createPayPalOrder(order.id,sellerId);
     if (!res.success)
       return toast({
         description: res.message,
-        variant: 'destructive',
-      })
-    return res.data
-  }
-  const handleApprovePayPalOrder = async (data: OnApproveData) => {
-
-    try {
-      const orderId = order.id;
-      const sellerId = order.sellerId;
-      const res = await approvePayPalSellerOrder(orderId, sellerId, data);
-
-      toast({
-        description: res.message,
-        variant: res.success ? "default" : "destructive",
-      });
-    } catch (error) {
-      console.error("Error approving PayPal order:", error);
-      toast({
-        description: "An error occurred while approving the order.",
         variant: "destructive",
       });
-    }
+    return res.data;
+  };
+  const handleApprovePayPalOrder = async (data: { orderID: string }) => {
+    const res = await approvePayPalOrder(order.id, data,);
+    toast({
+      description: res.message,
+      variant: res.success ? "default" : "destructive",
+    });
   };
 
   const MarkAsPaidButton = () => {
-    const [isPending, startTransition] = useTransition()
-    const { toast } = useToast()
+    const [isPending, startTransition] = useTransition();
+    const { toast } = useToast();
     return (
       <Button
         type="button"
         disabled={isPending}
         onClick={() =>
           startTransition(async () => {
-            const res = await updateSellerOrderToPaidByCOD(order.id,order.sellerId)
+            const res = await updateOrderToPaidByCOD(order.id, );
             toast({
-              variant: res.success ? 'default' : 'destructive',
+              variant: res.success ? "default" : "destructive",
               description: res.message,
-            })
+            });
           })
         }
       >
-        {isPending ? 'processing...' : 'Mark As Paid'}
+        {isPending ? "processing..." : "Mark As Paid"}
       </Button>
-    )
-  }
+    );
+  };
 
   const MarkAsDeliveredButton = () => {
-    const [isPending, startTransition] = useTransition()
-    const { toast } = useToast()
+    const [isPending, startTransition] = useTransition();
+    const { toast } = useToast();
     return (
       <Button
         type="button"
         disabled={isPending}
         onClick={() =>
           startTransition(async () => {
-            const res = await deliverSellerOrder(order.id, order.sellerId)
+            const res = await deliverOrder(order.id, sellerId);
             toast({
-              variant: res.success ? 'default' : 'destructive',
+              variant: res.success ? "default" : "destructive",
               description: res.message,
-            })
+            });
           })
         }
       >
-        {isPending ? 'processing...' : 'Mark As Delivered'}
+        {isPending ? "processing..." : "Mark As Delivered"}
       </Button>
-    )
-  }
+    );
+  };
 
   return (
     <>
@@ -166,8 +156,8 @@ export default function OrderDetailsForm({
               <h2 className="text-xl pb-4">Shipping Address</h2>
               <p>{shippingAddress.fullName}</p>
               <p>
-                {shippingAddress.streetAddress}, {shippingAddress.city},{' '}
-                {shippingAddress.postalCode}, {shippingAddress.country}{' '}
+                {shippingAddress.streetAddress}, {shippingAddress.city},{" "}
+                {shippingAddress.postalCode}, {shippingAddress.country}{" "}
               </p>
               <p className="py-2">
                 <Button asChild variant="outline">
@@ -201,7 +191,7 @@ export default function OrderDetailsForm({
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {sellerOrderItems.map((item) => (
+                  {orderItems.map((item) => (
                     <TableRow key={item.slug}>
                       <TableCell>
                         <Link
@@ -221,7 +211,7 @@ export default function OrderDetailsForm({
                         <span className="px-2">{item.qty}</span>
                       </TableCell>
                       <TableCell className="text-right">
-                        ksh{item.price}
+                        ${item.price}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -238,7 +228,7 @@ export default function OrderDetailsForm({
                 <div>Items</div>
                 <div>{formatCurrency(itemsPrice)}</div>
               </div>
-              
+             
               <div className="flex justify-between">
                 <div>Shipping</div>
                 <div>{formatCurrency(shippingPrice)}</div>
@@ -247,7 +237,7 @@ export default function OrderDetailsForm({
                 <div>Total</div>
                 <div>{formatCurrency(totalPrice)}</div>
               </div>
-              {!isPaid && paymentMethod === 'PayPal' && (
+              {!isPaid && paymentMethod === "PayPal" && (
                 <div>
                   <PayPalScriptProvider options={{ clientId: paypalClientId }}>
                     <PrintLoadingState />
@@ -258,21 +248,21 @@ export default function OrderDetailsForm({
                   </PayPalScriptProvider>
                 </div>
               )}
-              {!isPaid && paymentMethod === 'Stripe' && stripeClientSecret && (
+              {!isPaid && paymentMethod === "Stripe" && stripeClientSecret && (
                 <StripePayment
                   priceInCents={Number(order.totalPrice) * 100}
                   orderId={order.id}
                   clientSecret={stripeClientSecret}
                 />
               )}
-              {isAdmin ||seller && !isPaid && paymentMethod === 'CashOnDelivery' && (
+              {isAdmin && !isPaid && paymentMethod === "CashOnDelivery" && (
                 <MarkAsPaidButton />
               )}
-              {isAdmin || seller && isPaid && !isDelivered && <MarkAsDeliveredButton />}
+              {isAdmin && isPaid && !isDelivered && <MarkAsDeliveredButton />}
             </CardContent>
           </Card>
         </div>
       </div>
     </>
-  )
+  );
 }

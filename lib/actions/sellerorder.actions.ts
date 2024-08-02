@@ -219,7 +219,7 @@ export async function deleteSellerOrder(id: string, sellerId: string) {
 }
 
 // UPDATE
-export async function createPayPalSellerOrder(
+export async function createPayPalOrder(
   orderId: string,
   sellerId: string
 ) {
@@ -256,16 +256,14 @@ export async function createPayPalSellerOrder(
   }
 }
 
-export async function approvePayPalSellerOrder(
+export async function approvePayPalOrder(
   orderId: string,
-  sellerId: string,
   data: { orderID: string }
 ) {
   try {
     const order = await db.query.sellerOrders.findFirst({
       where: and(
         eq(sellerOrders.id, orderId),
-        eq(sellerOrders.sellerId, sellerId)
       ),
     });
     if (!order) throw new Error("Order not found");
@@ -279,7 +277,6 @@ export async function approvePayPalSellerOrder(
       throw new Error("Error in PayPal payment");
     await updateSellerOrderToPaid({
       orderId,
-      sellerId,
       paymentResult: {
         id: captureData.id,
         status: captureData.status,
@@ -307,18 +304,15 @@ const session = await auth();
 
 export const updateSellerOrderToPaid = async ({
   orderId,
-  sellerId,
   paymentResult,
 }: {
   orderId: string;
-  sellerId: string;
   paymentResult?: PaymentResult;
 }) => {
   const order = await db.query.sellerOrders.findFirst({
     columns: { isPaid: true },
     where: and(
       eq(sellerOrders.id, orderId),
-      eq(sellerOrders.sellerId, sellerId)
     ),
     with: { sellerOrderItems: true },
   });
@@ -345,7 +339,6 @@ export const updateSellerOrderToPaid = async ({
   const updatedOrder = await db.query.sellerOrders.findFirst({
     where: and(
       eq(sellerOrders.id, orderId),
-      eq(sellerOrders.sellerId, sellerId)
     ),
     with: { sellerOrderItems: true, user: { columns: { name: true, email: true } } },
   });
@@ -355,12 +348,11 @@ export const updateSellerOrderToPaid = async ({
   await sendPurchaseReceipt({ sellerOrder: { ...updatedOrder, sellerOrderItems: [] } });
 };
 
-export async function updateSellerOrderToPaidByCOD(
+export async function updateOrderToPaidByCOD(
   orderId: string,
-  sellerId: string
 ) {
   try {
-    await updateSellerOrderToPaid({ orderId, sellerId });
+    await updateSellerOrderToPaid({ orderId, });
     revalidatePath(`/order/${orderId}`);
     return { success: true, message: "Order paid successfully" };
   } catch (err) {
@@ -368,7 +360,7 @@ export async function updateSellerOrderToPaidByCOD(
   }
 }
 
-export async function deliverSellerOrder(orderId: string, sellerId: string) {
+export async function deliverOrder(orderId: string, sellerId: string) {
   try {
     const order = await db.query.sellerOrders.findFirst({
       where: and(
