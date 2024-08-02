@@ -35,12 +35,10 @@ const OrderDetailsPage = async ({
 
   return (
       <OrderDetailsForm
-        order={{ ...order, sellerOrderItems: [] }}
-        paypalClientId={process.env.PAYPAL_CLIENT_ID || 'sb'}
-        isAdmin={session?.user.role === 'admin' || false}
-        seller={session?.user.role === 'seller' || false}
-        stripeClientSecret={client_secret}
-      />
+      order={{ ...order, sellerOrderItems: [] }}
+      paypalClientId={process.env.PAYPAL_CLIENT_ID || 'sb'}
+      isAdmin={session?.user.role === 'admin' || false}
+      stripeClientSecret={client_secret} sellerId={sellerId}      />
     )
 }
 
