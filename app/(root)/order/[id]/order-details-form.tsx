@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/table";
 import { useToast } from "@/components/ui/use-toast";
 import { formatCurrency, formatDateTime, formatId } from "@/lib/utils";
-import { Order } from "@/types";
+import { sellerOrder } from "@/types/sellerindex";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -38,7 +38,7 @@ export default function OrderDetailsForm({
   sellerId,
   stripeClientSecret,
 }: {
-  order: Order;
+  order: sellerOrder;
   sellerId: string;
   paypalClientId: string;
   isAdmin: boolean;
@@ -46,7 +46,7 @@ export default function OrderDetailsForm({
 }) {
   const {
     shippingAddress,
-    orderItems,
+    sellerOrderItems,
     itemsPrice,
     shippingPrice,
     totalPrice,
@@ -191,7 +191,7 @@ export default function OrderDetailsForm({
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {orderItems.map((item) => (
+                  {sellerOrderItems.map((item) => (
                     <TableRow key={item.slug}>
                       <TableCell>
                         <Link
@@ -258,7 +258,7 @@ export default function OrderDetailsForm({
               {isAdmin && !isPaid && paymentMethod === "CashOnDelivery" && (
                 <MarkAsPaidButton />
               )}
-              {isAdmin && isPaid && !isDelivered && <MarkAsDeliveredButton />}
+              {isAdmin  && isPaid && !isDelivered && <MarkAsDeliveredButton />}
             </CardContent>
           </Card>
         </div>
