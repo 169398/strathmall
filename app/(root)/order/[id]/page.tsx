@@ -10,15 +10,14 @@ export const metadata = {
 }
 
 const OrderDetailsPage = async ({
-  params: { id ,sellerId},
+  params: { id },
 }: {
   params: {
     id: string
-    sellerId:string
   }
 }) => {
   const session = await auth()
-  const order = await getSellerOrderById(id,sellerId)
+  const order = await getSellerOrderById(id,)
   if (!order) notFound()
 
   let client_secret = null
@@ -35,10 +34,10 @@ const OrderDetailsPage = async ({
 
   return (
       <OrderDetailsForm
-      order={order}
+      order={{ ...order, sellerId: '', sellerOrderItems: [] }}
       paypalClientId={process.env.PAYPAL_CLIENT_ID || 'sb'}
       isAdmin={session?.user.role === 'admin' || false}
-      stripeClientSecret={client_secret} sellerId={sellerId}      />
+      stripeClientSecret={client_secret}      />
     )
 }
 

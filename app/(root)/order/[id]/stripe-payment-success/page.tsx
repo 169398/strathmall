@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 
 export default async function SuccessPage({
   searchParams,
-  params: { id ,sellerId},
+  params: { id ,},
 }: {
   params: {
     id: string
@@ -23,7 +23,7 @@ export default async function SuccessPage({
   }
   searchParams: { payment_intent: string }
 }) {
-  const order = await getSellerOrderById(id,sellerId)
+  const order = await getSellerOrderById(id,)
   if (!order) notFound()
 
   const paymentIntent = await stripe.paymentIntents.retrieve(
