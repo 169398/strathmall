@@ -28,10 +28,13 @@ export async function getSellerOrderSummary(sellerId: string) {
     .select({ count: count() })
     .from(sellerOrders)
     .where(eq(sellerOrders.sellerId, sellerId));
+
+
   const productsCount = await db
     .select({ count: count() })
     .from(sellerProducts)
     .where(eq(sellerProducts.sellerId, sellerId));
+
   const ordersPrice = await db
     .select({ sum: sum(sellerOrders.totalPrice) })
     .from(sellerOrders)
@@ -39,15 +42,53 @@ export async function getSellerOrderSummary(sellerId: string) {
 
   const salesData = await db
     .select({
-      months: sql<string>`to_char(${sellerOrders.createdAt},'MM/YY')`,
+      months: sql<string>`to_char(${sellerOrders.createdAt}, 'MM/YY')`,
       totalSales: sql<number>`sum(${sellerOrders.totalPrice})`.mapWith(Number),
     })
     .from(sellerOrders)
     .where(eq(sellerOrders.sellerId, sellerId))
-    .groupBy(sql`1`);
+    .groupBy(sql`to_char(${sellerOrders.createdAt}, 'MM/YY')`);
 
   const latestOrders = await db.query.sellerOrders.findMany({
     where: eq(sellerOrders.sellerId, sellerId),
+    orderBy: [desc(sellerOrders.createdAt)],
+    with: {
+      user: { columns: { name: true } },
+    },
+    limit: 6,
+  });
+
+  return {
+    ordersCount: ordersCount[0]?.count || 0,
+    productsCount: productsCount[0]?.count || 0,
+    ordersPrice: ordersPrice[0]?.sum || 0,
+    salesData,
+    latestOrders,
+  };
+}
+
+export async function getOrderSummary(sellerId: string) {
+  const ordersCount = await db.select({ count: count() }).from(sellerOrders)
+    .where(eq(sellerOrders.sellerId, sellerId));
+
+  const productsCount = await db
+    .select({ count: count() })
+    .from(sellerProducts)
+
+  const ordersPrice = await db
+    .select({ sum: sum(sellerOrders.totalPrice) })
+    .from(sellerOrders)
+
+
+  const salesData = await db
+    .select({
+      months: sql<string>`to_char(${sellerOrders.createdAt},'MM/YY')`,
+      totalSales: sql<number>`sum(${sellerOrders.totalPrice})`.mapWith(Number),
+    })
+    .from(sellerOrders)
+    .groupBy(sql`1`);
+
+  const latestOrders = await db.query.sellerOrders.findMany({
     orderBy: [desc(sellerOrders.createdAt)],
     with: {
       user: { columns: { name: true } },
@@ -62,6 +103,8 @@ export async function getSellerOrderSummary(sellerId: string) {
     latestOrders,
   };
 }
+
+
 
 export async function getAllSellerOrders({
   limit = PAGE_SIZE,
