@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 
-import { updateSellerOrderToPaid } from '@/lib/actions/sellerorder.actions'
+import { updateOrderToPaid } from '@/lib/actions/sellerorder.actions'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string)
 
@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
   )
   if (event.type === 'charge.succeeded') {
     const { object } = event.data
-    await updateSellerOrderToPaid({
+    await updateOrderToPaid({
       orderId: object.metadata.orderId,
       paymentResult: {
         id: object.id,
