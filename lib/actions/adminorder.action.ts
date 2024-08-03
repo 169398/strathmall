@@ -19,7 +19,7 @@ import { isRedirectError } from "next/dist/client/components/redirect";
 import { formatError } from "../utils";
 import { paypal } from "../paypal";
 import { revalidatePath } from "next/cache";
-import { PaymentResult } from "@/types";
+import { PaymentResult } from "@/types/sellerindex";
 import { PAGE_SIZE } from "../constants";
 import { sendPurchaseReceipt } from "@/emails";
 
@@ -127,7 +127,7 @@ export async function getAllOrders({
 }
 
 // CREATE
-export const createOrder = async () => {
+export const createSellerOrder = async () => {
   try {
     const session = await auth();
     if (!session) throw new Error("User is not authenticated");
@@ -137,27 +137,29 @@ export const createOrder = async () => {
     if (!user.address) redirect("/shipping-address");
     if (!user.paymentMethod) redirect("/payment-method");
 
-    const order = insertSellerOrderSchema.parse({
+    const sellerOrder = insertSellerOrderSchema.parse({
       userId: user.id,
       shippingAddress: user.address,
       paymentMethod: user.paymentMethod,
       itemsPrice: cart.itemsPrice,
       shippingPrice: cart.shippingPrice,
       totalPrice: cart.totalPrice,
+      sellerId: user.id,
     });
     const insertedOrderId = await db.transaction(async (tx) => {
       const insertedOrder = await tx
         .insert(sellerOrders)
-        .values({ ...order })
+        .values({ ...sellerOrder })
         .returning();
       for (const item of cart.items) {
         await tx.insert(sellerOrderItems).values({
           ...item,
           price: item.price.toFixed(2),
-          orderId: insertedOrder[0].id,
+          sellerOrderId: insertedOrder[0].id,
+          sellerId: user.id,
         });
       }
-      await db
+      await tx
         .update(sellerCarts)
         .set({
           items: [],
@@ -165,7 +167,7 @@ export const createOrder = async () => {
           shippingPrice: "0",
           itemsPrice: "0",
         })
-        .where(eq(sellerCarts.id, sellerCarts.id));
+        .where(eq(sellerCarts.id, cart.id));
       return insertedOrder[0].id;
     });
     if (!insertedOrderId) throw new Error("Order not created");
@@ -286,7 +288,7 @@ export const updateOrderToPaid = async ({
         .set({
           stock: sql`${sellerProducts.stock} - ${item.qty}`,
         })
-        .where(eq(sellerProducts.id, item.productId));
+        .where(eq(sellerProducts.id, item.sellerProductId));
     }
     await tx
       .update(sellerOrders)

@@ -1,27 +1,16 @@
-'use client'
+"use client";
 
-import { Check, Loader } from 'lucide-react'
-import { useFormState, useFormStatus } from 'react-dom'
+import { Check, Loader } from "lucide-react";
+import { useFormState, useFormStatus } from "react-dom";
 
-import { Button } from '@/components/ui/button'
-import { createSellerOrder } from '@/lib/actions/sellerorder.actions'
+import { Button } from "@/components/ui/button";
+import { createSellerOrder } from "@/lib/actions/sellerorder.actions";
 
-
-function createSellerOrderWrapper(
-  state: { success: boolean; message: string },
-  sellerId: string
-) {
-  return createSellerOrder(sellerId);
-}
-
-export default function PlaceOrderForm({ sellerId }: { sellerId: string }) {
-  const [data, action] = useFormState(
-    (state) => createSellerOrderWrapper(state, sellerId),
-    {
-      success: false,
-      message: "",
-    }
-  );
+export default function PlaceOrderForm() {
+  const [data, action] = useFormState(createSellerOrder, {
+    success: false,
+    message: "",
+  });
 
   const PlaceOrderButton = () => {
     const { pending } = useFormStatus();

@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 
 export default async function SuccessPage({
   searchParams,
-  params: { id ,},
+  params: { id },
 }: {
   params: {
     id: string

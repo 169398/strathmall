@@ -8,7 +8,6 @@ import React from 'react'
 import Navbar from '@/components/shared/Navbar'
 import { constructMetadata } from '@/lib/paypal'
 import { Analytics } from "@vercel/analytics/react";
-import { ThemeProvider } from '@/components/shared/theme-provider'
 const fontSans = FontSans({
   subsets: ['latin'],
   weight: ['400', '600'],
@@ -30,17 +29,11 @@ export default function RootLayout({
           fontSans.variable
         )}
       >
-         <ThemeProvider
-            attribute="class"
-            defaultTheme="light"
-            enableSystem
-            disableTransitionOnChange
-          >
+        
           <Navbar/>
           {children}
           <Analytics/>
           <Toaster />
-         </ThemeProvider> 
       </body>
     </html>
   )

@@ -93,7 +93,7 @@ export default function CartForm({ cart }: { cart?: sellerCart }) {
                         onClick={() =>
                           startTransition(async () => {
                             const res = await removeItemFromSellerCart(
-                              item.productId
+                              item.sellerProductId
                             );
                             if (!res.success) {
                               toast({
@@ -117,7 +117,7 @@ export default function CartForm({ cart }: { cart?: sellerCart }) {
                         type="button"
                         onClick={() =>
                           startTransition(async () => {
-                            const res = await addItemToSellerCart({...item,sellerProductId:item.productId});
+                            const res = await addItemToSellerCart({...item,sellerProductId:item.sellerProductId});
                             if (!res.success) {
                               toast({
                                 variant: "destructive",

@@ -9,9 +9,29 @@ import { revalidatePath } from "next/cache";
 import { formatError } from "../utils";
 import { z } from "zod";
 import {
+  insertProductSchema,
   updateSellerProductSchema,
 } from "../validator";
 
+// CREATE
+export async function createProduct(
+
+  data: z.infer<typeof insertProductSchema>
+) {
+
+
+
+
+    const sellerProduct = insertProductSchema.parse(data);
+    await db.insert(sellerProducts).values(sellerProduct );
+
+    revalidatePath("/seller/products");
+    return {
+      success: true,
+      message: "Product created successfully",
+    };
+  
+}
 
 
 // UPDATE

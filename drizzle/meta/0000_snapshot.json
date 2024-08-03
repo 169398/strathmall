@@ -1,5 +1,5 @@
 {
-  "id": "bc525dfe-624f-44a2-aa36-ffaf41507c20",
+  "id": "82bdbfc1-e387-48ac-927f-12f0794bf420",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -102,8 +102,8 @@
       },
       "uniqueConstraints": {}
     },
-    "public.cart": {
-      "name": "cart",
+    "public.sellerCart": {
+      "name": "sellerCart",
       "schema": "",
       "columns": {
         "id": {
@@ -144,12 +144,6 @@
           "primaryKey": false,
           "notNull": true
         },
-        "taxPrice": {
-          "name": "taxPrice",
-          "type": "numeric(12, 2)",
-          "primaryKey": false,
-          "notNull": true
-        },
         "totalPrice": {
           "name": "totalPrice",
           "type": "numeric(12, 2)",
@@ -166,9 +160,9 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "cart_userId_user_id_fk": {
-          "name": "cart_userId_user_id_fk",
-          "tableFrom": "cart",
+        "sellerCart_userId_user_id_fk": {
+          "name": "sellerCart_userId_user_id_fk",
+          "tableFrom": "sellerCart",
           "tableTo": "user",
           "columnsFrom": [
             "userId"
@@ -183,31 +177,32 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "public.orderItems": {
-      "name": "orderItems",
+    "public.sellerOrderItems": {
+      "name": "sellerOrderItems",
       "schema": "",
       "columns": {
-        "orderId": {
-          "name": "orderId",
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "sellerOrderId": {
+          "name": "sellerOrderId",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
-        "productId": {
-          "name": "productId",
+        "sellerProductId": {
+          "name": "sellerProductId",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
-        "qty": {
-          "name": "qty",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "price": {
-          "name": "price",
-          "type": "numeric(12, 2)",
+        "sellerId": {
+          "name": "sellerId",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
@@ -217,27 +212,33 @@
           "primaryKey": false,
           "notNull": true
         },
-        "slug": {
-          "name": "slug",
+        "image": {
+          "name": "image",
           "type": "text",
           "primaryKey": false,
           "notNull": true
         },
-        "image": {
-          "name": "image",
-          "type": "text",
+        "quantity": {
+          "name": "quantity",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "price": {
+          "name": "price",
+          "type": "numeric(12, 2)",
           "primaryKey": false,
           "notNull": true
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "orderItems_orderId_order_id_fk": {
-          "name": "orderItems_orderId_order_id_fk",
-          "tableFrom": "orderItems",
-          "tableTo": "order",
+        "sellerOrderItems_sellerOrderId_sellerOrders_id_fk": {
+          "name": "sellerOrderItems_sellerOrderId_sellerOrders_id_fk",
+          "tableFrom": "sellerOrderItems",
+          "tableTo": "sellerOrders",
           "columnsFrom": [
-            "orderId"
+            "sellerOrderId"
           ],
           "columnsTo": [
             "id"
@@ -245,12 +246,25 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "orderItems_productId_product_id_fk": {
-          "name": "orderItems_productId_product_id_fk",
-          "tableFrom": "orderItems",
-          "tableTo": "product",
+        "sellerOrderItems_sellerProductId_sellerProduct_id_fk": {
+          "name": "sellerOrderItems_sellerProductId_sellerProduct_id_fk",
+          "tableFrom": "sellerOrderItems",
+          "tableTo": "sellerProduct",
           "columnsFrom": [
-            "productId"
+            "sellerProductId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "sellerOrderItems_sellerId_user_id_fk": {
+          "name": "sellerOrderItems_sellerId_user_id_fk",
+          "tableFrom": "sellerOrderItems",
+          "tableTo": "user",
+          "columnsFrom": [
+            "sellerId"
           ],
           "columnsTo": [
             "id"
@@ -259,19 +273,11 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {
-        "orderItems_orderId_productId_pk": {
-          "name": "orderItems_orderId_productId_pk",
-          "columns": [
-            "orderId",
-            "productId"
-          ]
-        }
-      },
+      "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "public.order": {
-      "name": "order",
+    "public.sellerOrders": {
+      "name": "sellerOrders",
       "schema": "",
       "columns": {
         "id": {
@@ -283,6 +289,12 @@
         },
         "userId": {
           "name": "userId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sellerId": {
+          "name": "sellerId",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
@@ -313,12 +325,6 @@
         },
         "shippingPrice": {
           "name": "shippingPrice",
-          "type": "numeric(12, 2)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "taxPrice": {
-          "name": "taxPrice",
           "type": "numeric(12, 2)",
           "primaryKey": false,
           "notNull": true
@@ -365,12 +371,25 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "order_userId_user_id_fk": {
-          "name": "order_userId_user_id_fk",
-          "tableFrom": "order",
+        "sellerOrders_userId_user_id_fk": {
+          "name": "sellerOrders_userId_user_id_fk",
+          "tableFrom": "sellerOrders",
           "tableTo": "user",
           "columnsFrom": [
             "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "sellerOrders_sellerId_user_id_fk": {
+          "name": "sellerOrders_sellerId_user_id_fk",
+          "tableFrom": "sellerOrders",
+          "tableTo": "user",
+          "columnsFrom": [
+            "sellerId"
           ],
           "columnsTo": [
             "id"
@@ -382,8 +401,8 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "public.product": {
-      "name": "product",
+    "public.sellerProduct": {
+      "name": "sellerProduct",
       "schema": "",
       "columns": {
         "id": {
@@ -392,6 +411,12 @@
           "primaryKey": true,
           "notNull": true,
           "default": "gen_random_uuid()"
+        },
+        "sellerId": {
+          "name": "sellerId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
         },
         "name": {
           "name": "name",
@@ -478,8 +503,8 @@
         }
       },
       "indexes": {
-        "product_slug_idx": {
-          "name": "product_slug_idx",
+        "product_slug_unique_idx": {
+          "name": "product_slug_unique_idx",
           "columns": [
             {
               "expression": "slug",
@@ -494,12 +519,26 @@
           "with": {}
         }
       },
-      "foreignKeys": {},
+      "foreignKeys": {
+        "sellerProduct_sellerId_user_id_fk": {
+          "name": "sellerProduct_sellerId_user_id_fk",
+          "tableFrom": "sellerProduct",
+          "tableTo": "user",
+          "columnsFrom": [
+            "sellerId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "public.reviews": {
-      "name": "reviews",
+    "public.sellerReviews": {
+      "name": "sellerReviews",
       "schema": "",
       "columns": {
         "id": {
@@ -515,8 +554,14 @@
           "primaryKey": false,
           "notNull": true
         },
-        "productId": {
-          "name": "productId",
+        "sellerProductId": {
+          "name": "sellerProductId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sellerId": {
+          "name": "sellerId",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
@@ -533,8 +578,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "slug": {
-          "name": "slug",
+        "description": {
+          "name": "description",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -556,9 +601,9 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "reviews_userId_user_id_fk": {
-          "name": "reviews_userId_user_id_fk",
-          "tableFrom": "reviews",
+        "sellerReviews_userId_user_id_fk": {
+          "name": "sellerReviews_userId_user_id_fk",
+          "tableFrom": "sellerReviews",
           "tableTo": "user",
           "columnsFrom": [
             "userId"
@@ -569,12 +614,87 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "reviews_productId_product_id_fk": {
-          "name": "reviews_productId_product_id_fk",
-          "tableFrom": "reviews",
-          "tableTo": "product",
+        "sellerReviews_sellerProductId_sellerProduct_id_fk": {
+          "name": "sellerReviews_sellerProductId_sellerProduct_id_fk",
+          "tableFrom": "sellerReviews",
+          "tableTo": "sellerProduct",
           "columnsFrom": [
-            "productId"
+            "sellerProductId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "sellerReviews_sellerId_user_id_fk": {
+          "name": "sellerReviews_sellerId_user_id_fk",
+          "tableFrom": "sellerReviews",
+          "tableTo": "user",
+          "columnsFrom": [
+            "sellerId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.sellerShop": {
+      "name": "sellerShop",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "userId": {
+          "name": "userId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "shopName": {
+          "name": "shopName",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "phoneNumber": {
+          "name": "phoneNumber",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "sellerShop_userId_user_id_fk": {
+          "name": "sellerShop_userId_user_id_fk",
+          "tableFrom": "sellerShop",
+          "tableTo": "user",
+          "columnsFrom": [
+            "userId"
           ],
           "columnsTo": [
             "id"

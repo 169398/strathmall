@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { useToast } from '@/components/ui/use-toast'
-import { createProduct, updateProduct } from '@/lib/actions/product.actions'
+import { createProduct, updateProduct } from '@/lib/actions/adminproduct.action'
 import { productDefaultValues } from '@/lib/constants'
 import { insertProductSchema, updateProductSchema } from '@/lib/validator'
 import { Product } from '@/types'

@@ -10,7 +10,7 @@ import Resend from 'next-auth/providers/resend'
 import Google from 'next-auth/providers/google'
 
 import db from './db/drizzle'
-import { carts, users } from './db/schema'
+import { sellerCarts, users } from './db/schema'
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
 import { APP_NAME, SENDER_EMAIL } from './lib/constants'
@@ -82,20 +82,20 @@ export const config = {
         if (trigger === 'signIn' || trigger === 'signUp') {
           const sessionCartId = cookies().get('sessionCartId')?.value
           if (!sessionCartId) throw new Error('Session Cart Not Found')
-          const sessionCartExists = await db.query.carts.findFirst({
-            where: eq(carts.sessionCartId, sessionCartId),
+          const sessionCartExists = await db.query.sellerCarts.findFirst({
+            where: eq(sellerCarts.sessionCartId, sessionCartId),
           })
           if (sessionCartExists && !sessionCartExists.userId) {
-            const userCartExists = await db.query.carts.findFirst({
-              where: eq(carts.userId, user.id),
+            const userCartExists = await db.query.sellerCarts.findFirst({
+              where: eq(sellerCarts.userId, user.id),
             })
             if (userCartExists) {
               cookies().set('beforeSigninSessionCartId', sessionCartId)
               cookies().set('sessionCartId', userCartExists.sessionCartId)
             } else {
-              db.update(carts)
+              db.update(sellerCarts)
                 .set({ userId: user.id })
-                .where(eq(carts.id, sessionCartExists.id))
+                .where(eq(sellerCarts.id, sessionCartExists.id))
             }
           }
         }
