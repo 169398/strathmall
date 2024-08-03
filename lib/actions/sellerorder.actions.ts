@@ -21,31 +21,7 @@ import { PaymentResult } from "@/types/sellerindex";
 import { PAGE_SIZE } from "../constants";
 import { sendPurchaseReceipt } from "@/emails";
 
-export async function getMySellerOrders({
-  limit = PAGE_SIZE,
-  page,
-  sellerId,
-}: {
-  limit?: number;
-  page: number;
-  sellerId: string;
-}) {
-  const data = await db.query.sellerOrders.findMany({
-    where: eq(sellerOrders.sellerId, sellerId),
-    orderBy: [desc(sellerOrders.createdAt)],
-    limit,
-    offset: (page - 1) * limit,
-  });
-  const dataCount = await db
-    .select({ count: count() })
-    .from(sellerOrders)
-    .where(eq(sellerOrders.sellerId, sellerId));
 
-  return {
-    data,
-    totalPages: Math.ceil(dataCount[0].count / limit),
-  };
-}
 
 export async function getSellerOrderSummary(sellerId: string) {
   const ordersCount = await db
