@@ -39,7 +39,7 @@ export const addItemToSellerCart = async (data: sellerCartItem) => {
       if (product.stock < 1) throw new Error("Not enough stock");
       await db.insert(sellerCarts).values({
         userId: userId,
-        items: [{...item,productId:item.sellerProductId,}],
+        items: [{...item,sellerProductId:item.sellerProductId,}],
         sessionCartId: sessionCartId,
         ...calcPrice([item]),
       });
@@ -49,15 +49,15 @@ export const addItemToSellerCart = async (data: sellerCartItem) => {
         message: "Item added to cart successfully",
       };
     } else {
-      const existItem = cart.items.find((x) => x.productId === item.sellerProductId);
+      const existItem = cart.items.find((x) => x.sellerProductId === item.sellerProductId);
       if (existItem) {
         if (product.stock < existItem.qty + 1)
           throw new Error("Not enough stock");
-        cart.items.find((x) => x.productId === item.sellerProductId)!.qty =
+        cart.items.find((x) => x.sellerProductId === item.sellerProductId)!.qty =
           existItem.qty + 1;
       } else {
         if (product.stock < 1) throw new Error("Not enough stock");
-        cart.items.push({...item,productId:item.sellerProductId,});
+        cart.items.push({...item,sellerProductId:item.sellerProductId,});
       }
       await db
         .update(sellerCarts)
@@ -109,26 +109,26 @@ export const removeItemFromSellerCart = async (productId: string) => {
     const sellerCart = await getMyCart();
     if (!sellerCart) throw new Error("Cart not found");
 
-    const exist = sellerCart.items.find((x) => x.productId === productId);
+    const exist = sellerCart.items.find((x) => x.sellerProductId === productId);
     if (!exist) throw new Error("Item not found");
 
     if (exist.qty === 1) {
-      sellerCart.items = sellerCart.items.filter((x) => x.productId !== exist.productId);
+      sellerCart.items = sellerCart.items.filter((x) => x.sellerProductId !== exist.sellerProductId);
     } else {
-      sellerCart.items.find((x) => x.productId === productId)!.qty = exist.qty - 1;
+      sellerCart.items.find((x) => x.sellerProductId === productId)!.qty = exist.qty - 1;
     }
     await db
       .update(sellerCarts)
       .set({
         items: sellerCart.items,
-        ...calcPrice(sellerCart.items.map(i=>({...i,sellerProductId:i.productId}))),
+        ...calcPrice(sellerCart.items.map(i=>({...i,sellerProductId:i.sellerProductId}))),
       })
       .where(eq(sellerCarts.id, sellerCart.id));
     revalidatePath(`/product/${product.slug}`);
     return {
       success: true,
       message: `${product.name}  ${
-        sellerCart.items.find((x) => x.productId === productId)
+        sellerCart.items.find((x) => x.sellerProductId === productId)
           ? "updated in"
           : "removed from"
       } cart successfully`,

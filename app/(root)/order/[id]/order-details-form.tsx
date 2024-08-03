@@ -194,6 +194,7 @@ export default function OrderDetailsForm({
                 <TableBody>
                   {sellerOrderItems.map((item) => (
                     <TableRow key={item.slug}>
+                      
                       <TableCell>
                         <Link
                           href={`/product/${item.slug}`}

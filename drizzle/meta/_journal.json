@@ -5,50 +5,15 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1721603548699,
-      "tag": "0000_dizzy_the_santerians",
+      "when": 1722684673709,
+      "tag": "0000_aberrant_roulette",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "7",
-      "when": 1722107704524,
-      "tag": "0001_talented_vector",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1722204465667,
-      "tag": "0002_easy_hannibal_king",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1722332383504,
-      "tag": "0003_dry_lady_ursula",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1722394241845,
-      "tag": "0004_real_quicksilver",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1722405263273,
-      "tag": "0005_cultured_zaladane",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "7",
-      "when": 1722434636072,
-      "tag": "0006_spooky_scream",
+      "when": 1722686644508,
+      "tag": "0001_fixed_magdalene",
       "breakpoints": true
     }
   ]

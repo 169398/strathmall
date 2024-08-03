@@ -2,7 +2,7 @@ import * as z from 'zod'
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod'
 import { formatNumberWithDecimal } from './utils'
 import { PAYMENT_METHODS } from './constants'
-import { orderItems, orders, products, reviews, sellerOrderItems, sellerOrders, sellerProducts, sellerReviews } from '@/db/schema'
+import {  sellerOrderItems, sellerOrders, sellerProducts, sellerReviews } from '@/db/schema'
 
 // USER
 export const signInFormSchema = z.object({
@@ -33,7 +33,7 @@ export const updateUserSchema = updateProfileSchema.extend({
   role: z.string().min(1, 'Role is required'),
 })
 // PRODUCT
-export const insertProductSchema = createSelectSchema(products, {
+export const insertProductSchema = createSelectSchema(sellerProducts, {
   images: z.array(z.string()).min(1, 'Product must have at least one image'),
   stock: z.coerce.number().min(0, 'Stock must be at least 0'),
 }).omit({
@@ -43,7 +43,7 @@ export const insertProductSchema = createSelectSchema(products, {
   createdAt: true,
 })
 
-export const updateProductSchema = createSelectSchema(products, {
+export const updateProductSchema = createSelectSchema(sellerProducts, {
   images: z.array(z.string()).min(1, 'Product must have at least one image'),
   stock: z.coerce.number().min(0, 'Stock must be at least 0'),
 }).omit({
@@ -78,13 +78,7 @@ export const updateSellerProductSchema = createSelectSchema(sellerProducts, {
   createdAt: true,
 });
 
-export const insertReviewSchema = createInsertSchema(reviews, {
-  rating: z.coerce
-    .number()
-    .int()
-    .min(1, 'Rating must be at least 1')
-    .max(5, 'Rating must be at most 5'),
-})
+
 export const insertSellerReviewSchema = createInsertSchema(sellerReviews, {
   rating: z.coerce
     .number()
@@ -146,21 +140,9 @@ export const paymentResultSchema = z.object({
   pricePaid: z.string(),
 })
 
-export const insertOrderSchema = createInsertSchema(orders, {
-  shippingAddress: shippingAddressSchema,
-  paymentResult: z
-    .object({
-      id: z.string(),
-      status: z.string(),
-      email_address: z.string(),
-      pricePaid: z.string(),
-    })
-    .optional(),
-})
 
-export const insertOrderItemSchema = createInsertSchema(orderItems, {
-  price: z.number(),
-})
+
+
 export const insertSellerOrderSchema = createInsertSchema(sellerOrders, {
   shippingAddress: shippingAddressSchema,
   paymentResult: z

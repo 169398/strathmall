@@ -42,13 +42,15 @@ PurchaseReceiptEmail.PreviewProps = {
     shippingPrice: '20',
     itemsPrice: '80',
     sellerOrderItems: sampleData.products.map((x) => ({
+      id: '123',
       name: x.name,
-      orderId: '123',
-      productId: '123',
-      slug: x.slug,
-      qty: x.stock,
       image: x.images[0],
+      sellerId: '123',
+      sellerOrderId: '123',
+      sellerProductId: '123',
+      slug: x.slug,
       price: x.price,
+      qty: x.stock,
     })),
     isDelivered: true,
     deliveredAt: new Date(),
@@ -102,7 +104,7 @@ export default function PurchaseReceiptEmail({ sellerOrder }: OrderInformationPr
             </Section>
             <Section className="border border-solid border-gray-500 rounded-lg p-4 md:p-6 my-4">
               {sellerOrder.sellerOrderItems.map((item) => (
-                <Row key={item.productId} className="mt-8">
+                <Row key={item.sellerProductId} className="mt-8">
                   <Column className="w-20">
                     <Img
                       width="80"

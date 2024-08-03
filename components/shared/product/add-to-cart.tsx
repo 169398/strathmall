@@ -20,7 +20,7 @@ export default function AddToCart({
   const { toast } = useToast()
   const [isPending, startTransition] = useTransition()
   const existItem =
-    cart && cart.items.find((x) => x.productId === item.sellerProductId)
+    cart && cart.items.find((x) => x.sellerProductId === item.sellerProductId)
   return existItem ? (
     <div>
       <Button

@@ -13,38 +13,37 @@ CREATE TABLE IF NOT EXISTS "account" (
 	CONSTRAINT "account_provider_providerAccountId_pk" PRIMARY KEY("provider","providerAccountId")
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "cart" (
+CREATE TABLE IF NOT EXISTS "sellerCart" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"userId" uuid,
 	"sessionCartId" text NOT NULL,
 	"items" json DEFAULT '[]'::json NOT NULL,
 	"itemsPrice" numeric(12, 2) NOT NULL,
 	"shippingPrice" numeric(12, 2) NOT NULL,
-	"taxPrice" numeric(12, 2) NOT NULL,
 	"totalPrice" numeric(12, 2) NOT NULL,
 	"createdAt" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "orderItems" (
-	"orderId" uuid NOT NULL,
-	"productId" uuid NOT NULL,
-	"qty" integer NOT NULL,
-	"price" numeric(12, 2) NOT NULL,
+CREATE TABLE IF NOT EXISTS "sellerOrderItems" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"sellerOrderId" uuid NOT NULL,
+	"sellerProductId" uuid NOT NULL,
+	"sellerId" uuid NOT NULL,
 	"name" text NOT NULL,
-	"slug" text NOT NULL,
 	"image" text NOT NULL,
-	CONSTRAINT "orderItems_orderId_productId_pk" PRIMARY KEY("orderId","productId")
+	"quantity" integer NOT NULL,
+	"price" numeric(12, 2) NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "order" (
+CREATE TABLE IF NOT EXISTS "sellerOrders" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"userId" uuid NOT NULL,
+	"sellerId" uuid NOT NULL,
 	"shippingAddress" json NOT NULL,
 	"paymentMethod" text NOT NULL,
 	"paymentResult" json,
 	"itemsPrice" numeric(12, 2) NOT NULL,
 	"shippingPrice" numeric(12, 2) NOT NULL,
-	"taxPrice" numeric(12, 2) NOT NULL,
 	"totalPrice" numeric(12, 2) NOT NULL,
 	"isPaid" boolean DEFAULT false NOT NULL,
 	"paidAt" timestamp,
@@ -53,8 +52,9 @@ CREATE TABLE IF NOT EXISTS "order" (
 	"createdAt" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "product" (
+CREATE TABLE IF NOT EXISTS "sellerProduct" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"sellerId" uuid NOT NULL,
 	"name" text NOT NULL,
 	"slug" text NOT NULL,
 	"category" text NOT NULL,
@@ -70,14 +70,24 @@ CREATE TABLE IF NOT EXISTS "product" (
 	"createdAt" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "reviews" (
+CREATE TABLE IF NOT EXISTS "sellerReviews" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"userId" uuid NOT NULL,
-	"productId" uuid NOT NULL,
+	"sellerProductId" uuid NOT NULL,
+	"sellerId" uuid NOT NULL,
 	"rating" integer NOT NULL,
 	"title" text NOT NULL,
-	"slug" text NOT NULL,
+	"description" text NOT NULL,
 	"isVerifiedPurchase" boolean DEFAULT true NOT NULL,
+	"createdAt" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "sellerShop" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"userId" uuid NOT NULL,
+	"shopName" text NOT NULL,
+	"email" text NOT NULL,
+	"phoneNumber" text NOT NULL,
 	"createdAt" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
@@ -114,37 +124,67 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "cart" ADD CONSTRAINT "cart_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "sellerCart" ADD CONSTRAINT "sellerCart_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "orderItems" ADD CONSTRAINT "orderItems_orderId_order_id_fk" FOREIGN KEY ("orderId") REFERENCES "public"."order"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "sellerOrderItems" ADD CONSTRAINT "sellerOrderItems_sellerOrderId_sellerOrders_id_fk" FOREIGN KEY ("sellerOrderId") REFERENCES "public"."sellerOrders"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "orderItems" ADD CONSTRAINT "orderItems_productId_product_id_fk" FOREIGN KEY ("productId") REFERENCES "public"."product"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "sellerOrderItems" ADD CONSTRAINT "sellerOrderItems_sellerProductId_sellerProduct_id_fk" FOREIGN KEY ("sellerProductId") REFERENCES "public"."sellerProduct"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "order" ADD CONSTRAINT "order_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "sellerOrderItems" ADD CONSTRAINT "sellerOrderItems_sellerId_user_id_fk" FOREIGN KEY ("sellerId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "reviews" ADD CONSTRAINT "reviews_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "sellerOrders" ADD CONSTRAINT "sellerOrders_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "reviews" ADD CONSTRAINT "reviews_productId_product_id_fk" FOREIGN KEY ("productId") REFERENCES "public"."product"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "sellerOrders" ADD CONSTRAINT "sellerOrders_sellerId_user_id_fk" FOREIGN KEY ("sellerId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "sellerProduct" ADD CONSTRAINT "sellerProduct_sellerId_user_id_fk" FOREIGN KEY ("sellerId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "sellerReviews" ADD CONSTRAINT "sellerReviews_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "sellerReviews" ADD CONSTRAINT "sellerReviews_sellerProductId_sellerProduct_id_fk" FOREIGN KEY ("sellerProductId") REFERENCES "public"."sellerProduct"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "sellerReviews" ADD CONSTRAINT "sellerReviews_sellerId_user_id_fk" FOREIGN KEY ("sellerId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "sellerShop" ADD CONSTRAINT "sellerShop_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -155,5 +195,5 @@ EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
-CREATE UNIQUE INDEX IF NOT EXISTS "product_slug_idx" ON "product" USING btree ("slug");--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS "product_slug_unique_idx" ON "sellerProduct" USING btree ("slug");--> statement-breakpoint
 CREATE UNIQUE INDEX IF NOT EXISTS "user_email_idx" ON "user" USING btree ("email");
