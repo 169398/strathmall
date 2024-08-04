@@ -12,7 +12,7 @@ const ThankYouPage = () => {
       <h1 className="text-4xl font-bold mb-8">Thank You!</h1>
       <p className="mb-8">Your payment has been successfully processed.</p>
       <Button variant="default" onClick={() => router.push("/dashboard")}>
-        Go to Dashboard
+        Go to your Dashboard
       </Button>
     </div>
   );
