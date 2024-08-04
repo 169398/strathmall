@@ -5,7 +5,7 @@ const base = process.env.PAYPAL_API_URL || 'https://api-m.sandbox.paypal.com'
 export const paypal = {
   createOrder: async function createOrder(price: number) {
     const accessToken = await generateAccessToken()
-    const url = `${base}/v2/checkout/orders`
+    const url = `${base}/v2/checkout/sellerOrders`
     const response = await fetch(url, {
       method: 'post',
       headers: {
@@ -28,7 +28,7 @@ export const paypal = {
   },
   capturePayment: async function capturePayment(orderId: string) {
     const accessToken = await generateAccessToken()
-    const url = `${base}/v2/checkout/orders/${orderId}/capture`
+    const url = `${base}/v2/checkout/sellerOrders/${orderId}/capture`
     const response = await fetch(url, {
       method: 'post',
       headers: {
