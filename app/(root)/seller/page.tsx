@@ -23,6 +23,7 @@ import { Accordion, AccordionDetails, AccordionSummary, Stack } from "@mui/mater
 import { UserCard } from "@/components/shared/card";
 import { UserCard2 } from "@/components/shared/WhyStrathCard";
 import { createSeller } from "@/lib/actions/selleractions";
+import { CardSpot } from "@/components/shared/how-to-start";
 
 const  OnboardingForm = () => {
   const form = useForm<z.infer<typeof createSellerSchema>>({
@@ -292,14 +293,8 @@ const GetStarted = () => (
           className="rounded-lg"
         />
       </div>
-      <div className="md:w-1/2">
-        <h2 className="text-3xl font-bold mb-4">Get started in 3 steps</h2>
-        <ul className="list-disc list-inside">
-          <li>Tell us about your shop</li>
-          <li>Pay the activation fee</li>
-          <li>Upload your products</li>
-          <li>Access your dashboard to manage products</li>
-        </ul>
+      <div className="md:w-1/2  mx-auto">
+        <CardSpot />
       </div>
     </div>
   </div>
