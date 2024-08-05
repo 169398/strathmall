@@ -30,8 +30,8 @@ export default async function SuccessPage({
     searchParams.payment_intent
   )
   if (
-    paymentIntent.metadata.orderId == null ||
-    paymentIntent.metadata.orderId !== order.id.toString()
+    paymentIntent.metadata.sellerOrderId == null ||
+    paymentIntent.metadata.sellerOrderId !== order.id.toString()
   )
     return notFound()
 
@@ -43,7 +43,7 @@ export default async function SuccessPage({
         <h1 className="h1-bold">Thanks for your purchase</h1>
         <div>We are now processing your order.</div>
         <Button asChild>
-          <Link href={`/order/${id}`}>View order</Link>
+          <Link href={`/sellerOrder/${id}`}>View order</Link>
         </Button>
       </div>
     </div>

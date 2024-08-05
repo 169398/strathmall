@@ -250,7 +250,7 @@ export async function createPayPalOrder(sellerOrderId: string) {
 
 export async function approvePayPalOrder(
   sellerOrderId: string,
-  data: { sellerOrderID: string }
+  data: { orderID: string }
 ) {
   try {
     const order = await db.query.sellerOrders.findFirst({
@@ -258,7 +258,7 @@ export async function approvePayPalOrder(
     })
     if (!order) throw new Error('Order not found')
 
-    const captureData = await paypal.capturePayment(data.sellerOrderID)
+    const captureData = await paypal.capturePayment(data.orderID)
     if (
       !captureData ||
       captureData.id !== order.paymentResult?.id ||
