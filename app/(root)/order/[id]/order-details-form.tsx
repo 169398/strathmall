@@ -32,12 +32,12 @@ import { Button } from "@/components/ui/button";
 import StripePayment from "./stripe-payment";
 
 export default function OrderDetailsForm({
-  order,
+  sellerOrder,
   paypalClientId,
   isAdmin,
   stripeClientSecret,
 }: {
-  order: sellerOrder;
+  sellerOrder: sellerOrder;
   paypalClientId: string;
   isAdmin: boolean;
   stripeClientSecret: string | null;
@@ -53,7 +53,7 @@ export default function OrderDetailsForm({
     paidAt,
     isDelivered,
     deliveredAt,
-  } = order;
+  } = sellerOrder;
 
   const { toast } = useToast();
 
@@ -71,7 +71,7 @@ export default function OrderDetailsForm({
   const handleCreatePayPalOrder = async () => {
 
     
-    const res = await createPayPalOrder(order.id,);
+    const res = await createPayPalOrder(sellerOrder.id,);
     if (!res.success)
       return toast({
         description: res.message,
@@ -79,10 +79,10 @@ export default function OrderDetailsForm({
       });
     return res.data;
   };
-  const handleApprovePayPalOrder = async (data: { sellerOrderID: string }) => {
+  const handleApprovePayPalOrder = async (data: { orderID: string }) => {
    
 
-    const res = await approvePayPalOrder(  order.id,data
+    const res = await approvePayPalOrder(  sellerOrder.id,data
    );
     toast({
       description: res.message,
@@ -99,7 +99,7 @@ export default function OrderDetailsForm({
         disabled={isPending}
         onClick={() =>
           startTransition(async () => {
-            const res = await updateOrderToPaidByCOD(order.id, );
+            const res = await updateOrderToPaidByCOD(sellerOrder.id, );
             toast({
               variant: res.success ? "default" : "destructive",
               description: res.message,
@@ -121,7 +121,7 @@ export default function OrderDetailsForm({
         disabled={isPending}
         onClick={() =>
           startTransition(async () => {
-            const res = await deliverOrder(order.id);
+            const res = await deliverOrder(sellerOrder.id);
             toast({
               variant: res.success ? "default" : "destructive",
               description: res.message,
@@ -136,7 +136,7 @@ export default function OrderDetailsForm({
 
   return (
     <>
-      <h1 className="py-4 text-2xl"> Order {formatId(order.id)}</h1>
+      <h1 className="py-4 text-2xl"> Order {formatId(sellerOrder.id)}</h1>
       <div className="grid md:grid-cols-3 md:gap-5">
         <div className="overflow-x-auto md:col-span-2 space-y-4">
           <Card>
@@ -245,15 +245,15 @@ export default function OrderDetailsForm({
                     <PrintLoadingState />
                     <PayPalButtons
                       createOrder={handleCreatePayPalOrder}
-                      onApprove={(data) => handleApprovePayPalOrder({ sellerOrderID: data.orderID })}
+                      onApprove={(data) => handleApprovePayPalOrder({ orderID: data.orderID })}
                     />
                   </PayPalScriptProvider>
                 </div>
               )}
               {!isPaid && paymentMethod === "Stripe" && stripeClientSecret && (
                 <StripePayment
-                  priceInCents={Number(order.totalPrice) * 100}
-                  orderId={order.id}
+                  priceInCents={Number(sellerOrder.totalPrice) * 100}
+                  sellerOrderId={sellerOrder.id}
                   clientSecret={stripeClientSecret}
                 />
               )}

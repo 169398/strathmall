@@ -27,14 +27,14 @@ const OrderDetailsPage = async ({
     const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round(Number(order.totalPrice) * 100),
       currency: "KES",
-      metadata: { orderId: order.id },
+      metadata: { sellerOrderId: order.id },
     });
     client_secret = paymentIntent.client_secret;
   }
 
   return (
     <OrderDetailsForm
-      order={order}
+      sellerOrder={order}
       paypalClientId={process.env.PAYPAL_CLIENT_ID || "sb"}
       isAdmin={session?.user.role === "admin" || false}
       stripeClientSecret={client_secret}
