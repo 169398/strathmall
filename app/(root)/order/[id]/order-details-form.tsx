@@ -194,7 +194,6 @@ export default function OrderDetailsForm({
                 <TableBody>
                   {sellerOrderItems.map((item) => (
                     <TableRow key={item.slug}>
-                      
                       <TableCell>
                         <Link
                           href={`/product/${item.slug}`}
@@ -230,7 +229,7 @@ export default function OrderDetailsForm({
                 <div>Items</div>
                 <div>{formatCurrency(itemsPrice)}</div>
               </div>
-             
+
               <div className="flex justify-between">
                 <div>Shipping</div>
                 <div>{formatCurrency(shippingPrice)}</div>
@@ -245,7 +244,7 @@ export default function OrderDetailsForm({
                     <PrintLoadingState />
                     <PayPalButtons
                       createOrder={handleCreatePayPalOrder}
-                      onApprove={(data) => handleApprovePayPalOrder({ orderID: data.orderID })}
+                      onApprove={handleApprovePayPalOrder}
                     />
                   </PayPalScriptProvider>
                 </div>
@@ -260,7 +259,7 @@ export default function OrderDetailsForm({
               {isAdmin && !isPaid && paymentMethod === "CashOnDelivery" && (
                 <MarkAsPaidButton />
               )}
-              {isAdmin  && isPaid && !isDelivered && <MarkAsDeliveredButton />}
+              {isAdmin && isPaid && !isDelivered && <MarkAsDeliveredButton />}
             </CardContent>
           </Card>
         </div>
