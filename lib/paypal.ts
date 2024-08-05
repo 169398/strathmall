@@ -68,8 +68,8 @@ async function handleResponse(response: any) {
 }
 
 export function constructMetadata({
-  title = "StrathMall - The marketplace for all university and local sellers",
-  description = "Strathmall is an open-source marketplace for high-quality  goods.",
+  title = "StrathMall - Your Campus & Community Marketplace",
+  description = "Discover StrathMall, the ultimate  marketplace for premium goods, connecting university  sellers with savvy shoppers",
   image = "/thumbnail.png",
   icons = "/favicon.ico",
   noIndex = false,
@@ -107,7 +107,6 @@ export function constructMetadata({
         follow: false,
       },
     }),
-  
   };
 }
 
