@@ -82,7 +82,7 @@ export default function OrderDetailsForm({
   const handleApprovePayPalOrder = async (data: { orderID: string }) => {
    
 
-    const res = await approvePayPalOrder(  data.orderID,data
+    const res = await approvePayPalOrder(  order.id,data
    );
     toast({
       description: res.message,
