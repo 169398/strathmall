@@ -79,7 +79,7 @@ export default function OrderDetailsForm({
       });
     return res.data;
   };
-  const handleApprovePayPalOrder = async (data: { orderID: string }) => {
+  const handleApprovePayPalOrder = async (data: { sellerOrderID: string }) => {
    
 
     const res = await approvePayPalOrder(  order.id,data
@@ -245,7 +245,7 @@ export default function OrderDetailsForm({
                     <PrintLoadingState />
                     <PayPalButtons
                       createOrder={handleCreatePayPalOrder}
-                      onApprove={handleApprovePayPalOrder}
+                      onApprove={(data) => handleApprovePayPalOrder({ sellerOrderID: data.orderID })}
                     />
                   </PayPalScriptProvider>
                 </div>
