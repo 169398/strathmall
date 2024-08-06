@@ -1,41 +1,26 @@
 
 'use client';
 
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { APP_NAME } from "@/lib/constants";
+import { PaymentBg } from "@/components/shared/Payment-bg";
+import Footer from "@/components/shared/footer";
 
 
 
 const WelcomeSellerPage = () => {
-  const router = useRouter();
-
-  const handleProceedToPayment = () => {
-    // Redirect to the payment page
-    router.push("/payment");
-  };
+ 
 
   return (
     <div className="min-h-screen   flex flex-col">
       {/* Hero Section */}
-      <div className="flex-1 bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-16 px-8 flex flex-col justify-center container mx-auto rounded-sm items-center text-center">
-        <h1 className="text-4xl font-bold mb-4">
-          Welcome to {APP_NAME} Seller Community!
-        </h1>
-        <p className="text-lg mb-8">
-          Congratulations on starting your journey with us. We are thrilled to
-          have you!
-        </p>
-        <Button variant="secondary" onClick={handleProceedToPayment}>
-          Proceed to Payment
-        </Button>
+      <div className="flex-1 bg-gradient-to-r  container mx-auto  items-center text-center">
+       <PaymentBg />
       </div>
 
       {/* Body Section */}
       <div className="flex-1 bg-gray-100 py-16 px-8">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl font-semibold mb-8">
-            Why the Onboarding Fee is Worth It
+            More Than Just Onboarding: Your Fee Unlocks a World of Value
           </h2>
           <div className="space-y-6">
             <div className="bg-white p-6 rounded shadow-md">
@@ -57,11 +42,29 @@ const WelcomeSellerPage = () => {
               </p>
             </div>
             <div className="bg-white p-6 rounded shadow-md">
+              <h3 className="text-2xl font-semibold mb-2">
+                Zero Delivery costs
+              </h3>
+              <p>
+                We take care of the delivery costs for you. This means you can
+                focus on creating and selling your products without worrying
+                about the logistics.
+              </p>
+            </div>
+            <div className="bg-white p-6 rounded shadow-md">
+              <h3 className="text-2xl font-semibold mb-2">Seller Dashboard</h3>
+              <p>
+                Get access to our seller dashboard, where you can manage your
+                products, track sales, and monitor your performance. It&apos;s
+                your one-stop shop for all things selling.
+              </p>
+            </div>
+            <div className="bg-white p-6 rounded shadow-md">
               <h3 className="text-2xl font-semibold mb-2">Seller Support</h3>
               <p>
                 Our dedicated support team is here to help you every step of the
-                way. From setting up your shop to managing orders, we&apos;ve got you
-                covered.
+                way. From setting up your shop to managing orders, we&apos;ve
+                got you covered.
               </p>
             </div>
           </div>
@@ -69,16 +72,9 @@ const WelcomeSellerPage = () => {
       </div>
 
       {/* Footer Section */}
-      <div className="bg-blue-600 text-white py-8 px-8  container rounded-sm">
-        <div className="max-w-4xl mx-auto flex flex-col md:flex-row justify-between items-center">
-          <div className="mb-4 md:mb-0">
-            <h4 className="text-xl font-semibold">Get Started Now</h4>
-            <p>Join our community of successful sellers.</p>
-          </div>
-          <Button variant="outline" onClick={handleProceedToPayment}>
-            Pay 300 KES
-          </Button>
-        </div>
+      <div className="  container rounded-sm">
+        
+          <Footer/>
       </div>
     </div>
   );
