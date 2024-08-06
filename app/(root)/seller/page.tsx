@@ -59,7 +59,7 @@ const  OnboardingForm = () => {
         description: res.message,
       });
        // Redirect to the seller dashboard after shop creation
-      router.push("/payment");
+      router.push("/onboard");
     }
   }
 
