@@ -42,7 +42,7 @@ import {
 } from '@/lib/actions/sellerreview.actions'
 import { reviewFormDefaultValues } from '@/lib/constants'
 import { formatDateTime } from '@/lib/utils'
-import { insertSellerReviewSchema } from '@/lib/validator'
+import { insertReviewSchema } from '@/lib/validator'
 import { Review } from '@/types/sellerindex'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Calendar, Check, StarIcon, User } from 'lucide-react'
@@ -54,13 +54,13 @@ import { z } from 'zod'
 
 export default function ReviewList({
   userId,
-  sellerProductId,
-  sellerProductSlug,
+  productId,
+  productSlug,
 
 }: {
   userId: string
-  sellerProductId: string
-  sellerProductSlug: string
+  productId: string
+  productSlug: string
 }) {
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(0)
@@ -68,7 +68,7 @@ export default function ReviewList({
   const { ref, inView } = useInView()
   const reload = async () => {
     try {
-      const res = await getReviews({ sellerProductId, page: 1 })
+      const res = await getReviews({ productId, page: 1 })
       setReviews([...res.data])
       setTotalPages(res.totalPages)
     } catch (err) {
@@ -81,7 +81,7 @@ export default function ReviewList({
   useEffect(() => {
     const loadMoreReviews = async () => {
       if (page === totalPages) return
-      const res = await getReviews({ sellerProductId, page })
+      const res = await getReviews({ productId, page })
       setReviews([...reviews, ...res.data])
       setTotalPages(res.totalPages)
       if (page < res.totalPages) {
@@ -94,17 +94,17 @@ export default function ReviewList({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inView])
 
-  type CustomerReview = z.infer<typeof insertSellerReviewSchema>
+  type CustomerReview = z.infer<typeof insertReviewSchema>
 
   const form = useForm<CustomerReview>({
-    resolver: zodResolver(insertSellerReviewSchema),
+    resolver: zodResolver(insertReviewSchema),
     defaultValues: reviewFormDefaultValues,
   })
   const [open, setOpen] = useState(false)
   const { toast } = useToast()
 
   const onSubmit: SubmitHandler<CustomerReview> = async (values) => {
-    const res = await createUpdateReview({ ...values, sellerProductId })
+    const res = await createUpdateReview({ ...values, productId })
     if (!res.success)
       return toast({
         variant: 'destructive',
@@ -118,10 +118,10 @@ export default function ReviewList({
   }
 
   const handleOpenForm = async () => {
-    form.setValue('sellerProductId', sellerProductId)
+    form.setValue('productId', productId)
     form.setValue('userId', userId)
     form.setValue('sellerId', userId)
-    const review = await getUserReviewByProductId({ sellerProductId })
+    const review = await getUserReviewByProductId({ productId })
     if (review) {
       form.setValue('title', review.title)
       form.setValue('description', review.description)
@@ -237,7 +237,7 @@ export default function ReviewList({
           Please
           <Link
             className="text-primary px-2"
-            href={`/api/auth/signup?callbackUrl=/product/${sellerProductSlug}`}
+            href={`/api/auth/signup?callbackUrl=/product/${productSlug}`}
           >
             sign in
           </Link>

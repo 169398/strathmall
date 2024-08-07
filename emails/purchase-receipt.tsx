@@ -1,6 +1,6 @@
 import sampleData from '@/lib/sample-data'
 import { formatCurrency } from '@/lib/utils'
-import { sellerOrder } from '@/types/sellerindex'
+import { order } from '@/types/sellerindex'
 import {
   Body,
   Column,
@@ -17,11 +17,11 @@ import {
 } from '@react-email/components'
 
 type OrderInformationProps = {
-  sellerOrder: sellerOrder
+  order: order
 }
 
 PurchaseReceiptEmail.PreviewProps = {
-  sellerOrder: {
+  order: {
     sellerId:'',
     id: crypto.randomUUID(),
     userId: '123',
@@ -41,13 +41,13 @@ PurchaseReceiptEmail.PreviewProps = {
     totalPrice: '110',
     shippingPrice: '20',
     itemsPrice: '80',
-    sellerOrderItems: sampleData.products.map((x) => ({
+    orderItems: sampleData.products.map((x) => ({
       id: '123',
       name: x.name,
       image: x.images[0],
       sellerId: '123',
-      sellerOrderId: '123',
-      sellerProductId: '123',
+      orderId: '123',
+      productId: '123',
       slug: x.slug,
       price: x.price,
       qty: x.stock,
@@ -67,7 +67,7 @@ PurchaseReceiptEmail.PreviewProps = {
 
 const dateFormatter = new Intl.DateTimeFormat('en', { dateStyle: 'medium' })
 
-export default function PurchaseReceiptEmail({ sellerOrder }: OrderInformationProps) {
+export default function PurchaseReceiptEmail({ order }: OrderInformationProps) {
   return (
     <Html>
       <Preview>View order receipt</Preview>
@@ -82,14 +82,14 @@ export default function PurchaseReceiptEmail({ sellerOrder }: OrderInformationPr
                   <Text className="mb-0 text-gray-500 whitespace-nowrap text-nowrap mr-4">
                     Order ID
                   </Text>
-                  <Text className="mt-0 mr-4">{sellerOrder.id.toString()}</Text>
+                  <Text className="mt-0 mr-4">{order.id.toString()}</Text>
                 </Column>
                 <Column>
                   <Text className="mb-0 text-gray-500 whitespace-nowrap text-nowrap mr-4">
                     Purchased On
                   </Text>
                   <Text className="mt-0 mr-4">
-                    {dateFormatter.format(sellerOrder.createdAt)}
+                    {dateFormatter.format(order.createdAt)}
                   </Text>
                 </Column>
                 <Column>
@@ -97,14 +97,14 @@ export default function PurchaseReceiptEmail({ sellerOrder }: OrderInformationPr
                     Price Paid
                   </Text>
                   <Text className="mt-0 mr-4">
-                    {formatCurrency(sellerOrder.totalPrice)}
+                    {formatCurrency(order.totalPrice)}
                   </Text>
                 </Column>
               </Row>
             </Section>
             <Section className="border border-solid border-gray-500 rounded-lg p-4 md:p-6 my-4">
-              {sellerOrder.sellerOrderItems.map((item) => (
-                <Row key={item.sellerProductId} className="mt-8">
+              {order.orderItems.map((item) => (
+                <Row key={item.productId} className="mt-8">
                   <Column className="w-20">
                     <Img
                       width="80"
@@ -128,9 +128,9 @@ export default function PurchaseReceiptEmail({ sellerOrder }: OrderInformationPr
                 </Row>
               ))}
               {[
-                { name: 'Items', price: sellerOrder.itemsPrice },
-                { name: 'Shipping', price: sellerOrder.shippingPrice },
-                { name: 'Total', price: sellerOrder.totalPrice },
+                { name: 'Items', price: order.itemsPrice },
+                { name: 'Shipping', price: order.shippingPrice },
+                { name: 'Total', price: order.totalPrice },
               ].map(({ name, price }) => (
                 <Row key={name} className="py-1">
                   <Column align="right">{name}:</Column>

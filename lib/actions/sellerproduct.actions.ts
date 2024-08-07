@@ -2,22 +2,22 @@
 
 import { desc } from "drizzle-orm";
 import db from "@/db/drizzle";
-import { sellerProducts } from "@/db/schema";
+import { products } from "@/db/schema";
 import { and, count, eq, ilike, sql } from "drizzle-orm/sql";
 import { PAGE_SIZE } from "../constants";
 import { revalidatePath } from "next/cache";
 import { formatError } from "../utils";
 import { z } from "zod";
 import {
-  insertSellerProductSchema,
-  updateSellerProductSchema,
+  insertProductSchema,
+  updateProductSchema,
 } from "../validator";
 import { auth } from "@/auth";
 
 // CREATE
-export async function createSellerProduct(
+export async function createProduct(
 
-  data: z.infer<typeof insertSellerProductSchema>
+  data: z.infer<typeof insertProductSchema>
 ) {
   try {
 const session = await auth();
@@ -26,8 +26,8 @@ const session = await auth();
 
 
 
-    const sellerProduct = insertSellerProductSchema.parse(data);
-    await db.insert(sellerProducts).values([{ ...sellerProduct, sellerId }]);
+    const product = insertProductSchema.parse(data);
+    await db.insert(products).values([{ ...product, sellerId }]);
 
     revalidatePath("/seller/products");
     return {
@@ -40,22 +40,22 @@ const session = await auth();
 }
 
 // UPDATE seller product
-export async function updateSellerProduct(
-  data: z.infer<typeof updateSellerProductSchema>
+export async function updateProduct(
+  data: z.infer<typeof updateProductSchema>
 ) {
   try {
-    const sellerProduct = updateSellerProductSchema.parse(data);
-    const productExists = await db.query.sellerProducts.findFirst({
+    const product = updateProductSchema.parse(data);
+    const productExists = await db.query.products.findFirst({
       where: and(
-        eq(sellerProducts.id, sellerProduct.id),
-        eq(sellerProducts.id, sellerProduct.id)
+        eq(products.id, product.id),
+        eq(products.id, product.id)
       ),
     });
     if (!productExists) throw new Error("Product not found");
     await db
-      .update(sellerProducts)
-      .set(sellerProduct)
-      .where(eq(sellerProducts.id, sellerProduct.id));
+      .update(products)
+      .set(product)
+      .where(eq(products.id, product.id));
     revalidatePath("/seller/products");
     return {
       success: true,
@@ -85,36 +85,36 @@ export async function getAllSearchProducts({
 }) {
   const queryFilter =
     query && query !== "all"
-      ? ilike(sellerProducts.name, `%${query}%`)
+      ? ilike(products.name, `%${query}%`)
       : undefined;
   const categoryFilter =
     category && category !== "all"
-      ? eq(sellerProducts.category, category)
+      ? eq(products.category, category)
       : undefined;
   const ratingFilter =
     rating && rating !== "all"
-      ? sql`${sellerProducts.rating} >= ${rating}`
+      ? sql`${products.rating} >= ${rating}`
       : undefined;
   const priceFilter =
     price && price !== "all"
-      ? sql`${sellerProducts.price} >= ${price.split("-")[0]} AND ${
-          sellerProducts.price
+      ? sql`${products.price} >= ${price.split("-")[0]} AND ${
+          products.price
         } <= ${price.split("-")[1]}`
       : undefined;
   const order =
     sort === "lowest"
-      ? sellerProducts.price
+      ? products.price
       : sort === "highest"
-      ? desc(sellerProducts.price)
+      ? desc(products.price)
       : sort === "rating"
-      ? desc(sellerProducts.rating)
-      : desc(sellerProducts.createdAt);
+      ? desc(products.rating)
+      : desc(products.createdAt);
 
   const condition = and(queryFilter, categoryFilter, ratingFilter, priceFilter);
 
   const data = await db
     .select()
-    .from(sellerProducts)
+    .from(products)
     .where(condition)
     .orderBy(order)
     .offset((page - 1) * limit)
@@ -122,7 +122,7 @@ export async function getAllSearchProducts({
 
   const dataCount = await db
     .select({ count: count() })
-    .from(sellerProducts)
+    .from(products)
     .where(condition);
 
   return {
@@ -132,29 +132,29 @@ export async function getAllSearchProducts({
 }
 
 // GET
-export async function getSellerProductById(sellerProductId: string) {
-  return await db.query.sellerProducts.findFirst({
-    where: eq(sellerProducts.id, sellerProductId),
+export async function getProductById(productId: string) {
+  return await db.query.products.findFirst({
+    where: eq(products.id, productId),
   });
 }
 
-export async function getSellerLatestProducts() {
-  const data = await db.query.sellerProducts.findMany({
-    orderBy: [desc(sellerProducts.createdAt)],
+export async function getLatestProducts() {
+  const data = await db.query.products.findMany({
+    orderBy: [desc(products.createdAt)],
     limit: 4,
   });
   return data;
 }
 
-export async function getSellerProductBySlug(slug: string) {
-  return await db.query.sellerProducts.findFirst({
+export async function getProductBySlug(slug: string) {
+  return await db.query.products.findFirst({
     where: and(
-      eq(sellerProducts.slug, slug),
+      eq(products.slug, slug),
     ),
   });
 }
 
-export async function getAllSellerProducts({
+export async function getAllproducts({
   sellerId,
   query,
   limit = PAGE_SIZE,
@@ -175,33 +175,33 @@ export async function getAllSellerProducts({
 }) {
   const queryFilter =
     query && query !== "all"
-      ? ilike(sellerProducts.name, `%${query}%`)
+      ? ilike(products.name, `%${query}%`)
       : undefined;
   const categoryFilter =
     category && category !== "all"
-      ? eq(sellerProducts.category, category)
+      ? eq(products.category, category)
       : undefined;
   const ratingFilter =
     rating && rating !== "all"
-      ? sql`${sellerProducts.rating} >= ${rating}`
+      ? sql`${products.rating} >= ${rating}`
       : undefined;
   const priceFilter =
     price && price !== "all"
-      ? sql`${sellerProducts.price} >= ${price.split("-")[0]} AND ${
-          sellerProducts.price
+      ? sql`${products.price} >= ${price.split("-")[0]} AND ${
+          products.price
         } <= ${price.split("-")[1]}`
       : undefined;
   const order =
     sort === "lowest"
-      ? sellerProducts.price
+      ? products.price
       : sort === "highest"
-      ? desc(sellerProducts.price)
+      ? desc(products.price)
       : sort === "rating"
-      ? desc(sellerProducts.rating)
-      : desc(sellerProducts.createdAt);
+      ? desc(products.rating)
+      : desc(products.createdAt);
 
   const condition = and(
-    eq(sellerProducts.sellerId, sellerId),
+    eq(products.sellerId, sellerId),
     queryFilter,
     categoryFilter,
     ratingFilter,
@@ -209,7 +209,7 @@ export async function getAllSellerProducts({
   );
   const data = await db
     .select()
-    .from(sellerProducts)
+    .from(products)
     .where(condition)
     .orderBy(order)
     .offset((page - 1) * limit)
@@ -217,7 +217,7 @@ export async function getAllSellerProducts({
 
   const dataCount = await db
     .select({ count: count() })
-    .from(sellerProducts)
+    .from(products)
     .where(condition);
 
   return {
@@ -226,38 +226,38 @@ export async function getAllSellerProducts({
   };
 }
 
-export async function getAllSellerCategories() {
+export async function getAllCategories() {
   const data = await db
-    .selectDistinctOn([sellerProducts.category], {
-      name: sellerProducts.category,
+    .selectDistinctOn([products.category], {
+      name: products.category,
     })
-    .from(sellerProducts)
-    .orderBy(sellerProducts.category);
+    .from(products)
+    .orderBy(products.category);
   return data;
 }
 
-export async function getSellerFeaturedProducts(userId: string) {
-  const data = await db.query.sellerProducts.findMany({
+export async function getFeaturedProducts(userId: string) {
+  const data = await db.query.products.findMany({
     where: and(
-      eq(sellerProducts.isFeatured, true),
-      eq(sellerProducts.sellerId, userId)
+      eq(products.isFeatured, true),
+      eq(products.sellerId, userId)
     ),
-    orderBy: [desc(sellerProducts.createdAt)],
+    orderBy: [desc(products.createdAt)],
     limit: 4,
   });
   return data;
 }
 
 // DELETE
-export async function deleteSellerProduct(id: string, ) {
+export async function deleteProduct(id: string, ) {
   try {
-    const productExists = await db.query.sellerProducts.findFirst({
+    const productExists = await db.query.products.findFirst({
       where: and(
-        eq(sellerProducts.id, id),
+        eq(products.id, id),
       ),
     });
     if (!productExists) throw new Error("Product not found");
-    await db.delete(sellerProducts).where(eq(sellerProducts.id, id));
+    await db.delete(products).where(eq(products.id, id));
     revalidatePath("/seller/products");
     return {
       success: true,

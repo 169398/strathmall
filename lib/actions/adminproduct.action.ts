@@ -2,52 +2,32 @@
 
 import { desc } from "drizzle-orm";
 import db from "@/db/drizzle";
-import { sellerProducts } from "@/db/schema";
+import { products } from "@/db/schema";
 import { and, count, eq, ilike, sql } from "drizzle-orm/sql";
 import { PAGE_SIZE } from "../constants";
 import { revalidatePath } from "next/cache";
 import { formatError } from "../utils";
 import { z } from "zod";
 import {
-  insertProductSchema,
-  updateSellerProductSchema,
+  updateProductSchema,
 } from "../validator";
 
-// CREATE
-export async function createProduct(
-
-  data: z.infer<typeof insertProductSchema>
-) {
-
-
-
-
-    const sellerProduct = insertProductSchema.parse(data);
-    await db.insert(sellerProducts).values(sellerProduct );
-
-    revalidatePath("/seller/products");
-    return {
-      success: true,
-      message: "Product created successfully",
-    };
-  
-}
 
 
 // UPDATE
 export async function updateProduct(
-  data: z.infer<typeof updateSellerProductSchema>
+  data: z.infer<typeof updateProductSchema>
 ) {
   try {
-    const product = updateSellerProductSchema.parse(data);
-    const productExists = await db.query.sellerProducts.findFirst({
-      where: eq(sellerProducts.id, product.id),
+    const product = updateProductSchema.parse(data);
+    const productExists = await db.query.products.findFirst({
+      where: eq(products.id, product.id),
     });
     if (!productExists) throw new Error("Product not found");
     await db
-      .update(sellerProducts)
+      .update(products)
       .set(product)
-      .where(eq(sellerProducts.id, product.id));
+      .where(eq(products.id, product.id));
     revalidatePath("/admin/products");
     return {
       success: true,
@@ -78,36 +58,36 @@ export async function getAllSearchProducts({
 }) {
   const queryFilter =
     query && query !== "all"
-      ? ilike(sellerProducts.name, `%${query}%`)
+      ? ilike(products.name, `%${query}%`)
       : undefined;
   const categoryFilter =
     category && category !== "all"
-      ? eq(sellerProducts.category, category)
+      ? eq(products.category, category)
       : undefined;
   const ratingFilter =
     rating && rating !== "all"
-      ? sql`${sellerProducts.rating} >= ${rating}`
+      ? sql`${products.rating} >= ${rating}`
       : undefined;
   const priceFilter =
     price && price !== "all"
-      ? sql`${sellerProducts.price} >= ${price.split("-")[0]} AND ${
-          sellerProducts.price
+      ? sql`${products.price} >= ${price.split("-")[0]} AND ${
+          products.price
         } <= ${price.split("-")[1]}`
       : undefined;
   const order =
     sort === "lowest"
-      ? sellerProducts.price
+      ? products.price
       : sort === "highest"
-      ? desc(sellerProducts.price)
+      ? desc(products.price)
       : sort === "rating"
-      ? desc(sellerProducts.rating)
-      : desc(sellerProducts.createdAt);
+      ? desc(products.rating)
+      : desc(products.createdAt);
 
   const condition = and(queryFilter, categoryFilter, ratingFilter, priceFilter);
 
   const data = await db
     .select()
-    .from(sellerProducts)
+    .from(products)
     .where(condition)
     .orderBy(order)
     .offset((page - 1) * limit)
@@ -115,7 +95,7 @@ export async function getAllSearchProducts({
 
   const dataCount = await db
     .select({ count: count() })
-    .from(sellerProducts)
+    .from(products)
     .where(condition);
 
   return {
@@ -126,15 +106,15 @@ export async function getAllSearchProducts({
 
 // GET by ID
 export async function getProductById(productId: string) {
-  return await db.query.sellerProducts.findFirst({
-    where: eq(sellerProducts.id, productId),
+  return await db.query.products.findFirst({
+    where: eq(products.id, productId),
   });
 }
 
 // GET latest products
 export async function getLatestProducts() {
-  const data = await db.query.sellerProducts.findMany({
-    orderBy: [desc(sellerProducts.createdAt)],
+  const data = await db.query.products.findMany({
+    orderBy: [desc(products.createdAt)],
     limit: 4,
   });
   return data;
@@ -142,8 +122,8 @@ export async function getLatestProducts() {
 
 // GET by slug
 export async function getProductBySlug(slug: string) {
-  return await db.query.sellerProducts.findFirst({
-    where: eq(sellerProducts.slug, slug),
+  return await db.query.products.findFirst({
+    where: eq(products.slug, slug),
   });
 }
 
@@ -167,35 +147,35 @@ export async function getAllProducts({
 }) {
   const queryFilter =
     query && query !== "all"
-      ? ilike(sellerProducts.name, `%${query}%`)
+      ? ilike(products.name, `%${query}%`)
       : undefined;
   const categoryFilter =
     category && category !== "all"
-      ? eq(sellerProducts.category, category)
+      ? eq(products.category, category)
       : undefined;
   const ratingFilter =
     rating && rating !== "all"
-      ? sql`${sellerProducts.rating} >= ${rating}`
+      ? sql`${products.rating} >= ${rating}`
       : undefined;
   const priceFilter =
     price && price !== "all"
-      ? sql`${sellerProducts.price} >= ${price.split("-")[0]} AND ${
-          sellerProducts.price
+      ? sql`${products.price} >= ${price.split("-")[0]} AND ${
+          products.price
         } <= ${price.split("-")[1]}`
       : undefined;
   const order =
     sort === "lowest"
-      ? sellerProducts.price
+      ? products.price
       : sort === "highest"
-      ? desc(sellerProducts.price)
+      ? desc(products.price)
       : sort === "rating"
-      ? desc(sellerProducts.rating)
-      : desc(sellerProducts.createdAt);
+      ? desc(products.rating)
+      : desc(products.createdAt);
 
   const condition = and(queryFilter, categoryFilter, ratingFilter, priceFilter);
   const data = await db
     .select()
-    .from(sellerProducts)
+    .from(products)
     .where(condition)
     .orderBy(order)
     .offset((page - 1) * limit)
@@ -203,7 +183,7 @@ export async function getAllProducts({
 
   const dataCount = await db
     .select({ count: count() })
-    .from(sellerProducts)
+    .from(products)
     .where(condition);
 
   return {
@@ -215,19 +195,19 @@ export async function getAllProducts({
 // GET all categories
 export async function getAllCategories() {
   const data = await db
-    .selectDistinctOn([sellerProducts.category], {
-      name: sellerProducts.category,
+    .selectDistinctOn([products.category], {
+      name: products.category,
     })
-    .from(sellerProducts)
-    .orderBy(sellerProducts.category);
+    .from(products)
+    .orderBy(products.category);
   return data;
 }
 
 // GET featured products
 export async function getFeaturedProducts() {
-  const data = await db.query.sellerProducts.findMany({
-    where: eq(sellerProducts.isFeatured, true),
-    orderBy: [desc(sellerProducts.createdAt)],
+  const data = await db.query.products.findMany({
+    where: eq(products.isFeatured, true),
+    orderBy: [desc(products.createdAt)],
     limit: 4,
   });
   return data;
@@ -236,11 +216,11 @@ export async function getFeaturedProducts() {
 // DELETE
 export async function deleteProduct(id: string) {
   try {
-    const productExists = await db.query.sellerProducts.findFirst({
-      where: eq(sellerProducts.id, id),
+    const productExists = await db.query.products.findFirst({
+      where: eq(products.id, id),
     });
     if (!productExists) throw new Error("Product not found");
-    await db.delete(sellerProducts).where(eq(sellerProducts.id, id));
+    await db.delete(products).where(eq(products.id, id));
     revalidatePath("/admin/products");
     return {
       success: true,

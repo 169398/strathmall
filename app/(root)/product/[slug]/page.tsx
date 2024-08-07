@@ -4,7 +4,7 @@ import ProductImages from '@/components/shared/product/product-images'
 import ProductPrice from '@/components/shared/product/product-price'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
-import { getSellerProductBySlug } from '@/lib/actions/sellerproduct.actions'
+import { getProductBySlug } from '@/lib/actions/sellerproduct.actions'
 import { APP_NAME } from '@/lib/constants'
 import AddToCart from '@/components/shared/product/add-to-cart'
 import { getMyCart } from '@/lib/actions/sellercart.actions'
@@ -18,7 +18,7 @@ export async function generateMetadata({
 }: {
   params: { slug: string }
 }) {
-  const product = await getSellerProductBySlug(params.slug)
+  const product = await getProductBySlug(params.slug)
   if (!product) {
     return { title: 'Product not found' }
   }
@@ -34,7 +34,7 @@ const ProductDetails = async ({
   params: { slug: string }
   searchParams: { page: string; color: string; size: string }
 }) => {
-  const product = await getSellerProductBySlug(slug)
+  const product = await getProductBySlug(slug)
   if (!product) notFound()
   const cart = await getMyCart()
   const session = await auth()
@@ -94,7 +94,7 @@ const ProductDetails = async ({
                     <AddToCart
                       cart={cart}
                       item={{
-                        sellerProductId: product.id,
+                        productId: product.id,
                         name: product.name,
                         slug: product.slug,
                         price: round2(product.price),
@@ -112,8 +112,8 @@ const ProductDetails = async ({
       <section className="mt-10">
         <h2 className="h2-bold  mb-5">Customer Reviews</h2>
         <ReviewList
-          sellerProductId={product.id}
-          sellerProductSlug={product.slug}
+          productId={product.id}
+          productSlug={product.slug}
           userId={session?.user.id!}
         />
       </section>

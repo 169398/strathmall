@@ -1,8 +1,5 @@
-import {
-  sellerCartItem,
-  PaymentResult,
-  ShippingAddress,
-} from "@/types/sellerindex";
+import { CartItem, PaymentResult, ShippingAddress } from "@/types";
+
 import { relations } from "drizzle-orm";
 import {
   boolean,
@@ -100,8 +97,8 @@ export const verificationTokens = pgTable(
 );
 
 // SELLER PRODUCTS
-export const sellerProducts = pgTable(
-  "sellerProduct",
+export const products = pgTable(
+  "product",
   {
     id: uuid("id").defaultRandom().primaryKey().notNull(),
     sellerId: uuid("sellerId")
@@ -131,14 +128,14 @@ export const sellerProducts = pgTable(
 );
 
 // SELLER REVIEWS
-export const sellerReviews = pgTable("sellerReviews", {
+export const reviews = pgTable("reviews", {
   id: uuid("id").defaultRandom().primaryKey().notNull(),
   userId: uuid("userId")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
-  sellerProductId: uuid("sellerProductId")
+  productId: uuid("productId")
     .notNull()
-    .references(() => sellerProducts.id, { onDelete: "cascade" }),
+    .references(() => products.id, { onDelete: "cascade" }),
   sellerId: uuid("sellerId")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
@@ -149,26 +146,26 @@ export const sellerReviews = pgTable("sellerReviews", {
   createdAt: timestamp("createdAt").notNull().defaultNow(),
 });
 
-export const sellerReviewsRelations = relations(sellerReviews, ({ one }) => ({
-  user: one(users, { fields: [sellerReviews.userId], references: [users.id] }),
-  sellerProduct: one(sellerProducts, {
-    fields: [sellerReviews.sellerProductId],
-    references: [sellerProducts.id],
+export const reviewsRelations = relations(reviews, ({ one }) => ({
+  user: one(users, { fields: [reviews.userId], references: [users.id] }),
+  sellerProduct: one(products, {
+    fields: [reviews.productId],
+    references: [products.id],
   }),
   seller: one(users, {
-    fields: [sellerReviews.sellerId],
+    fields: [reviews.sellerId],
     references: [users.id],
   }),
 }));
 
 // SELLER CARTS
-export const sellerCarts = pgTable("sellerCart", {
+export const carts = pgTable("cart", {
   id: uuid("id").notNull().defaultRandom().primaryKey(),
   userId: uuid("userId").references(() => users.id, {
     onDelete: "cascade",
   }),
   sessionCartId: text("sessionCartId").notNull(),
-  items: json("items").$type<sellerCartItem[]>().notNull().default([]),
+  items: json("items").$type<CartItem[]>().notNull().default([]),
   itemsPrice: numeric("itemsPrice", { precision: 12, scale: 2 }).notNull(),
   shippingPrice: numeric("shippingPrice", {
     precision: 12,
@@ -179,7 +176,7 @@ export const sellerCarts = pgTable("sellerCart", {
 });
 
 // SELLER ORDERS
-export const sellerOrders = pgTable("sellerOrders", {
+export const orders = pgTable("order", {
   id: uuid("id").defaultRandom().primaryKey(),
   userId: uuid("userId")
     .notNull()
@@ -203,23 +200,22 @@ export const sellerOrders = pgTable("sellerOrders", {
   createdAt: timestamp("createdAt").notNull().defaultNow(),
 });
 
-export const sellerOrdersRelations = relations(
-  sellerOrders,
+export const ordersRelations = relations(
+  orders,
   ({ one, many }) => ({
-    sellerOrderItems: many(sellerOrderItems),
-    user: one(users, { fields: [sellerOrders.userId], references: [users.id] }),
+    orderItems: many(orderItems),
+    user: one(users, { fields: [orders.userId], references: [users.id] }),
   })
 );
 
 // SELLER ORDER ITEMS
-export const sellerOrderItems = pgTable("sellerOrderItems", {
-  id: uuid("id").defaultRandom().primaryKey().notNull(),
-  sellerOrderId: uuid("sellerOrderId")
+export const orderItems = pgTable("orderItems", {
+  orderId: uuid("orderId")
     .notNull()
-    .references(() => sellerOrders.id, { onDelete: "cascade" }),
-  sellerProductId: uuid("sellerProductId")
+    .references(() => orders.id, { onDelete: "cascade" }),
+  productId: uuid("productId")
     .notNull()
-    .references(() => sellerProducts.id, { onDelete: "cascade" }),
+    .references(() => products.id, { onDelete: "cascade" }),
   sellerId: uuid("sellerId")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
@@ -229,21 +225,29 @@ export const sellerOrderItems = pgTable("sellerOrderItems", {
   slug: text("slug").notNull(),
 
   price: numeric("price", { precision: 12, scale: 2 }).notNull(),
-});
+},
+(orderItem)=>({
+  compoundKey: primaryKey({
+    columns: [orderItem.orderId, orderItem.productId],
+  }),
+})
+);
 
-export const sellerOrderItemsRelations = relations(
-  sellerOrderItems,
+
+
+export const orderItemsRelations = relations(
+  orderItems,
   ({ one }) => ({
-    sellerOrder: one(sellerOrders, {
-      fields: [sellerOrderItems.sellerOrderId],
-      references: [sellerOrders.id],
+    order: one(orders, {
+      fields: [orderItems.orderId],
+      references: [orders.id],
     }),
-    sellerProduct: one(sellerProducts, {
-      fields: [sellerOrderItems.sellerProductId],
-      references: [sellerProducts.id],
+    product: one(products, {
+      fields: [orderItems.productId],
+      references: [products.id],
     }),
     seller: one(users, {
-      fields: [sellerOrderItems.sellerId],
+      fields: [orderItems.sellerId],
       references: [users.id],
     }),
   })
@@ -251,12 +255,12 @@ export const sellerOrderItemsRelations = relations(
 
 // RELATIONS
 export const sellerProductsRelations = relations(
-  sellerProducts,
+  products,
   ({ many, one }) => ({
-    sellerReviews: many(sellerReviews),
-    sellerOrderItems: many(sellerOrderItems),
+    sellerReviews: many(reviews),
+    sellerOrderItems: many(orderItems),
     seller: one(users, {
-      fields: [sellerProducts.sellerId],
+      fields: [products.sellerId],
       references: [users.id],
     }),
   })
@@ -264,5 +268,5 @@ export const sellerProductsRelations = relations(
 
 export const sellersRelations = relations(sellers, ({ one, many }) => ({
   user: one(users, { fields: [sellers.userId], references: [users.id] }),
-  products: many(sellerProducts),
+  products: many(products),
 }));
