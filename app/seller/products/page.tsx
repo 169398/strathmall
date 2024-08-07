@@ -49,7 +49,7 @@ const sellerId = session?.user.id || ""
       <div className="flex-between">
         <h1 className="h2-bold">Products</h1>
         <Button asChild variant="default">
-          <Link href="/seller/products/create">Create Product</Link>
+          <Link href="/seller/products/create">Add Product</Link>
         </Button>
       </div>
       <div>

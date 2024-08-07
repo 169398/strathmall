@@ -62,13 +62,12 @@ export default function SellerProductForm({
         toast({
           variant: "destructive",
           description: res.message,
-          color: "green",
         });
       } else {
         toast({
           description: res.message,
         });
-        router.push(`/seller/products`); // Redirect to seller's products page
+        router.push(`/seller/products`); 
       }
     }
     if (type === "Update") {
