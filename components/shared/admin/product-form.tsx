@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { useToast } from '@/components/ui/use-toast'
-import { createProduct, updateProduct } from '@/lib/actions/adminproduct.action'
+import {  updateProduct } from '@/lib/actions/adminproduct.action'
 import { productDefaultValues } from '@/lib/constants'
 import { insertProductSchema, updateProductSchema } from '@/lib/validator'
 import { Product } from '@/types'
@@ -25,6 +25,7 @@ import { UploadButton } from '@/lib/uploadthing'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
+import { createProduct } from '@/lib/actions/sellerproduct.actions'
 
 export default function ProductForm({
   type,

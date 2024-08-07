@@ -4,7 +4,7 @@ import { notFound, redirect } from 'next/navigation'
 import Stripe from 'stripe'
 
 import { Button } from '@/components/ui/button'
-import { getSellerOrderById } from '@/lib/actions/sellerorder.actions'
+import { getOrderById } from '@/lib/actions/sellerorder.actions'
 import { APP_NAME } from '@/lib/constants'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string)
@@ -23,15 +23,15 @@ export default async function SuccessPage({
   }
   searchParams: { payment_intent: string }
 }) {
-  const order = await getSellerOrderById(id,)
+  const order = await getOrderById(id,)
   if (!order) notFound()
 
   const paymentIntent = await stripe.paymentIntents.retrieve(
     searchParams.payment_intent
   )
   if (
-    paymentIntent.metadata.sellerOrderId == null ||
-    paymentIntent.metadata.sellerOrderId !== order.id.toString()
+    paymentIntent.metadata.orderId == null ||
+    paymentIntent.metadata.orderId !== order.id.toString()
   )
     return notFound()
 
@@ -43,7 +43,7 @@ export default async function SuccessPage({
         <h1 className="h1-bold">Thanks for your purchase</h1>
         <div>We are now processing your order.</div>
         <Button asChild>
-          <Link href={`/sellerOrder/${id}`}>View order</Link>
+          <Link href={`/order/${id}`}>View order</Link>
         </Button>
       </div>
     </div>

@@ -13,11 +13,11 @@ import { formatCurrency } from '@/lib/utils'
 
 export default function StripePayment({
   priceInCents,
-  sellerOrderId,
+  orderId,
   clientSecret,
 }: {
   priceInCents: number
-  sellerOrderId: string
+  orderId: string
   clientSecret: string
 }) {
   const stripePromise = loadStripe(
@@ -39,7 +39,7 @@ export default function StripePayment({
         .confirmPayment({
           elements,
           confirmParams: {
-            return_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/order/${sellerOrderId}/stripe-payment-success`,
+            return_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/order/${orderId}/stripe-payment-success`,
           },
         })
         .then(({ error }) => {

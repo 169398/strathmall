@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/table";
 import { useToast } from "@/components/ui/use-toast";
 import { formatCurrency, formatDateTime, formatId } from "@/lib/utils";
-import { sellerOrder } from "@/types/sellerindex";
+import { order } from "@/types/sellerindex";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -32,19 +32,19 @@ import { Button } from "@/components/ui/button";
 import StripePayment from "./stripe-payment";
 
 export default function OrderDetailsForm({
-  sellerOrder,
+  order,
   paypalClientId,
   isAdmin,
   stripeClientSecret,
 }: {
-  sellerOrder: sellerOrder;
+  order: order;
   paypalClientId: string;
   isAdmin: boolean;
   stripeClientSecret: string | null;
 }) {
   const {
     shippingAddress,
-    sellerOrderItems,
+    orderItems,
     itemsPrice,
     shippingPrice,
     totalPrice,
@@ -53,7 +53,7 @@ export default function OrderDetailsForm({
     paidAt,
     isDelivered,
     deliveredAt,
-  } = sellerOrder;
+  } = order;
 
   const { toast } = useToast();
 
@@ -71,7 +71,7 @@ export default function OrderDetailsForm({
   const handleCreatePayPalOrder = async () => {
 
     
-    const res = await createPayPalOrder(sellerOrder.id,);
+    const res = await createPayPalOrder(order.id,);
     if (!res.success)
       return toast({
         description: res.message,
@@ -82,7 +82,7 @@ export default function OrderDetailsForm({
   const handleApprovePayPalOrder = async (data: { orderID: string }) => {
    
 
-    const res = await approvePayPalOrder(  sellerOrder.id,data
+    const res = await approvePayPalOrder(  order.id,data
    );
     toast({
       description: res.message,
@@ -99,7 +99,7 @@ export default function OrderDetailsForm({
         disabled={isPending}
         onClick={() =>
           startTransition(async () => {
-            const res = await updateOrderToPaidByCOD(sellerOrder.id, );
+            const res = await updateOrderToPaidByCOD(order.id, );
             toast({
               variant: res.success ? "default" : "destructive",
               description: res.message,
@@ -121,7 +121,7 @@ export default function OrderDetailsForm({
         disabled={isPending}
         onClick={() =>
           startTransition(async () => {
-            const res = await deliverOrder(sellerOrder.id);
+            const res = await deliverOrder(order.id);
             toast({
               variant: res.success ? "default" : "destructive",
               description: res.message,
@@ -136,7 +136,7 @@ export default function OrderDetailsForm({
 
   return (
     <>
-      <h1 className="py-4 text-2xl"> Order {formatId(sellerOrder.id)}</h1>
+      <h1 className="py-4 text-2xl"> Order {formatId(order.id)}</h1>
       <div className="grid md:grid-cols-3 md:gap-5">
         <div className="overflow-x-auto md:col-span-2 space-y-4">
           <Card>
@@ -192,7 +192,7 @@ export default function OrderDetailsForm({
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {sellerOrderItems.map((item) => (
+                  {orderItems.map((item) => (
                     <TableRow key={item.slug}>
                       <TableCell>
                         <Link
@@ -251,8 +251,8 @@ export default function OrderDetailsForm({
               )}
               {!isPaid && paymentMethod === "Stripe" && stripeClientSecret && (
                 <StripePayment
-                  priceInCents={Number(sellerOrder.totalPrice) * 100}
-                  sellerOrderId={sellerOrder.id}
+                  priceInCents={Number(order.totalPrice) * 100}
+                  orderId={order.id}
                   clientSecret={stripeClientSecret}
                 />
               )}

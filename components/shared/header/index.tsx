@@ -10,10 +10,10 @@ import {
 } from '@/components/ui/drawer';
 import { Button } from '@/components/ui/button';
 import { MenuIcon, XIcon } from 'lucide-react'; // Import XIcon
-import { getAllSellerCategories } from '@/lib/actions/sellerproduct.actions';
+import { getAllCategories } from '@/lib/actions/sellerproduct.actions';
 
 const Header = async () => {
-  const categories = await getAllSellerCategories();
+  const categories = await getAllCategories();
 
   return (
     <header>
