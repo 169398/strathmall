@@ -43,12 +43,11 @@ const WelcomeSellerPage = () => {
             </div>
             <div className="bg-white p-6 rounded shadow-md">
               <h3 className="text-2xl font-semibold mb-2">
-                Zero Delivery costs
+                Server Hosting & Maintenance
               </h3>
               <p>
-                We take care of the delivery costs for you. This means you can
-                focus on creating and selling your products without worrying
-                about the logistics.
+                The last thing you want to worry about is server downtime. Our team of experts will ensure your shop 
+                is always up and running, so you can focus on what you do best. 
               </p>
             </div>
             <div className="bg-white p-6 rounded shadow-md">
