@@ -12,14 +12,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import {
-  createSellerProduct,
-  updateSellerProduct,
-} from "@/lib/actions/sellerproduct.actions"; // Update to seller-specific actions
-import {  sellerProductDefaultValues } from "@/lib/constants"; // Update default values if necessary
+  createProduct,
+  updateProduct,
+} from "@/lib/actions/sellerproduct.actions"; 
+import {  productDefaultValues } from "@/lib/constants"; 
 import {
-  insertSellerProductSchema,
-  updateSellerProductSchema,
-} from "@/lib/validator"; // Update to seller-specific schemas
+  insertProductSchema,
+  updateProductSchema,
+} from "@/lib/validator"; 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -30,38 +30,39 @@ import { UploadButton } from "@/lib/uploadthing";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import {sellerProduct } from "@/types/sellerindex"
+import {product } from "@/types/sellerindex"
 export default function SellerProductForm({
   type,
-  sellerProduct,
-  sellerProductId,
+  product,
+  productId,
 }: {
   type: "Create" | "Update";
-  sellerProduct?: sellerProduct;
-  sellerProductId?: string;
+  product?: product;
+  productId?: string;
 }) {
   const router = useRouter();
 
-  const form = useForm<z.infer<typeof insertSellerProductSchema>>({
+  const form = useForm<z.infer<typeof insertProductSchema>>({
     resolver:
       type === "Update"
-        ? zodResolver(updateSellerProductSchema)
-        : zodResolver(insertSellerProductSchema),
+        ? zodResolver(updateProductSchema)
+        : zodResolver(insertProductSchema),
     defaultValues:
-      sellerProduct && type === "Update" ? sellerProduct : sellerProductDefaultValues,
+      product && type === "Update" ? product : productDefaultValues,
   });
 
   const { toast } = useToast();
 
-  async function onSubmit(values: z.infer<typeof insertSellerProductSchema>) {
+  async function onSubmit(values: z.infer<typeof insertProductSchema>) {
   
   
       if (type === "Create") {
-        const res = await createSellerProduct(values, );
+        const res = await createProduct(values, );
       if (!res.success) {
         toast({
           variant: "destructive",
           description: res.message,
+          color: "green",
         });
       } else {
         toast({
@@ -71,13 +72,13 @@ export default function SellerProductForm({
       }
     }
     if (type === "Update") {
-      if (!sellerProductId) {
+      if (!productId) {
         router.push(`/seller/products`);
         return;
       }
-      const res = await updateSellerProduct(
+      const res = await updateProduct(
         {
-          ...values, id: sellerProductId,
+          ...values, id: productId,
         },
       
       );

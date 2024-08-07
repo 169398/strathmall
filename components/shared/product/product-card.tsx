@@ -5,9 +5,9 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import ProductPrice from './product-price'
 import Rating from './rating'
 import { Button } from '@/components/ui/button'
-import { sellerProduct } from '@/types/sellerindex'
+import { product } from '@/types/sellerindex'
 
-const ProductCard = ({ product }: { product: sellerProduct }) => {
+const ProductCard = ({ product }: { product: product }) => {
   return (
     <Card className="w-full max-w-sm">
       <CardHeader className="p-0 items-center">

@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
   if (event.type === 'charge.succeeded') {
     const { object } = event.data
     await updateOrderToPaid({
-      sellerOrderId: object.metadata.orderId,
+      orderId: object.metadata.orderId,
       paymentResult: {
         id: object.id,
         status: 'COMPLETED',

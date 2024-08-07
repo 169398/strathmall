@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { deleteSellerProduct, getAllSellerProducts } from '@/lib/actions/sellerproduct.actions'
+import { deleteProduct, getAllproducts } from '@/lib/actions/sellerproduct.actions'
 import { APP_NAME } from '@/lib/constants'
 import { formatCurrency, formatId } from '@/lib/utils'
 import { Metadata } from 'next'
@@ -37,7 +37,7 @@ export default async function AdminProductsPage({
   const category = searchParams.category || ''
 const session = await auth()
 const sellerId = session?.user.id || ""
-  const products = await getAllSellerProducts({
+  const products = await getAllproducts({
     query: searchText,
     category,
     page,
@@ -81,7 +81,7 @@ const sellerId = session?.user.id || ""
                     <Link href={`/seller/products/${product.id}`}>Edit</Link>
                   </Button>
                   
-                  <DeleteDialog id={product.id} action={ deleteSellerProduct} />
+                  <DeleteDialog id={product.id} action={ deleteProduct} />
                 </TableCell>
               </TableRow>
             ))}

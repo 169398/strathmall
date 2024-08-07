@@ -4,14 +4,14 @@ import ProductPrice from '@/components/shared/product/product-price'
 import QuickViewModalWrapper from '@/components/shared/product/quickview-modal-wrapper'
 import Rating from '@/components/shared/product/rating'
 import { getMyCart } from '@/lib/actions/sellercart.actions'
-import { getSellerProductBySlug } from '@/lib/actions/sellerproduct.actions'
+import { getProductBySlug } from '@/lib/actions/sellerproduct.actions'
 import { notFound } from 'next/navigation'
 import ReloadButton from './reload-button'
 
 export default async function StorefrontProductQuickView(props: {
   params: { slug: string }
 }) {
-  const product = await getSellerProductBySlug(props.params.slug)
+  const product = await getProductBySlug(props.params.slug)
   if (!product) return notFound()
   const cart = await getMyCart()
   return (
@@ -38,7 +38,7 @@ export default async function StorefrontProductQuickView(props: {
                 <AddToCart
                   cart={cart}
                   item={{
-                    sellerProductId: product.id,
+                    productId: product.id,
                     name: product.name,
                     slug: product.slug,
                     price: Number(product.price),
