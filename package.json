@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "email": "cp .env.local ./node_modules/react-email && email dev --dir email --port 3001"
+    "email": "cp .env.local ./node_modules/react-email && email dev --dir email --port 3001",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
