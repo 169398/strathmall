@@ -13,6 +13,7 @@ import { sellers } from "@/db/schema";
 import { z } from "zod";
 import { eq } from "drizzle-orm/sql";
 import { revalidatePath } from "next/cache";
+import { sendCongratulatoryEmail } from "@/emailcongrats";
 
 // SELLER
 export async function createSeller(prevState: unknown, formData: FormData) {
@@ -25,7 +26,6 @@ export async function createSeller(prevState: unknown, formData: FormData) {
     console.log("Data received in createSeller:", data); // Debug log
 
     const seller = createSellerSchema.parse(data);
-   //TO DO   check if the shopname already exists
     const session = await auth();
     if (!session) throw new Error("User not authenticated");
     const values = {
@@ -34,6 +34,18 @@ export async function createSeller(prevState: unknown, formData: FormData) {
       ...seller,
     };
     await db.insert(sellers).values(values);
+
+//send email to seller
+const queriedSeller = await db.query.sellers.findFirst({
+  where: (sellers, { eq }) => eq(sellers.id, values.id),
+});
+if (!queriedSeller){
+  throw new Error("Seller not found");
+}
+await sendCongratulatoryEmail({
+  seller: queriedSeller,
+});
+
     return { success: true, message: "Shop created successfully" };
   } catch (error) {
     return {

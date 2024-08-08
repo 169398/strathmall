@@ -35,7 +35,7 @@ export default function SignUpForm() {
           <Input
             id="name"
             name="name"
-            placeholder="John Doe"
+            placeholder="Your name"
             required
             type="text"
             defaultValue={signUpDefaultValues.name}
