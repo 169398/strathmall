@@ -76,7 +76,7 @@ export default function PurchaseReceiptEmail({ order }: OrderInformationProps) {
         <Body className="font-sans bg-white">
           <Container className="max-w-xl p-4 md:p-6 bg-blue-50 rounded-lg shadow-md">
             <Heading className="text-blue-600 text-3xl font-bold mb-4">
-              📦 Purchase Receipt 🧾
+               Purchase Receipt 🧾
             </Heading>
             <Section>
               <Row>

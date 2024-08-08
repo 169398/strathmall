@@ -13,7 +13,7 @@ export const sendCongratulatoryEmail = async ({
   const res = await resend.emails.send({
     from: SENDER_EMAIL,
     to: seller.email,
-    subject: "🎉 Congratulations on setting up your shop!",
+    subject: "🎉 Congratulations on setting up your shop",
     react: <CongratulationsEmail  seller={seller} />,
   });
   console.log(res);

@@ -47,7 +47,7 @@ export default function CongratulationsEmail({
             <Section className="mt-6 text-center">
               <Text className="text-sm text-gray-500">
                 Thank you for choosing StrathMall. We&apos;re looking forward to
-                seeing your shop thrive🚀 and grow 🤗
+                seeing your shop thrive and grow 🤗
               </Text>
               <Text className="text-sm text-gray-500 mt-2">Best regards,</Text>
               <Text className="text-sm text-gray-500">The StrathMall Team</Text>
