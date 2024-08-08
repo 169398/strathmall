@@ -131,7 +131,7 @@ export async function getAllSellerOrders({
 }
 
 // CREATE
-export const createSellerOrder = async () => {
+export const createOrder = async () => {
   try {
     const session = await auth();
     if (!session) throw new Error("User is not authenticated");
@@ -157,6 +157,7 @@ export const createSellerOrder = async () => {
           price: item.price.toFixed(2),
           orderId: insertedOrder[0].id,
           sellerId: user.id,
+
         });
       }
       await db
@@ -178,12 +179,12 @@ export const createSellerOrder = async () => {
     }
     return { success: false, message: formatError(error) };
   }
-}
+};
 
 // GET
-export async function getOrderById(sellerOrderId: string) {
+export async function getOrderById(orderId: string) {
   return await db.query.orders.findFirst({
-    where: eq(orders.id, sellerOrderId),
+    where: eq(orders.id, orderId),
     with: {
       orderItems: true,
       user: { columns: { name: true, email: true } },
