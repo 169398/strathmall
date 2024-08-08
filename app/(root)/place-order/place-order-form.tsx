@@ -4,10 +4,10 @@ import { Check, Loader } from "lucide-react";
 import { useFormState, useFormStatus } from "react-dom";
 
 import { Button } from "@/components/ui/button";
-import { createSellerOrder } from "@/lib/actions/sellerorder.actions";
+import { createOrder } from "@/lib/actions/sellerorder.actions";
 
 export default function PlaceOrderForm() {
-  const [data, action] = useFormState(createSellerOrder, {
+  const [data, action] = useFormState(createOrder, {
     success: false,
     message: "",
   });

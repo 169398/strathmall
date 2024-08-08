@@ -148,6 +148,7 @@ export const createOrder = async () => {
       itemsPrice: cart.itemsPrice,
       shippingPrice: cart.shippingPrice,
       totalPrice: cart.totalPrice,
+      sellerId: user.id,
     });
     const insertedOrderId = await db.transaction(async (tx) => {
       const insertedOrder = await tx.insert(orders).values(order).returning();
