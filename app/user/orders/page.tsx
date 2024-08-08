@@ -29,7 +29,7 @@ export default async function OrdersPage({
   searchParams: { page: string };
 }) {
   const session = await auth();
-  if (session?.user.role !== "user")
+  if (session?.user.role !== "user"&&session?.user.role !== "seller")
     throw new Error("user permission required");
   const sellerId = session.user.id || "";
   const orders = await getAllSellerOrders({
