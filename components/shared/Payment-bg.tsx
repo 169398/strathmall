@@ -14,7 +14,7 @@ export function PaymentBg() {
        router.push("/payment");
      };
   return (
-    <div className="w-[calc(100%-4rem)] mx-auto rounded-md  h-[30rem] overflow-hidden">
+    <div className="w-full mx-auto rounded    h-[30rem] overflow-hidden">
       <Vortex
         backgroundColor="black"
         className="flex items-center flex-col justify-center px-2 md:px-10 py-4 w-full h-full"
@@ -22,7 +22,7 @@ export function PaymentBg() {
         <h2 className="text-white text-2xl md:text-6xl font-bold text-center">
           Welcome to {APP_NAME} Seller Community!
         </h2>
-        <p className="text-white text-sm md:text-2xl max-w-xl mt-6 text-auto">
+        <p className="text-white text-sm md:text-2xl max-auto mt-6 text-auto">
           To kickstart your success, we kindly request a one-time onboarding fee
           of 300 KES. This fee enables us to provide you with exceptional
           services and support throughout your selling journey.

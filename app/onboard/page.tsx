@@ -12,7 +12,7 @@ const WelcomeSellerPage = () => {
   return (
     <div className="min-h-screen   flex flex-col">
       {/* Hero Section */}
-      <div className="flex-1 bg-gradient-to-r  container mx-auto  items-center text-center">
+      <div className="flex-1 w-full  container mx-auto  items-center text-center">
        <PaymentBg />
       </div>
 
