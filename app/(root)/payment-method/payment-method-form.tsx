@@ -53,7 +53,6 @@ export default function PaymentMethodForm({
       router.push('/place-order')
     })
   }
-
   return (
     <>
       <CheckoutSteps current={2} />
