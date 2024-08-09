@@ -12,47 +12,65 @@ import {
 } from '../validator'
 import { formatError } from '../utils'
 import { hashSync } from 'bcrypt-ts-edge'
-import db from '@/db/drizzle'
 import { users } from '@/db/schema'
 import { ShippingAddress } from '@/types'
 import { count, desc, eq } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 import { PAGE_SIZE } from '../constants'
+import db from "@/db/drizzle";
+
+import { sendVerificationEmail } from '@/emailverify'
+
+
 
 // USER
+
 export async function signUp(prevState: unknown, formData: FormData) {
-  try {
-    const user = signUpFormSchema.parse({
+
+try {
+
+  const user = signUpFormSchema.parse({
       name: formData.get('name'),
       email: formData.get('email'),
       confirmPassword: formData.get('confirmPassword'),
       password: formData.get('password'),
-    })
+    });
     const values = {
       id: crypto.randomUUID(),
       ...user,
       password: hashSync(user.password, 10),
-    }
-    await db.insert(users).values(values)
-    await signIn('credentials', {
-      email: user.email,
-      password: user.password,
-    })
-    return { success: true, message: 'User created successfully' }
-  } catch (error) {
-    if (isRedirectError(error)) {
-      throw error
-    }
-    return {
+    };
+
+    await db.insert(users).values(values);
+
+ 
+    await sendVerificationEmail({
+      name: "",
+      email: user.email ?? "",
+      password: null,
+      id: "",
+      role: "",
+      emailVerified: null,
+      image: null,
+      address: null,
+      paymentMethod: null,
+      createdAt: null,
+    });
+
+    return { success: true, message: 'User created successfully. Please check your email for verification.' };
+  
+} catch (error) {
+   return {
       success: false,
       message: formatError(error).includes(
-        'duplicate key value violates unique constraint "user_email_idx"'
+        'duplicate key value violates unique constraint "user_email_idx"',
       )
-        ? 'Email  already exist'
+        ? 'Email already exists'
         : formatError(error),
-    }
-  }
+}
+
+}
 }
 export async function signInWithCredentials(
   prevState: unknown,
@@ -212,3 +230,5 @@ export async function updateProfile(user: { name: string; email: string }) {
     return { success: false, message: formatError(error) }
   }
 }
+
+
