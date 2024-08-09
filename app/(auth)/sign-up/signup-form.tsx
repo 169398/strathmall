@@ -1,29 +1,36 @@
-'use client'
-import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
-import { useFormState, useFormStatus } from 'react-dom'
+"use client";
+import Link from "next/link";
+import { useSearchParams, useRouter } from "next/navigation";
+import { useFormState, useFormStatus } from "react-dom";
 
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { signUp } from '@/lib/actions/user.actions'
-import { signUpDefaultValues } from '@/lib/constants'
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { signUp } from "@/lib/actions/user.actions";
+import { signUpDefaultValues } from "@/lib/constants";
 
 export default function SignUpForm() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl") || "/";
+
   const [data, action] = useFormState(signUp, {
     success: false,
-    message: '',
-  })
-  const searchParams = useSearchParams()
-  const callbackUrl = searchParams.get('callbackUrl') || '/'
+    message: "",
+  });
 
   const SignUpButton = () => {
-    const { pending } = useFormStatus()
+    const { pending } = useFormStatus();
     return (
       <Button disabled={pending} className="w-full" variant="default">
-        {pending ? 'Submitting...' : 'Sign Up'}
+        {pending ? "Submitting..." : "Sign Up"}
       </Button>
-    )
+    );
+  };
+
+  // Redirect to the verification page if sign up is successful
+  if (data.success) {
+    router.push(`/verify-email?email=${signUpDefaultValues.email}`);
   }
 
   return (
@@ -80,7 +87,7 @@ export default function SignUpForm() {
           <div className="text-center text-destructive">{data.message}</div>
         )}
         <div className="text-sm text-center text-muted-foreground">
-          Already have an account?{' '}
+          Already have an account?{" "}
           <Link
             target="_self"
             className="link"
@@ -91,5 +98,5 @@ export default function SignUpForm() {
         </div>
       </div>
     </form>
-  )
+  );
 }
