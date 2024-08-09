@@ -28,7 +28,7 @@ export async function sendVerificationEmail(
     expires: addMinutes(new Date(), 60),
   });
 
-const verificationLink = `${baseUrl}/verify-email?identifier=${user.email}&token=${verificationToken}`;
+const verificationLink = `${baseUrl}/verify-mail?identifier=${user.email}&token=${verificationToken}`;
 
   const resend = new Resend(process.env.RESEND_API_KEY as string);
 
