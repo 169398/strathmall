@@ -1,15 +1,23 @@
-'use client'
-export default function VerificationPage() {
+"use client";
+
+import Image from "next/image";
+
+
+
+export default function VerificationPage( ){
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
-      <h1 className="text-2xl font-bold">Check Your Email</h1>
-      <p className="mt-4 text-lg">
-        A verification link has been sent to <strong>{}</strong>.
-      </p>
-      <p className="mt-2 text-lg">
-        Please check your inbox and click the link to verify your email address.
-      </p>
+    <div className="flex  flex-col items-center bg-blue-10 justify-center h-screen">
+      <div className="relative mb-4 h-60 w-60 text-muted-foreground">
+        <Image src="/emails-sent.png" fill alt=" email sent image" />
+      </div>
+
+      <h3 className="font-semibold text-2xl">Check your email</h3>
+ 
+        <p className="text-muted-foreground text-center">
+          We&apos;ve sent a verification link to your email.
+        </p>
+      
     </div>
   );
 }
