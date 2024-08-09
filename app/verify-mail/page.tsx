@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import db from "@/db/drizzle";
 import { verificationTokens, users } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 
 export default async function VerifyEmailPage({
   searchParams,
@@ -28,8 +28,12 @@ export default async function VerifyEmailPage({
   const verificationToken = await db
     .select()
     .from(verificationTokens)
-    .where(eq(verificationTokens.identifier, identifier))
-    .where(eq(verificationTokens.token, token))
+    .where(
+      and(
+        eq(verificationTokens.identifier, identifier),
+        eq(verificationTokens.token, token)
+      )
+    )
     .limit(1);
 
   if (verificationToken.length > 0) {
@@ -42,8 +46,12 @@ export default async function VerifyEmailPage({
     // Remove the used token
     await db
       .delete(verificationTokens)
-      .where(eq(verificationTokens.identifier, identifier))
-      .where(eq(verificationTokens.token, token));
+      .where(
+        and(
+          eq(verificationTokens.identifier, identifier),
+          eq(verificationTokens.token, token)
+        )
+      );
 
     // Redirect to the verification success page
     redirect("/verify-email/success");
