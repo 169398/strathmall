@@ -1,11 +1,16 @@
 import { Metadata } from "next"
+import { toast } from "react-toastify"
+
+
+
 
 const base = process.env.PAYPAL_API_URL || 'https://api-m.sandbox.paypal.com'
 
 
 
-
 export const paypal = {
+
+
   createOrder: async function createOrder(price: number) {
      const conversionRate = 0.0074103;
     const convertedPrice = (price * conversionRate).toFixed(2);
@@ -48,6 +53,7 @@ export const paypal = {
 }
 
 async function generateAccessToken() {
+
   const { PAYPAL_CLIENT_ID, PAYPAL_APP_SECRET } = process.env
   const auth = Buffer.from(PAYPAL_CLIENT_ID + ':' + PAYPAL_APP_SECRET).toString(
     'base64'
@@ -65,11 +71,15 @@ async function generateAccessToken() {
 }
 
 async function handleResponse(response: any) {
+
+
+
   if (response.status === 200 || response.status === 201) {
     return response.json()
   }
 
   const errorMessage = await response.text()
+  toast('Payment was not successful.Please check your details and account balance and try again')
   throw new Error(errorMessage)
 }
 
