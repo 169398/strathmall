@@ -1,30 +1,46 @@
 import { Metadata } from "next"
 
 const base = process.env.PAYPAL_API_URL || 'https://api-m.sandbox.paypal.com'
+async function fetchExchangeRate(): Promise<number> {
+  const exchangeRateAPI = "https://api.exchangerate-api.com/v4/latest/KES"; 
+  const response = await fetch(exchangeRateAPI);
+  const data = await response.json();
+
+  if (!data || !data.rates || !data.rates.USD) {
+    throw new Error("Failed to fetch exchange rate");
+  }
+
+  return data.rates.USD; 
+}
+
+
 
 export const paypal = {
   createOrder: async function createOrder(price: number) {
-    const accessToken = await generateAccessToken()
-    const url = `${base}/v2/checkout/orders`
+    const exchangeRate = await fetchExchangeRate();
+    const convertedPrice = (price * exchangeRate).toFixed(2);
+
+    const accessToken = await generateAccessToken();
+    const url = `${base}/v2/checkout/orders`;
     const response = await fetch(url, {
-      method: 'post',
+      method: "post",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         Authorization: `Bearer ${accessToken}`,
       },
       body: JSON.stringify({
-        intent: 'CAPTURE',
+        intent: "CAPTURE",
         purchase_units: [
           {
             amount: {
-              currency_code: 'USD',
-              value: price,
+              currency_code: "USD",
+              value: convertedPrice,
             },
           },
         ],
       }),
-    })
-    return handleResponse(response)
+    });
+    return handleResponse(response);
   },
   capturePayment: async function capturePayment(orderId: string) {
     const accessToken = await generateAccessToken()
