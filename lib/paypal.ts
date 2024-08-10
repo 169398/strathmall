@@ -1,24 +1,14 @@
 import { Metadata } from "next"
 
 const base = process.env.PAYPAL_API_URL || 'https://api-m.sandbox.paypal.com'
-async function fetchExchangeRate(): Promise<number> {
-  const exchangeRateAPI = "https://api.exchangerate-api.com/v4/latest/KES"; 
-  const response = await fetch(exchangeRateAPI);
-  const data = await response.json();
 
-  if (!data || !data.rates || !data.rates.USD) {
-    throw new Error("Failed to fetch exchange rate");
-  }
-
-  return data.rates.USD; 
-}
 
 
 
 export const paypal = {
   createOrder: async function createOrder(price: number) {
-    const exchangeRate = await fetchExchangeRate();
-    const convertedPrice = (price * exchangeRate).toFixed(2);
+     const conversionRate = 0.0074103;
+    const convertedPrice = (price * conversionRate).toFixed(2);
 
     const accessToken = await generateAccessToken();
     const url = `${base}/v2/checkout/orders`;
