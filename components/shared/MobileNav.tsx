@@ -1,5 +1,6 @@
 import Search from "./header/search";
 import Header from "./header";
+import Alert from "./NavbarAlert";
 
 export default function MobileNav() {
   return (
@@ -8,7 +9,7 @@ export default function MobileNav() {
         <div className="h-8 w-full max-w-xs text-sm">
           <Search />
         </div>
-
+        <Alert />
         <Header />
       </div>
     </div>

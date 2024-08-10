@@ -9,7 +9,7 @@ import {
   DrawerTrigger,
 } from '@/components/ui/drawer';
 import { Button } from '@/components/ui/button';
-import { MenuIcon, XIcon } from 'lucide-react'; // Import XIcon
+import { MenuIcon, X } from 'lucide-react'; // Import XIcon
 import { getAllCategories } from '@/lib/actions/sellerproduct.actions';
 
 const Header = async () => {
@@ -21,9 +21,8 @@ const Header = async () => {
         <div className="flex-start">
           <Drawer direction="left">
             <DrawerTrigger asChild>
-              <Button variant="outline">
-                <MenuIcon />
-              </Button>
+                <MenuIcon color='blue'className='cursor-pointer' />
+              
             </DrawerTrigger>
             <DrawerContent className="h-full max-w-xs  ">
               <DrawerHeader>
@@ -31,7 +30,7 @@ const Header = async () => {
                   <DrawerTitle>Select a category</DrawerTitle>
                   <DrawerClose asChild>
                     <Button variant="outline" className="p-1">
-                      <XIcon className="h-6 w-6" />
+                      <X className="h-6 w-6 " color='blue' />
                     </Button>
                   </DrawerClose>
                 </div>
