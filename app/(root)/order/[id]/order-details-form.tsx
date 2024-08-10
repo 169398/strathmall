@@ -212,7 +212,7 @@ export default function OrderDetailsForm({
                         <span className="px-2">{item.qty}</span>
                       </TableCell>
                       <TableCell className="text-right">
-                        ${item.price}
+                        ksh{item.price}
                       </TableCell>
                     </TableRow>
                   ))}
