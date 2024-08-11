@@ -35,7 +35,7 @@ const verificationLink = `${baseUrl}/verify-mail?identifier=${user.email}&token=
   await resend.emails.send({
     from: SENDER_EMAIL,
     to: user.email,
-    subject: "Verify your email💌",
+    subject: "Verify your email",
     react: (
       <VerificationEmail user={user} verificationLink={verificationLink} />
     ),
