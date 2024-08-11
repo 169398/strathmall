@@ -21,6 +21,8 @@ export async function sendVerificationEmail(
         : "http://localhost:3000";
         
   const verificationToken = crypto.randomUUID();
+  
+  
 
   await db.insert(verificationTokens).values({
     identifier: user.email,

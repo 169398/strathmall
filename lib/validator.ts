@@ -137,10 +137,22 @@ export const insertOrderItemSchema = createInsertSchema(orderItems, {
   price: z.number(),
 });
 
+
 export const createSellerSchema = z.object({
   shopName: z.string().min(3, "Shop name must be at least 3 characters"),
-  email: z.string().email("Invalid email address"),
-  phoneNumber: z.string().min(10, "Phone number must be at least 10 digits"),
+  email: z
+    .string()
+    .email("Invalid email address")
+    .regex(
+      /^[\w.%+-]+@strathmore\.edu$/,
+      "Email must be a Strathmore University email"
+    ),
+  phoneNumber: z
+    .string()
+    .regex(
+      /^(01|07|\+254)\d{8}$/,
+      "Phone number must start with 01, 07, or +254 and be followed by 8 digits"
+    ),
 });
 
 export const updateSellerSchema = createSellerSchema.extend({
