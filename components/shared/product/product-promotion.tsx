@@ -51,10 +51,10 @@ const ProductPromotion = () => {
       <div className="flex flex-col gap-2 justify-center">
         <h3 className="text-3xl font-bold">Deals of the Month</h3>
         <p>
-          Get ready for a shopping experience like never before with our Deals
-          of the Month! Every purchase comes with exclusive perks and offers,
-          making this month a celebration of savvy choices and amazing deals.
-          Don&apos;t miss out! 🎁🛒
+          Score amazing discounts on your campus essentials, plus enjoy
+          exclusive perks with every purchase. It&apos;s time to celebrate smart
+          shopping and unbeatable savings, only at Strathmall! Don&apos;t miss out on
+          this month&apos;s incredible offers. 🎁🛒
         </p>
 
         <ul className="grid grid-cols-4">
@@ -79,7 +79,7 @@ const ProductPromotion = () => {
         />
       </div>
     </section>
-  )
+  );
 }
 
 const StatBox = ({ label, value }: { label: string; value: number }) => (
