@@ -8,6 +8,20 @@
       "when": 1723040051840,
       "tag": "0000_clever_luke_cage",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1723484043193,
+      "tag": "0001_fast_misty_knight",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1723485749411,
+      "tag": "0002_gigantic_night_nurse",
+      "breakpoints": true
     }
   ]
 }

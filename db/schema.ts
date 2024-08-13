@@ -49,6 +49,21 @@ export const sellers = pgTable("sellerShop", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
+//PAYMENTS
+
+export const fees = pgTable("fees", {
+  id: uuid("id").defaultRandom().primaryKey().notNull(),
+  sellerId: uuid("sellerId")
+    .notNull()
+    .references(() => sellers.id, { onDelete: "cascade" }), // Foreign key to sellerShop table
+  amount: integer("amount").notNull(),
+  paymentMethod: text("paymentMethod").notNull(),
+  paymentResult: json("paymentResult"),
+  status: text("status").default("pending").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
+});
+
 // ACCOUNTS
 export const accounts = pgTable(
   "account",
@@ -207,6 +222,8 @@ export const ordersRelations = relations(
     user: one(users, { fields: [orders.userId], references: [users.id] }),
   })
 );
+
+
 
 // SELLER ORDER ITEMS
 export const orderItems = pgTable("orderItems", {
