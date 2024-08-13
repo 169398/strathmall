@@ -3,9 +3,9 @@ import { toast } from "@/components/ui/use-toast";
 const base = process.env.PAYPAL_API_URL || "https://api-m.sandbox.paypal.com";
 
 export const paypal = {
-  createOrder: async function createOrder(fee: number) {
+  createOrder: async function createOrder(totalAmount: number) {
     const conversionRate = 0.0074103;
-    const convertedPrice = (fee * conversionRate).toFixed(2);
+    const convertedPrice = (totalAmount * conversionRate).toFixed(2);
 
     const accessToken = await generateAccessToken();
     const url = `${base}/v2/checkout/orders`;
@@ -31,7 +31,7 @@ export const paypal = {
   },
   capturePayment: async function capturePayment(orderId: string) {
     const accessToken = await generateAccessToken();
-    const url = `${base}/v2/checkout/orders/${orderId}/capture`;
+    const url = `${base}/v2/checkout/feeorders/${orderId}/capture`;
     const response = await fetch(url, {
       method: "post",
       headers: {

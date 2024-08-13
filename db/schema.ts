@@ -1,4 +1,4 @@
-import { CartItem, PaymentResult, ShippingAddress } from "@/types";
+import { CartItem, feeResult, PaymentResult, ShippingAddress } from "@/types";
 
 import { relations } from "drizzle-orm";
 import {
@@ -49,40 +49,56 @@ export const sellers = pgTable("sellerShop", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
-//PAYMENTS
 
-export const fees = pgTable("fees", {
+export const feeorders = pgTable("feeorder", {
   id: uuid("id").defaultRandom().primaryKey().notNull(),
+  userId: uuid("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
   sellerId: uuid("sellerId")
     .notNull()
-    .references(() => users.id, { onDelete: "cascade" }), // Foreign key to sellerShop table
-  amount: integer("amount").notNull(),
+    .references(() => users.id, { onDelete: "cascade" }),
   paymentMethod: text("paymentMethod").notNull(),
-  paymentResult: json("paymentResult").$type<PaymentResult>(),
-  status: text("status").default("pending").notNull(),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
-});
-
-//fees order
-export const feesorder = pgTable("feesorder", {
-  id: uuid("id").defaultRandom().primaryKey().notNull(),
-  feeId: uuid("feeId")
-    .notNull()
-    .references(() => fees.id, { onDelete: "cascade" }), // Foreign key to fees table
-  orderId: text("orderId").notNull(), // Order ID to be provided to PayPal
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  paymentResult: json("paymentResult").$type<feeResult>(),
+  totalAmount: numeric("totalAmount", { precision: 12, scale: 2 }).notNull(),
   isPaid: boolean("isPaid").notNull().default(false),
   paidAt: timestamp("paidAt"),
+  createdAt: timestamp("createdAt").notNull().defaultNow(),
 });
 
-//fees order relations
-export const feesorderRelations = relations(feesorder, ({ one }) => ({
-  fee: one(fees, {
-    fields: [feesorder.feeId],
-    references: [fees.id],
+export const feeordersRelations = relations(feeorders, ({ one, many }) => ({
+  feeorderItems: many(feeorderItems),
+  user: one(users, { fields: [feeorders.userId], references: [users.id] }),
+  seller: one(sellers, {
+    fields: [feeorders.sellerId],
+    references: [sellers.id],
   }),
 }));
+
+export const feeorderItems = pgTable(
+  "feeorderItems",
+  {
+    orderId: uuid("orderId")
+      .notNull()
+      .references(() =>feeorders.id, { onDelete: "cascade" }),
+    description: text("description").notNull(),
+    totalAmount: numeric("totalAmount", { precision: 12, scale: 2 }).notNull(),
+  },
+  (feeorderItem) => ({
+    compoundKey: primaryKey({
+      columns: [feeorderItem.orderId, feeorderItem.description],
+    }),
+  })
+);
+
+export const feeorderItemsRelations = relations(feeorderItems, ({ one }) => ({
+  feeorder: one(feeorders, {
+    fields: [feeorderItems.orderId],
+    references: [feeorders.id],
+  }),
+}));
+
+
 // ACCOUNTS
 export const accounts = pgTable(
   "account",

@@ -1,17 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import { Vortex } from "../ui/vortex";
 import { APP_NAME } from "@/lib/constants";
 import { useRouter } from "next/navigation";
-import { createFee } from "@/lib/actions/onboarding.actions";
+import { createOrder } from "@/lib/actions/onboarding.actions";
 import { toast } from "../ui/use-toast";
 
 export function PaymentBg() {
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const handleProceedToPayment = async () => {
+    setIsLoading(true);
     try {
       // Create the fee record
-      const response = await createFee();
+      const response = await createOrder();
       if (response.success) {
         // Redirect to the payment page if fee creation is successful
         router.push("/payment");
@@ -19,12 +21,15 @@ export function PaymentBg() {
         // Handle error if fee creation fails
         console.error("Error creating fee:", response.message);
         toast({
-          description: response.message,
+          description: "An unexpected error occurred. Please try again later.",
           variant: "destructive",
-        })
+        });
       }
     } catch (error) {
       console.error("Error:", error);
+      
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -45,9 +50,10 @@ export function PaymentBg() {
         <div className="flex flex-col sm:flex-row items-center gap-4 mt-6">
           <button
             onClick={handleProceedToPayment}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 transition duration-200 rounded-lg text-white shadow-[0px_2px_0px_0px_#FFFFFF40_inset]"
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 transition duration-200 rounded-lg text-white shadow-[0px_2px_0px_0px_#FFFFFF40_inset] disabled:opacity-50"
+            disabled={isLoading}
           >
-            Proceed to Payment
+            {isLoading ? "Processing..." : "Proceed to Payment"}
           </button>
         </div>
       </Vortex>

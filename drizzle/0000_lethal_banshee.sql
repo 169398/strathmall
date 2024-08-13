@@ -24,6 +24,25 @@ CREATE TABLE IF NOT EXISTS "cart" (
 	"createdAt" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "feeorderItems" (
+	"orderId" uuid NOT NULL,
+	"description" text NOT NULL,
+	"totalAmount" numeric(12, 2) NOT NULL,
+	CONSTRAINT "feeorderItems_orderId_description_pk" PRIMARY KEY("orderId","description")
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "feeorder" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"userId" uuid NOT NULL,
+	"sellerId" uuid NOT NULL,
+	"paymentMethod" text NOT NULL,
+	"paymentResult" json,
+	"totalAmount" numeric(12, 2) NOT NULL,
+	"isPaid" boolean DEFAULT false NOT NULL,
+	"paidAt" timestamp,
+	"createdAt" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "orderItems" (
 	"orderId" uuid NOT NULL,
 	"productId" uuid NOT NULL,
@@ -126,6 +145,24 @@ END $$;
 --> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "cart" ADD CONSTRAINT "cart_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "feeorderItems" ADD CONSTRAINT "feeorderItems_orderId_feeorder_id_fk" FOREIGN KEY ("orderId") REFERENCES "public"."feeorder"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "feeorder" ADD CONSTRAINT "feeorder_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "feeorder" ADD CONSTRAINT "feeorder_sellerId_sellerShop_id_fk" FOREIGN KEY ("sellerId") REFERENCES "public"."sellerShop"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

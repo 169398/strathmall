@@ -1,49 +1,157 @@
 "use server";
 import { auth } from "@/auth";
+import { getUserById } from "./user.actions";
 import { redirect } from "next/navigation";
-import { insertFeeSchema } from "../validator";
+import { insertFeeOrderSchema } from "../validator";
 
 import db from "@/db/drizzle";
-import { eq, and } from "drizzle-orm";
+
+import { count, desc, eq, sql, sum, and } from "drizzle-orm";
+import { isRedirectError } from "next/dist/client/components/redirect";
 import { formatError } from "../utils";
 import { revalidatePath } from "next/cache";
-import { sendPaymentReceipt } from "@/emails";
-import { fees, feesorder } from "@/db/schema";
-import { PaymentResult } from "@/types";
-import { isRedirectError } from "next/dist/client/components/redirect";
+import { PAGE_SIZE } from "../constants";
+import {  feeorderItems, feeorders,    } from "@/db/schema";
+import { feeResult } from "@/types";
+import { sendPurchaseReceipt } from "@/emailonboard";
 import { paypal } from "../onboardpaypal";
 
+export async function getPaidOrderSummary(sellerId: string) {
+  const ordersCount = await db
+    .select({ count: count() })
+    .from(feeorders)
+    .where(eq(feeorders.sellerId, sellerId));
+
+  
+
+  const ordersPrice = await db
+    .select({ sum: sum(feeorders.totalAmount) })
+    .from(feeorders)
+    .where(eq(feeorders.sellerId, sellerId));
+
+  const salesData = await db
+    .select({
+      months: sql<string>`to_char(${feeorders.createdAt}, 'MM/YY')`,
+      totalSales: sql<number>`sum(${feeorders.totalAmount})`.mapWith(Number),
+    })
+    .from(feeorders)
+    .where(eq(feeorders.sellerId, sellerId))
+    .groupBy(sql`to_char(${feeorders.createdAt}, 'MM/YY')`);
+
+  const latestOrders = await db.query.feeorders.findMany({
+    where: eq(feeorders.sellerId, sellerId),
+    orderBy: [desc(feeorders.createdAt)],
+    with: {
+      user: { columns: { name: true } },
+    },
+    limit: 6,
+  });
+
+  return {
+    ordersCount: ordersCount[0]?.count || 0,
+    ordersPrice: ordersPrice[0]?.sum || 0,
+    salesData,
+    latestOrders,
+  };
+}
+
+export async function getOrderSummary(sellerId: string) {
+  const ordersCount = await db
+    .select({ count: count() })
+    .from(feeorders)
+    .where(eq(feeorders.sellerId, sellerId));
+
+
+  const ordersPrice = await db
+    .select({ sum: sum(feeorders.totalAmount) })
+    .from(feeorders);
+
+  const salesData = await db
+    .select({
+      months: sql<string>`to_char(${feeorders.createdAt},'MM/YY')`,
+      totalSales: sql<number>`sum(${feeorders.totalAmount})`.mapWith(Number),
+    })
+    .from(feeorders)
+    .groupBy(sql`1`);
+
+  const latestOrders = await db.query.feeorders.findMany({
+    orderBy: [desc(feeorders.createdAt)],
+    with: {
+      user: { columns: { name: true } },
+    },
+    limit: 6,
+  });
+  return {
+    ordersCount,
+    ordersPrice,
+    salesData,
+    latestOrders,
+  };
+}
+
+export async function getAllSellerOrders({
+  limit = PAGE_SIZE,
+  page,
+  sellerId,
+}: {
+  limit?: number;
+  page: number;
+  sellerId: string;
+}) {
+  const data = await db.query.feeorders.findMany({
+    where: eq(feeorders.sellerId, sellerId),
+    orderBy: [desc(feeorders.createdAt)],
+    limit,
+    offset: (page - 1) * limit,
+    with: { user: { columns: { name: true } } },
+  });
+
+  const dataCount = await db
+    .select({ count: count() })
+    .from(feeorders)
+    .where(eq(feeorders.sellerId, sellerId));
+
+  return {
+    data,
+    totalPages: Math.ceil(dataCount[0].count / limit),
+  };
+}
+
 // CREATE
-export const createFee = async () => {
+export const createOrder = async () => {
   try {
+    const totalAmount= 300;
     const session = await auth();
-    if (!session) throw new Error("User is not authenticated");
+    const user = await getUserById(session?.user.id!);
 
-    const userId = session.user.id!;
-    const amount = 300; // Static price
+    const order = insertFeeOrderSchema.parse({
+      userId: user.id,
+      paymentMethod:'PayPal',
+      totalAmount:totalAmount.toString(),
+      sellerId: user.id,
+    
 
-    const fee = insertFeeSchema.parse({
-      userId,
-      amount,
-      sellerId: userId,
-      paymentMethod: "paypal",
     });
-
-    const insertedFeeId = await db.transaction(async (tx) => {
-      const insertedFee = await tx.insert(fees).values(fee).returning();
-
-      // Generate a unique orderId
-      const orderId = generateUniqueOrderId();
-
-      await tx.insert(feesorder).values({
-        feeId: insertedFee[0].id,
-        orderId,
-      });
-
-      return insertedFee[0].id;
+    const insertedOrderId = await db.transaction(async (tx) => {
+      const insertedOrder = await tx.insert(feeorders).values(order).returning();
+      
+        await tx.insert(feeorderItems).values({
+          orderId: insertedOrder[0].id,
+          description: "Payment for order",
+          totalAmount: totalAmount.toFixed(2),
+        });
+      
+      await db
+        .update(feeorders)
+        .set({
+          totalAmount: "0",
+          sellerId: user.id,
+          userId: user.id,
+        })
+        .where(eq(feeorders.id, feeorders.id));
+      return insertedOrder[0].id;
     });
-
-    if (!insertedFeeId) throw new Error("Fee not created");
+    if (!insertedOrderId) throw new Error("Order not created");
     redirect(`/payment`);
   } catch (error) {
     if (isRedirectError(error)) {
@@ -52,157 +160,168 @@ export const createFee = async () => {
     return { success: false, message: formatError(error) };
   }
 };
-
-// GET
-export async function getFeeById(feeId: string) {
-  return await db.query.fees.findFirst({
-    where: eq(fees.id, feeId),
+export async function getOrderById(orderId: string) {
+  return await db.query.feeorders.findFirst({
+    where: eq(feeorders.id, orderId),
     with: {
+      feeorderItems: true,
       user: { columns: { name: true, email: true } },
     },
   });
 }
-
 // DELETE
-export async function deleteFee(id: string, userId: string) {
+export async function deleteFeeOrder(id: string, sellerId: string) {
   try {
-    const feeExists = await db.query.fees.findFirst({
-      where: and(eq(fees.id, id), eq(fees.sellerId, userId)),
+    const orderExists = await db.query.feeorders.findFirst({
+      where: and(eq(feeorders.id, id), eq(feeorders.sellerId, sellerId)),
     });
-    if (!feeExists) throw new Error("Fee not found");
-    await db.delete(fees).where(eq(fees.id, id));
-    revalidatePath("/user/fees");
+    if (!orderExists) throw new Error("Order not found");
+    await db.delete(feeorders).where(eq(feeorders.id, id));
+    revalidatePath("/seller/feeorders");
     return {
       success: true,
-      message: "Fee deleted successfully",
+      message: "Payment deleted successfully",
     };
   } catch (error) {
     return { success: false, message: formatError(error) };
   }
 }
 
-// UPDATE
-export async function createPayPalFee(feeId: string) {
+
+//CREATE PAYPAL ORDER
+export async function createPayPalOrder(orderId: string) {
   try {
-    const fee = await db.query.fees.findFirst({
-      where: eq(fees.id, feeId),
+    const order = await db.query.feeorders.findFirst({
+      where: eq(feeorders.id, orderId),
     });
-    if (fee) {
-      const paypalOrder = await paypal.createOrder(fee.amount);
+    if (order) {
+      const paypalOrder = await paypal.createOrder(Number(order.totalAmount));
       await db
-        .update(fees)
+        .update(feeorders)
         .set({
           paymentResult: {
             id: paypalOrder.id,
             email_address: "",
             status: "",
-            pricePaid: "0",
+            totalAmount: "0",
           },
         })
-        .where(eq(fees.id, feeId));
+        .where(eq(feeorders.id, orderId));
       return {
         success: true,
         message: "PayPal order created successfully",
         data: paypalOrder.id,
       };
     } else {
-      throw new Error("Fee not found");
+      throw new Error("Order not found");
     }
   } catch (err) {
     return { success: false, message: formatError(err) };
   }
 }
+//APPROVE PAYPAL ORDER
 
-export async function approvePayPalFee(
-  feeId: string,
+
+export async function approvePayPalOrder(
+  orderId: string,
   data: { orderID: string }
 ) {
   try {
-    const fee = await db.query.fees.findFirst({
-      where: eq(fees.id, feeId),
+    const order = await db.query.feeorders.findFirst({
+      where: eq(feeorders.id, orderId),
     });
-    if (!fee) throw new Error("Fee not found");
+    if (!order) throw new Error("Order not found");
 
     const captureData = await paypal.capturePayment(data.orderID);
     if (
       !captureData ||
-      captureData.id !== fee.paymentResult?.id ||
+      captureData.id !== order.paymentResult?.id ||
       captureData.status !== "COMPLETED"
     )
-      throw new Error("Error in PayPal payment");
-
-    await updateFeeToPaid({
-      feeId,
-      paymentResult: {
+      throw new Error("Error in paypal payment");
+    await updateOrderToPaid({
+      orderId,
+      feeResult: {
         id: captureData.id,
         status: captureData.status,
         email_address: captureData.payer.email_address,
-        pricePaid:
+        totalAmount:
           captureData.purchase_units[0]?.payments?.captures[0]?.amount?.value,
       },
     });
-    revalidatePath(`/user/fee/${feeId}`);
+    revalidatePath(`/order/${orderId}`);
     return {
       success: true,
-      message: "Your fee has been successfully paid via PayPal",
+      message: "Your order has been successfully paid by PayPal",
     };
   } catch (err) {
     return { success: false, message: formatError(err) };
   }
 }
 
-export const handleDeleteFee = async (id: string) => {
+export const handleDeleteOrder = async (id: string) => {
   const session = await auth();
-  const userId = session?.user.id || "";
-  return deleteFee(id, userId);
+  const sellerId = session?.user.id || "";
+  return deleteFeeOrder(id, sellerId);
 };
 
-export const updateFeeToPaid = async ({
-  feeId,
-  paymentResult,
+export const updateOrderToPaid = async ({
+  orderId,
+  feeResult,
 }: {
-  feeId: string;
-  paymentResult?: PaymentResult;
+  orderId: string;
+  feeResult?: feeResult;
 }) => {
-  const fee = await db.query.fees.findFirst({
-    where: and(eq(fees.id, feeId)),
+  const order = await db.query.feeorders.findFirst({
+    columns: { isPaid: true },
+    where: and(eq(feeorders.id, orderId)),
+    with: { feeorderItems: true },
   });
-  if (!fee) throw new Error("Fee not found");
-
-  await db
-    .update(fees)
-    .set({
-      paymentResult,
-    })
-    .where(eq(fees.id, feeId));
-
-  const updatedFee = await db.query.fees.findFirst({
-    where: eq(fees.id, feeId),
+  if (!order) throw new Error("Order not found");
+  if (order.isPaid) throw new Error("Order is already paid");
+  await db.transaction(async (tx) => {
+    
+    await tx
+      .update(feeorders)
+      .set({
+        isPaid: true,
+        paidAt: new Date(),
+        paymentResult: feeResult,
+      })
+      .where(eq(feeorders.id, orderId));
+  });
+  const updatedOrder = await db.query.feeorders.findFirst({
+    where: eq(feeorders.id, orderId),
     with: {
+      feeorderItems: true,
       user: { columns: { name: true, email: true } },
     },
   });
-  if (!updatedFee) {
-    throw new Error("Fee not found");
+  if (!updatedOrder) {
+    throw new Error("Order not found");
   }
-  await sendPaymentReceipt({
-    fee: updatedFee,
+
+const queriedSeller = await db.query.sellers.findFirst({
+  where: (sellers, { eq }) => eq(sellers.id, sellers.id),
+});
+if (!queriedSeller) {
+  throw new Error("Seller not found");
+}
+
+  await sendPurchaseReceipt({
+    order: updatedOrder,
+    seller: queriedSeller,
+    
   });
 };
-
-export async function updateFeeToPaidByCOD(feeId: string) {
+export async function updateOrderToPaidByCOD(orderId: string) {
   try {
-    await updateFeeToPaid({ feeId });
-    revalidatePath(`/user/fee/${feeId}`);
-    return { success: true, message: "Fee paid successfully" };
+    await updateOrderToPaid({ orderId });
+    revalidatePath(`/sellerOrder/${orderId}`);
+    return { success: true, message: "Order paid successfully" };
   } catch (err) {
     return { success: false, message: formatError(err) };
   }
 }
 
 
-
-// Utility function to generate a unique order ID
-function generateUniqueOrderId(): string {
-  return `order_${Math.random().toString(36).substr(2, 9)}`;
-}
