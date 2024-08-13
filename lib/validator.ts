@@ -158,3 +158,14 @@ export const createSellerSchema = z.object({
 export const updateSellerSchema = createSellerSchema.extend({
   id: z.string().min(1, "Id is required"),
 });
+
+export const insertFeeSchema = z.object({
+  userId: z.string().uuid(),
+  sellerId: z.string().uuid(),
+  amount: z.number().min(300).max(300), 
+  paymentMethod: z.string().min(1), 
+  isPaid: z.boolean().default(false), 
+  paidAt: z.date().optional(), 
+  createdAt: z.date().default(() => new Date()),
+  updatedAt: z.date().default(() => new Date()),
+});

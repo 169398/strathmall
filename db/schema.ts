@@ -55,15 +55,34 @@ export const fees = pgTable("fees", {
   id: uuid("id").defaultRandom().primaryKey().notNull(),
   sellerId: uuid("sellerId")
     .notNull()
-    .references(() => sellers.id, { onDelete: "cascade" }), // Foreign key to sellerShop table
+    .references(() => users.id, { onDelete: "cascade" }), // Foreign key to sellerShop table
   amount: integer("amount").notNull(),
   paymentMethod: text("paymentMethod").notNull(),
-  paymentResult: json("paymentResult"),
+  paymentResult: json("paymentResult").$type<PaymentResult>(),
   status: text("status").default("pending").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
 
+//fees order
+export const feesorder = pgTable("feesorder", {
+  id: uuid("id").defaultRandom().primaryKey().notNull(),
+  feeId: uuid("feeId")
+    .notNull()
+    .references(() => fees.id, { onDelete: "cascade" }), // Foreign key to fees table
+  orderId: text("orderId").notNull(), // Order ID to be provided to PayPal
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  isPaid: boolean("isPaid").notNull().default(false),
+  paidAt: timestamp("paidAt"),
+});
+
+//fees order relations
+export const feesorderRelations = relations(feesorder, ({ one }) => ({
+  fee: one(fees, {
+    fields: [feesorder.feeId],
+    references: [fees.id],
+  }),
+}));
 // ACCOUNTS
 export const accounts = pgTable(
   "account",

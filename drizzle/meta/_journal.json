@@ -22,6 +22,27 @@
       "when": 1723485749411,
       "tag": "0002_gigantic_night_nurse",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1723528415364,
+      "tag": "0003_cute_venus",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1723531996312,
+      "tag": "0004_pale_imperial_guard",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1723533915682,
+      "tag": "0005_medical_phalanx",
+      "breakpoints": true
     }
   ]
 }

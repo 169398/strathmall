@@ -269,7 +269,7 @@ export async function approvePayPalOrder(
           captureData.purchase_units[0]?.payments?.captures[0]?.amount?.value,
       },
     })
-    revalidatePath(`/sellerOrder/${orderId}`)
+    revalidatePath(`/order/${orderId}`)
     return {
       success: true,
       message: 'Your order have successfully paid by PayPal',
