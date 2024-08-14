@@ -1,6 +1,6 @@
 import { toast } from "@/components/ui/use-toast";
 
-const base = process.env.PAYPAL_API_URL || "https://api-m.sandbox.paypal.com";
+const base = process.env.PAYPAL_API_URL || "https://api-m.paypal.com";
 
 export const paypal = {
   createOrder: async function createOrder(totalAmount: number) {

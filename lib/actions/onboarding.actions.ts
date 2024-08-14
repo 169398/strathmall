@@ -15,6 +15,7 @@ import { feeResult } from "@/types";
 import { sendPurchaseReceipt } from "@/emailonboard";
 import { paypal } from "../onboardpaypal";
 
+
 export async function getPaidOrderSummary(sellerId: string) {
   const ordersCount = await db
     .select({ count: count() })
@@ -188,9 +189,11 @@ export async function deleteFeeOrder(id: string, sellerId: string) {
 //CREATE PAYPAL ORDER
 export async function createPayPalOrder(orderId: string) {
   try {
+    console.log("Order ID:", orderId);
     const order = await db.query.feeorders.findFirst({
       where: eq(feeorders.id, orderId),
     });
+    console.log("Order brought:", orderId);
     if (order) {
       const paypalOrder = await paypal.createOrder(Number(order.totalAmount));
       await db
@@ -204,10 +207,14 @@ export async function createPayPalOrder(orderId: string) {
           },
         })
         .where(eq(feeorders.id, orderId));
+      console.log("Order created:", paypalOrder.id);
+
       return {
         success: true,
         message: "PayPal order created successfully",
-        data: paypalOrder.id,
+        data:{
+          paypalOrderId: paypalOrder.id,
+        } 
       };
     } else {
       throw new Error("Order not found");
@@ -223,7 +230,9 @@ export async function approvePayPalOrder(
   orderId: string,
   data: { orderID: string }
 ) {
+
   try {
+    console.log("Order ID:", orderId);
     const order = await db.query.feeorders.findFirst({
       where: eq(feeorders.id, orderId),
     });
@@ -247,6 +256,8 @@ export async function approvePayPalOrder(
       },
     });
     revalidatePath(`/order/${orderId}`);
+
+    console.log("Order approved:", orderId);
     return {
       success: true,
       message: "Your order has been successfully paid by PayPal",
