@@ -22,10 +22,10 @@ export default function PaymentPage() {
   }, [orderId]);
 
   return (
-      <PaymentForm
-        paypalClientId={process.env.PAYPAL_CLIENT_ID || "sb"}
-        orderId={orderId ?? ""}
-      />
-    );
+        <PaymentForm
+          paypalClientId={process.env.PAYPAL_CLIENT_ID || "sb"}
+          orderId={orderId as string}
+        />
+      );
 }
 

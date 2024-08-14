@@ -22,32 +22,58 @@ export default function PaymentForm({
 
   function PrintLoadingState() {
     const [{ isPending, isRejected }] = usePayPalScriptReducer();
-    let status = "";
     if (isPending) {
-      status = "Loading PayPal...";
+      return <div>Loading PayPal...</div>;
     } else if (isRejected) {
-      status = "Error in loading PayPal.";
+      return <div>Error in loading PayPal.</div>;
     }
-    return status;
+    return null;
   }
 
   const handleCreatePayPalOrder = async () => {
-    const res = await createPayPalOrder(orderId);
-    if (!res.success)
-      return toast({
-        description: res.message,
+    try {
+      const res = await createPayPalOrder(orderId);
+      console.log("Response from server:", res);
+
+      if (!res.success) {
+        toast({
+          description: res.message,
+          variant: "destructive",
+        });
+        return null;
+      }
+
+      const paypalOrderId = res.data?.paypalOrderId;
+      if (!paypalOrderId) {
+        throw new Error("PayPal order ID not found in response");
+      }
+
+      return paypalOrderId; // Return PayPal's order ID
+    } catch (error: any) {
+      toast({
+        description: error.message || "Failed to create PayPal order.",
         variant: "destructive",
       });
-     
-    return res.data;
+      return null;
+    }
   };
 
   const handleApprovePayPalOrder = async (data: { orderID: string }) => {
-    const res = await approvePayPalOrder(orderId, data);
-    toast({
-      description: res.message,
-      variant: res.success ? "default" : "destructive",
-    });
+    console.log("Approved PayPal orderID:", data.orderID);
+  
+    try {
+      const res = await approvePayPalOrder(orderId, { orderID: data.orderID });
+  
+      toast({
+        description: res.message,
+        variant: res.success ? "default" : "destructive",
+      });
+    } catch (error) {
+      toast({
+        description: "Failed to approve PayPal order.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -55,23 +81,17 @@ export default function PaymentForm({
       <h2 className="text-xl pb-4">Order Summary</h2>
       <div className="flex justify-between">
         <div>Total</div>
-        <div>{300}</div>
+        <div>300</div>
       </div>
-
-
-      
-        <div>
-          <PayPalScriptProvider options={{ clientId: paypalClientId }}>
-            <PrintLoadingState />
-            <PayPalButtons
-              createOrder={handleCreatePayPalOrder}
-              onApprove={handleApprovePayPalOrder}
-            />
-          </PayPalScriptProvider>
-        </div>
-      
-
-      
+      <div>
+        <PayPalScriptProvider options={{ clientId: paypalClientId }}>
+          <PrintLoadingState />
+          <PayPalButtons
+            createOrder={handleCreatePayPalOrder}
+            onApprove={handleApprovePayPalOrder}
+          />
+        </PayPalScriptProvider>
+      </div>
     </div>
   );
 }
