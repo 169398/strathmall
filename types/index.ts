@@ -32,6 +32,5 @@ export type OrderItem = InferSelectModel<typeof orderItems>
 
 export type feeOrder = InferSelectModel<typeof feeorders> & {
   feeorderItems: feeorderItem[]
-  user: { name: string | null; email: string }
 }
 export type feeorderItem = InferSelectModel<typeof feeorderItems>

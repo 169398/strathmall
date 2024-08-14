@@ -142,7 +142,6 @@ export const createOrder = async () => {
         description: "Payment for order",
         totalAmount: totalAmount.toFixed(2),
       });
-      console.log("Order created:", insertedOrder[0].id);
 
       return insertedOrder[0].id;
     });
@@ -158,9 +157,10 @@ export const createOrder = async () => {
   }
 };
 export async function getOrderById(orderId: string) {
-  console.log("Order brought:", orderId);
+  console.log("orderId", orderId);
+
   return await db.query.feeorders.findFirst({
-    where: eq(feeorders.id, orderId),
+    where: eq(feeorders.id, feeorders.id),
     with: {
       feeorderItems: true,
      
@@ -189,11 +189,9 @@ export async function deleteFeeOrder(id: string, sellerId: string) {
 //CREATE PAYPAL ORDER
 export async function createPayPalOrder(orderId: string) {
   try {
-    console.log("Order ID:", orderId);
     const order = await db.query.feeorders.findFirst({
       where: eq(feeorders.id, orderId),
     });
-    console.log("Order brought:", orderId);
     if (order) {
       const paypalOrder = await paypal.createOrder(Number(order.totalAmount));
       await db
@@ -207,7 +205,6 @@ export async function createPayPalOrder(orderId: string) {
           },
         })
         .where(eq(feeorders.id, orderId));
-      console.log("Order created:", paypalOrder.id);
 
       return {
         success: true,
@@ -232,7 +229,6 @@ export async function approvePayPalOrder(
 ) {
 
   try {
-    console.log("Order ID:", orderId);
     const order = await db.query.feeorders.findFirst({
       where: eq(feeorders.id, orderId),
     });
@@ -257,7 +253,6 @@ export async function approvePayPalOrder(
     });
     revalidatePath(`/order/${orderId}`);
 
-    console.log("Order approved:", orderId);
     return {
       success: true,
       message: "Your order has been successfully paid by PayPal",

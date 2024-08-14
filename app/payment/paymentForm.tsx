@@ -10,30 +10,34 @@ import {
   createPayPalOrder,
   approvePayPalOrder,
 } from "@/lib/actions/onboarding.actions";
+import { feeOrder } from "@/types";
 
 export default function PaymentForm({
   paypalClientId,
-  orderId,
+  order,
 }: {
   paypalClientId: string;
-  orderId: string;
+  order: feeOrder;
 }) {
   const { toast } = useToast();
 
   function PrintLoadingState() {
     const [{ isPending, isRejected }] = usePayPalScriptReducer();
     if (isPending) {
-      return <div>Loading PayPal...</div>;
+      return <div className="text-center text-gray-500">Loading PayPal...</div>;
     } else if (isRejected) {
-      return <div>Error in loading PayPal.</div>;
+      return (
+        <div className="text-center text-red-500">
+          Error in loading PayPal. Please try again later.
+        </div>
+      );
     }
     return null;
   }
 
   const handleCreatePayPalOrder = async () => {
     try {
-      const res = await createPayPalOrder(orderId);
-      console.log("Response from server:", res);
+      const res = await createPayPalOrder(order.id);
 
       if (!res.success) {
         toast({
@@ -59,11 +63,9 @@ export default function PaymentForm({
   };
 
   const handleApprovePayPalOrder = async (data: { orderID: string }) => {
-    console.log("Approved PayPal orderID:", data.orderID);
-  
     try {
-      const res = await approvePayPalOrder(orderId, { orderID: data.orderID });
-  
+      const res = await approvePayPalOrder(order.id, { orderID: data.orderID });
+
       toast({
         description: res.message,
         variant: res.success ? "default" : "destructive",
@@ -75,23 +77,53 @@ export default function PaymentForm({
       });
     }
   };
+return (
+  <div className="payment-page">
+    {/* Hero Section */}
+    <div className="hero-section bg-blue-800 text-white text-center py-8 container">
+      <h1 className="text-4xl font-bold mb-2">Complete Your Payment</h1>
+      <p className="text-lg">
+        Securely pay the onboarding fee to join our marketplace.
+      </p>
+    </div>
 
-  return (
-    <div className="payment-form">
-      <h2 className="text-xl pb-4">Order Summary</h2>
-      <div className="flex justify-between">
-        <div>Total</div>
-        <div>300</div>
+    {/* Payment Form */}
+    <div className="payment-form max-w-lg mx-auto p-4 bg-white shadow-md rounded-md mt-8">
+      <h2 className="text-2xl font-semibold pb-4 text-gray-800">
+        Order Summary
+      </h2>
+      <div className="flex justify-between text-lg mb-4">
+        <div className="font-medium">Total:</div>
+        <div className="font-medium">300 KES</div>
       </div>
       <div>
         <PayPalScriptProvider options={{ clientId: paypalClientId }}>
           <PrintLoadingState />
-          <PayPalButtons
-            createOrder={handleCreatePayPalOrder}
-            onApprove={handleApprovePayPalOrder}
-          />
+          <div className="mt-4">
+            <PayPalButtons
+              createOrder={handleCreatePayPalOrder}
+              onApprove={handleApprovePayPalOrder}
+              style={{
+                layout: "vertical",
+                color: "blue",
+                shape: "pill",
+                label: "pay",
+              }}
+            />
+          </div>
         </PayPalScriptProvider>
+        <span className="text-xs text-blue-300 ">Mpesa coming soon</span>
       </div>
     </div>
-  );
+
+    {/* Footer */}
+    <div className="footer bg-gray-100 text-slate-400 text-center py-4 mt-12">
+      <p className="text-sm">© 2024 Your Marketplace. All rights reserved.</p>
+      <p className="text-sm">
+        Secure and trusted payment processing by PayPal.
+      </p>
+    </div>
+  </div>
+);
 }
+

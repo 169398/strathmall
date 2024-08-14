@@ -23,7 +23,6 @@ export async function createSeller(prevState: unknown, formData: FormData) {
       email: formData.get("email"),
       phoneNumber: formData.get("phoneNumber"),
     };
-    console.log("Data received in createSeller:", data); // Debug log
 
     const seller = createSellerSchema.parse(data);
     const session = await auth();

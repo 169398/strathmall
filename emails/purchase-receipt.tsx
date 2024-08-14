@@ -36,6 +36,7 @@ PurchaseReceiptEmail.PreviewProps = {
       city: "Nairobi",
       postalCode: "10001",
       country: "Kenya",
+      phoneNumber: "0712345678",
     },
     createdAt: new Date(),
     totalPrice: "110",

@@ -2,7 +2,13 @@ import * as z from "zod";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { formatNumberWithDecimal } from "./utils";
 import { PAYMENT_METHODS } from "./constants";
-import { feeorderItems, orderItems, orders, products, reviews } from "@/db/schema";
+import {
+  feeorderItems,
+  orderItems,
+  orders,
+  products,
+  reviews,
+} from "@/db/schema";
 
 // USER
 export const signInFormSchema = z.object({
@@ -81,6 +87,7 @@ export const cartItemSchema = z.object({
 
 export const shippingAddressSchema = z.object({
   fullName: z.string().min(3, "Name must be at least 3 characters"),
+  phoneNumber: z .string().regex(  /^(01|07|\+254)\d{8}$/,"Phone number must start with 01, 07, or +254 and be followed by 8 digits"),
   streetAddress: z.string().min(3, "Address must be at least 3 characters"),
   city: z.string().min(3, "city must be at least 3 characters"),
   postalCode: z.string().min(3, "Postal code must be at least 3 characters"),
@@ -137,7 +144,6 @@ export const insertOrderItemSchema = createInsertSchema(orderItems, {
   price: z.number(),
 });
 
-
 export const createSellerSchema = z.object({
   shopName: z.string().min(3, "Shop name must be at least 3 characters"),
   email: z
@@ -164,13 +170,19 @@ export const insertFeeOrderSchema = z.object({
   sellerId: z.string().uuid(),
   paymentMethod: z.enum(["PayPal", "CreditCard", "DebitCard"]), // Add other payment methods if needed
   totalAmount: z.string(),
-  feeResult:z.object({  id: z.string(),  status: z.string(),  email_address: z.string(),  totalAmount: z.string(),}).optional(),
+  feeResult: z
+    .object({
+      id: z.string(),
+      status: z.string(),
+      email_address: z.string(),
+      totalAmount: z.string(),
+    })
+    .optional(),
 });
 
 export const insertfeeorderItemSchema = createInsertSchema(feeorderItems, {
   totalAmount: z.number(),
 });
-
 
 export const feeResultSchema = z.object({
   id: z.string(),

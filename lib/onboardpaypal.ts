@@ -1,6 +1,5 @@
-import { toast } from "@/components/ui/use-toast";
 
-const base = process.env.PAYPAL_API_URL || "https://api-m.paypal.com";
+const base = process.env.PAYPAL_API_URL || "https://api-m.sandbox.paypal.com";
 
 export const paypal = {
   createOrder: async function createOrder(totalAmount: number) {
@@ -11,7 +10,6 @@ export const paypal = {
     try {
       const accessToken = await generateAccessToken();
       const url = `${base}/v2/checkout/orders`;
-      console.log("Creating PayPal order...");
       const response = await fetch(url, {
         method: "POST",
         headers: {
@@ -31,7 +29,6 @@ export const paypal = {
         }),
       });
 
-      console.log("PayPal order created successfully.");
       return handleResponse(response);
     } catch (error) {
       console.error("Error creating PayPal order:", error);
@@ -43,7 +40,6 @@ export const paypal = {
     try {
       const accessToken = await generateAccessToken();
       const url = `${base}/v2/checkout/orders/${orderId}/capture`;
-      console.log("Capturing PayPal payment...");
       const response = await fetch(url, {
         method: "POST",
         headers: {
@@ -52,7 +48,6 @@ export const paypal = {
         },
       });
 
-      console.log("PayPal payment captured successfully.");
       return handleResponse(response);
     } catch (error) {
       console.error("Error capturing PayPal payment:", error);
@@ -82,7 +77,6 @@ async function generateAccessToken() {
       },
     });
 
-    console.log("PayPal access token generated successfully.");
     const jsonData = await handleResponse(response);
     return jsonData.access_token;
   } catch (error) {
@@ -97,11 +91,6 @@ async function handleResponse(response: Response) {
   }
 
   const errorMessage = await response.text();
-  console.log("PayPal API error:", errorMessage);
-  toast({
-    description:
-      "Payment was not successful. Please check your details and account balance and try again.",
-    variant: "destructive",
-  });
+  
   throw new Error(`PayPal API error: ${errorMessage}`);
 }

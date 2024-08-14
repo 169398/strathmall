@@ -13,7 +13,7 @@ const WelcomeSellerPage = () => {
     <div className="min-h-screen   flex flex-col">
       {/* Hero Section */}
       <div className="flex-1 w-full  container mx-auto  items-center text-center">
-       <PaymentBg />
+        <PaymentBg />
       </div>
 
       {/* Body Section */}
@@ -25,7 +25,7 @@ const WelcomeSellerPage = () => {
           <div className="space-y-6">
             <div className="bg-white p-6 rounded shadow-md">
               <h3 className="text-2xl font-semibold mb-2">
-                Professional Photoshoot
+                Professional Photoshoot 📸
               </h3>
               <p>
                 A picture is worth a thousand words. Our professional photoshoot
@@ -34,7 +34,9 @@ const WelcomeSellerPage = () => {
               </p>
             </div>
             <div className="bg-white p-6 rounded shadow-md">
-              <h3 className="text-2xl font-semibold mb-2">Free Marketing</h3>
+              <h3 className="text-2xl font-semibold mb-2">
+                Free Marketing 🛍️{" "}
+              </h3>
               <p>
                 Benefit from our extensive marketing campaigns. We promote your
                 products across various platforms, giving you maximum exposure
@@ -46,12 +48,15 @@ const WelcomeSellerPage = () => {
                 Server Hosting & Maintenance
               </h3>
               <p>
-                The last thing you want to worry about is server downtime. Our team of experts will ensure your shop 
-                is always up and running, so you can focus on what you do best. 
+                The last thing you want to worry about is server downtime. Our
+                team of experts will ensure your shop is always up and running,
+                so you can focus on what you do best.
               </p>
             </div>
             <div className="bg-white p-6 rounded shadow-md">
-              <h3 className="text-2xl font-semibold mb-2">Seller Dashboard</h3>
+              <h3 className="text-2xl font-semibold mb-2">
+                Seller Dashboard 📈
+              </h3>
               <p>
                 Get access to our seller dashboard, where you can manage your
                 products, track sales, and monitor your performance. It&apos;s
@@ -59,7 +64,7 @@ const WelcomeSellerPage = () => {
               </p>
             </div>
             <div className="bg-white p-6 rounded shadow-md">
-              <h3 className="text-2xl font-semibold mb-2">Seller Support</h3>
+              <h3 className="text-2xl font-semibold mb-2">Seller Support 🧑‍💻</h3>
               <p>
                 Our dedicated support team is here to help you every step of the
                 way. From setting up your shop to managing orders, we&apos;ve
@@ -72,8 +77,7 @@ const WelcomeSellerPage = () => {
 
       {/* Footer Section */}
       <div className="  container rounded-sm">
-        
-          <Footer/>
+        <Footer />
       </div>
     </div>
   );
