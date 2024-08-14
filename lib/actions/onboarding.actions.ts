@@ -175,7 +175,7 @@ export async function deleteFeeOrder(id: string, sellerId: string) {
     });
     if (!orderExists) throw new Error("Order not found");
     await db.delete(feeorders).where(eq(feeorders.id, id));
-    revalidatePath("/seller/feeorders");
+    revalidatePath("/");
     return {
       success: true,
       message: "Payment deleted successfully",
@@ -251,7 +251,7 @@ export async function approvePayPalOrder(
           captureData.purchase_units[0]?.payments?.captures[0]?.amount?.value,
       },
     });
-    revalidatePath(`/order/${orderId}`);
+    revalidatePath("/");
 
     return {
       success: true,
@@ -321,7 +321,7 @@ if (!queriedSeller) {
 export async function updateOrderToPaidByCOD(orderId: string) {
   try {
     await updateOrderToPaid({ orderId });
-    revalidatePath(`/sellerOrder/${orderId}`);
+    revalidatePath("/");
     return { success: true, message: "Order paid successfully" };
   } catch (err) {
     return { success: false, message: formatError(err) };
