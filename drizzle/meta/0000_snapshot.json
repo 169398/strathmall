@@ -1,5 +1,5 @@
 {
-  "id": "29a3a206-4317-4c4a-840c-9d5a345fbf10",
+  "id": "85e690bb-5b5c-4e39-bb23-31d2ab435880",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -304,10 +304,10 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "feeorder_sellerId_sellerShop_id_fk": {
-          "name": "feeorder_sellerId_sellerShop_id_fk",
+        "feeorder_sellerId_user_id_fk": {
+          "name": "feeorder_sellerId_user_id_fk",
           "tableFrom": "feeorder",
-          "tableTo": "sellerShop",
+          "tableTo": "user",
           "columnsFrom": [
             "sellerId"
           ],

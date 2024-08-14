@@ -272,7 +272,7 @@ export async function approvePayPalOrder(
     revalidatePath(`/order/${orderId}`)
     return {
       success: true,
-      message: 'Your order have successfully paid by PayPal',
+      message: 'Your order has been successfully paid by PayPal',
     }
   } catch (err) {
     return { success: false, message: formatError(err) }
