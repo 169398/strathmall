@@ -73,9 +73,9 @@ const ProductPromotion = () => {
       <div className=" flex justify-center">
         <Image
           alt="promotion"
-          width={300}
+          width={200}
           height={200}
-          src="/assets/images/gamepa3.jpeg"
+          src="/assets/images/monthdeal.png"
         />
       </div>
     </section>
