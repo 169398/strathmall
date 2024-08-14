@@ -88,7 +88,7 @@ export default function OnboardingReceiptEmail({
 
             <Section className="mt-6 border-t border-blue-200 pt-4">
               <Text className="text-center text-sm text-gray-500">
-                StrathMall, Nairobi, Kenya. | Contact Us: support@strathmall.com
+                StrathMall, Nairobi, Kenya. | Contact Us: support@strathmall.com ,0714594345
               </Text>
               <Text className="text-center text-xs text-gray-400 mt-2">
                 You are receiving this email because you completed the
