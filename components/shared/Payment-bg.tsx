@@ -12,13 +12,11 @@ export function PaymentBg() {
   const handleProceedToPayment = async () => {
     setIsLoading(true);
     try {
-      // Create the fee record
       const response = await createOrder();
       if (response.success) {
-        // Redirect to the payment page if fee creation is successful
-        router.push("/payment");
+        // Redirect to the payment page with the orderId
+        router.push(`/payment?orderId=${response.orderId}`);
       } else {
-        // Handle error if fee creation fails
         console.error("Error creating fee:", response.message);
         toast({
           description: "An unexpected error occurred. Please try again later.",
@@ -27,7 +25,6 @@ export function PaymentBg() {
       }
     } catch (error) {
       console.error("Error:", error);
-      
     } finally {
       setIsLoading(false);
     }

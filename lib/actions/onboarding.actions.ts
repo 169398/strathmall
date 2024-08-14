@@ -1,7 +1,6 @@
 "use server";
 import { auth } from "@/auth";
 import { getUserById } from "./user.actions";
-import { redirect } from "next/navigation";
 import { insertFeeOrderSchema } from "../validator";
 
 import db from "@/db/drizzle";
@@ -120,39 +119,36 @@ export async function getAllSellerOrders({
 // CREATE
 export const createOrder = async () => {
   try {
-    const totalAmount= 300;
+    const totalAmount = 300;
     const session = await auth();
     const user = await getUserById(session?.user.id!);
 
     const order = insertFeeOrderSchema.parse({
       userId: user.id,
-      paymentMethod:'PayPal',
-      totalAmount:totalAmount.toString(),
+      paymentMethod: "PayPal",
+      totalAmount: totalAmount.toString(),
       sellerId: user.id,
-    
-
     });
+
     const insertedOrderId = await db.transaction(async (tx) => {
-      const insertedOrder = await tx.insert(feeorders).values(order).returning();
-      
-        await tx.insert(feeorderItems).values({
-          orderId: insertedOrder[0].id,
-          description: "Payment for order",
-          totalAmount: totalAmount.toFixed(2),
-        });
-      
-      await db
-        .update(feeorders)
-        .set({
-          totalAmount: "0",
-          sellerId: user.id,
-          userId: user.id,
-        })
-        .where(eq(feeorders.id, feeorders.id));
+      const insertedOrder = await tx
+        .insert(feeorders)
+        .values(order)
+        .returning();
+
+      await tx.insert(feeorderItems).values({
+        orderId: insertedOrder[0].id,
+        description: "Payment for order",
+        totalAmount: totalAmount.toFixed(2),
+      });
+      console.log("Order created:", insertedOrder[0].id);
+
       return insertedOrder[0].id;
     });
+
     if (!insertedOrderId) throw new Error("Order not created");
-    redirect(`/payment`);
+
+    return { success: true, orderId: insertedOrderId };
   } catch (error) {
     if (isRedirectError(error)) {
       throw error;
@@ -161,11 +157,12 @@ export const createOrder = async () => {
   }
 };
 export async function getOrderById(orderId: string) {
+  console.log("Order brought:", orderId);
   return await db.query.feeorders.findFirst({
     where: eq(feeorders.id, orderId),
     with: {
       feeorderItems: true,
-      user: { columns: { name: true, email: true } },
+     
     },
   });
 }
@@ -302,11 +299,12 @@ export const updateOrderToPaid = async ({
   }
 
 const queriedSeller = await db.query.sellers.findFirst({
-  where: (sellers, { eq }) => eq(sellers.id, sellers.id),
+  where: (sellers, { eq }) => eq(sellers.id, feeorders.sellerId),
 });
 if (!queriedSeller) {
   throw new Error("Seller not found");
 }
+
 
   await sendPurchaseReceipt({
     order: updatedOrder,
