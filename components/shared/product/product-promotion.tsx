@@ -73,7 +73,7 @@ const ProductPromotion = () => {
       <div className=" flex justify-center">
         <Image
           alt="promotion"
-          width={200}
+          width={500}
           height={200}
           src="/assets/images/monthdeal.png"
         />

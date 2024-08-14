@@ -34,9 +34,7 @@ const WelcomeSellerPage = () => {
               </p>
             </div>
             <div className="bg-white p-6 rounded shadow-md">
-              <h3 className="text-2xl font-semibold mb-2">
-                Free Marketing 🛍️{" "}
-              </h3>
+              <h3 className="text-2xl font-semibold mb-2">Free Marketing 📢</h3>
               <p>
                 Benefit from our extensive marketing campaigns. We promote your
                 products across various platforms, giving you maximum exposure
@@ -45,7 +43,7 @@ const WelcomeSellerPage = () => {
             </div>
             <div className="bg-white p-6 rounded shadow-md">
               <h3 className="text-2xl font-semibold mb-2">
-                Server Hosting & Maintenance
+                Server Hosting & Maintenance 💻
               </h3>
               <p>
                 The last thing you want to worry about is server downtime. Our
@@ -55,7 +53,7 @@ const WelcomeSellerPage = () => {
             </div>
             <div className="bg-white p-6 rounded shadow-md">
               <h3 className="text-2xl font-semibold mb-2">
-                Seller Dashboard 📈
+                Seller Dashboard 📊
               </h3>
               <p>
                 Get access to our seller dashboard, where you can manage your
