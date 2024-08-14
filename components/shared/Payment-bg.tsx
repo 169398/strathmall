@@ -15,7 +15,7 @@ export function PaymentBg() {
       const response = await createOrder();
       if (response.success) {
         // Redirect to the payment page with the orderId
-        router.push(`/payment?orderId=${response.orderId}`);
+        router.push(`/payment`);
       } else {
         console.error("Error creating fee:", response.message);
         toast({
@@ -37,7 +37,7 @@ export function PaymentBg() {
         className="flex items-center flex-col justify-center px-2 md:px-10 py-4 w-full h-full"
       >
         <h2 className="text-white text-2xl md:text-6xl font-bold text-center">
-          Welcome to {APP_NAME} Seller Community!
+          Welcome to {APP_NAME} Seller Community
         </h2>
         <p className="text-white text-sm md:text-2xl max-auto mt-6 text-auto">
           To kickstart your success, we kindly request a one-time onboarding fee

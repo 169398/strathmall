@@ -84,7 +84,9 @@ export default function OrderDetailsForm({
    
 
     const res = await approvePayPalOrder(  order.id,data
-   );
+   )
+   ;
+
     toast({
       description: res.message,
       variant: res.success ? "default" : "destructive",

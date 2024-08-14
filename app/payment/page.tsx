@@ -1,31 +1,28 @@
-'use client';
-
-
-import {  useSearchParams } from "next/navigation";
 import { getOrderById } from "@/lib/actions/onboarding.actions";
+import { APP_NAME } from "@/lib/constants";
+import { notFound } from "next/navigation";
 import PaymentForm from "./paymentForm";
-import { useEffect } from "react";
 
+export const metadata = {
+  title: `Order Details - ${APP_NAME}`,
+};
 
-
-export default function PaymentPage() {
-  const searchParams = useSearchParams();
-  const orderId = searchParams.get("orderId");
-
-  useEffect(() => {
-    if (orderId) {
-      // Fetch the order by ID
-      getOrderById(orderId).then((order) => {
-        console.log("Order:", order);
-      });
-    }
-  }, [orderId]);
+const OrderDetailsPage = async ({
+  params: { id },
+}: {
+  params: {
+    id: string;
+  };
+}) => {
+  const order = await getOrderById(id);
+  if (!order) notFound();
 
   return (
-        <PaymentForm
-          paypalClientId={process.env.PAYPAL_CLIENT_ID || "sb"}
-          orderId={orderId as string}
-        />
-      );
-}
+    <PaymentForm
+      order={order}
+      paypalClientId={process.env.PAYPAL_CLIENT_ID || "sb"}
+    />
+  );
+};
 
+export default OrderDetailsPage;

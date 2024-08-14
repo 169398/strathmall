@@ -51,7 +51,6 @@ export default function ShippingAddressForm({
     })
   }
   const setShippingLocation = ({ lat, lng }: { lat: number; lng: number }) => {
-    console.log(lat, lng)
     form.setValue('lat', lat)
     form.setValue('lng', lng)
   }
