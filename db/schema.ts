@@ -1,4 +1,4 @@
-import { CartItem, PaymentResult, ShippingAddress } from "@/types";
+import { CartItem, feeResult, PaymentResult, ShippingAddress } from "@/types";
 
 import { relations } from "drizzle-orm";
 import {
@@ -48,6 +48,56 @@ export const sellers = pgTable("sellerShop", {
   phoneNumber: text("phoneNumber").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
+
+
+export const feeorders = pgTable("feeorder", {
+  id: uuid("id").defaultRandom().primaryKey().notNull(),
+  userId: uuid("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  sellerId: uuid("sellerId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  paymentMethod: text("paymentMethod").notNull(),
+  paymentResult: json("paymentResult").$type<feeResult>(),
+  totalAmount: numeric("totalAmount", { precision: 12, scale: 2 }).notNull(),
+  isPaid: boolean("isPaid").notNull().default(false),
+  paidAt: timestamp("paidAt"),
+  createdAt: timestamp("createdAt").notNull().defaultNow(),
+});
+
+export const feeordersRelations = relations(feeorders, ({ one, many }) => ({
+  feeorderItems: many(feeorderItems),
+  user: one(users, { fields: [feeorders.userId], references: [users.id] }),
+  seller: one(sellers, {
+    fields: [feeorders.sellerId],
+    references: [sellers.id],
+  }),
+}));
+
+export const feeorderItems = pgTable(
+  "feeorderItems",
+  {
+    orderId: uuid("orderId")
+      .notNull()
+      .references(() =>feeorders.id, { onDelete: "cascade" }),
+    description: text("description").notNull(),
+    totalAmount: numeric("totalAmount", { precision: 12, scale: 2 }).notNull(),
+  },
+  (feeorderItem) => ({
+    compoundKey: primaryKey({
+      columns: [feeorderItem.orderId, feeorderItem.description],
+    }),
+  })
+);
+
+export const feeorderItemsRelations = relations(feeorderItems, ({ one }) => ({
+  feeorder: one(feeorders, {
+    fields: [feeorderItems.orderId],
+    references: [feeorders.id],
+  }),
+}));
+
 
 // ACCOUNTS
 export const accounts = pgTable(
@@ -207,6 +257,8 @@ export const ordersRelations = relations(
     user: one(users, { fields: [orders.userId], references: [users.id] }),
   })
 );
+
+
 
 // SELLER ORDER ITEMS
 export const orderItems = pgTable("orderItems", {

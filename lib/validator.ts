@@ -2,7 +2,7 @@ import * as z from "zod";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { formatNumberWithDecimal } from "./utils";
 import { PAYMENT_METHODS } from "./constants";
-import { orderItems, orders, products, reviews } from "@/db/schema";
+import { feeorderItems, orderItems, orders, products, reviews } from "@/db/schema";
 
 // USER
 export const signInFormSchema = z.object({
@@ -157,4 +157,24 @@ export const createSellerSchema = z.object({
 
 export const updateSellerSchema = createSellerSchema.extend({
   id: z.string().min(1, "Id is required"),
+});
+
+export const insertFeeOrderSchema = z.object({
+  userId: z.string().uuid(),
+  sellerId: z.string().uuid(),
+  paymentMethod: z.enum(["PayPal", "CreditCard", "DebitCard"]), // Add other payment methods if needed
+  totalAmount: z.string(),
+  feeResult:z.object({  id: z.string(),  status: z.string(),  email_address: z.string(),  totalAmount: z.string(),}).optional(),
+});
+
+export const insertfeeorderItemSchema = createInsertSchema(feeorderItems, {
+  totalAmount: z.number(),
+});
+
+
+export const feeResultSchema = z.object({
+  id: z.string(),
+  status: z.string(),
+  email_address: z.string(),
+  totalAmount: z.string(),
 });

@@ -16,5 +16,4 @@ export const sendPurchaseReceipt = async ({
     subject: "📦Order Confirmation🧾✨",
     react: <PurchaseReceiptEmail order={order} />,
   });
-  console.log(res);
-};
+return res;};

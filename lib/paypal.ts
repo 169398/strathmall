@@ -1,5 +1,5 @@
+import { toast } from "@/components/ui/use-toast";
 import { Metadata } from "next"
-import { toast } from "react-toastify"
 
 
 
@@ -79,7 +79,11 @@ async function handleResponse(response: any) {
   }
 
   const errorMessage = await response.text()
-  toast('Payment was not successful.Please check your details and account balance and try again')
+  toast({
+    description:
+      "Payment was not successful. Please check your details and account balance and try again",
+    variant: "destructive",
+  });
   throw new Error(errorMessage)
 }
 
