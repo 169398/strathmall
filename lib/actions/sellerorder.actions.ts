@@ -67,13 +67,18 @@ export async function getOrderSummary(sellerId: string) {
   const ordersCount = await db.select({ count: count() }).from(orders)
     .where(eq(orders.sellerId, sellerId));
 
+
   const productsCount = await db
     .select({ count: count() })
     .from(products)
+    .where(eq(products.sellerId, sellerId));
+
 
   const ordersPrice = await db
     .select({ sum: sum(orders.totalPrice) })
     .from(orders)
+    .where(eq(orders.sellerId, sellerId));
+
 
 
   const salesData = await db
