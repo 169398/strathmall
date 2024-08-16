@@ -123,15 +123,16 @@ export default function SellerProductForm({
             name="slug"
             render={({ field }) => (
               <FormItem className="w-full">
-                <FormLabel>Slug</FormLabel>
+                <FormLabel>Your product unique code</FormLabel>
                 <FormControl>
                   <div className="relative">
                     <Input
-                      placeholder="Enter product slug"
+                      placeholder="Click below"
                       className="pl-8"
                       {...field}
                     />
                     <button
+                    className="text-red-500"
                       type="button"
                       onClick={() => {
                         form.setValue(
@@ -140,7 +141,7 @@ export default function SellerProductForm({
                         );
                       }}
                     >
-                      Generate
+                      Click here
                     </button>
                   </div>
                 </FormControl>

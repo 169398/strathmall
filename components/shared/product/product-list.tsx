@@ -1,6 +1,7 @@
 import ProductCard from './product-card'
 import { product } from '@/types/sellerindex';
 
+
 const ProductList = ({ title, data }: { title: string; data: product[] }) => {
   return (
     <>

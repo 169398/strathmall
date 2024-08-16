@@ -1,6 +1,5 @@
 import MaxWidthWrapper from '@/components/shared/MaxWidthWrapper'
 import EcommerceFeatures from '@/components/shared/product/ecommerce-features'
-import ProductList from '@/components/shared/product/product-list'
 import ProductPromotion from '@/components/shared/product/product-promotion'
 import {
 
@@ -8,6 +7,10 @@ import {
 } from '@/lib/actions/sellerproduct.actions'
 import {  buttonVariants } from '@/components/ui/button'
 import Link from 'next/link'
+import * as React from "react"
+import ProductList from '@/components/shared/product/home-productlist'
+ 
+
 
 export default async function Home() {
   const latestProducts = await getLatestProducts()
@@ -40,7 +43,9 @@ export default async function Home() {
         </div>
       </MaxWidthWrapper>
       <div className="space-y-8">
+       
         <ProductList title="Newest Arrivals" data={latestProducts} />
+        
         <ProductPromotion />
         <EcommerceFeatures />
       </div>
