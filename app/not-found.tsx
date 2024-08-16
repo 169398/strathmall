@@ -12,6 +12,7 @@ export default function NotFound() {
         <Button
           variant="outline"
           className="mt-4 ml-2"
+          
           onClick={() => (window.location.href = "/")}
         >
           Back to home
