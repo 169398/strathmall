@@ -74,7 +74,7 @@ const Footer = () => {
                 Terms
               </Link>
               <Link
-                href="#"
+                href="/privacy"
                 className="text-sm text-muted-foreground hover:text-gray-600"
               >
                 Privacy Policy
