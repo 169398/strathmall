@@ -10,13 +10,17 @@ import Link from 'next/link'
 import * as React from "react"
 import ProductList from '@/components/shared/product/home-productlist'
 import SparklesText from '@/components/magicui/sparkles-text'
+import Footer from '@/components/shared/footer'
  
 
 
 export default async function Home() {
   const latestProducts = await getLatestProducts()
   return (
+   
+
     <div>
+
       <MaxWidthWrapper>
         <div className="mx-auto flex max-w-3xl flex-col items-center py-20 text-center">
           <h1 className="tranking-tight text-4xl font-bold text-gray-950 sm:text-6xl">
@@ -50,6 +54,9 @@ export default async function Home() {
         
         <ProductPromotion />
         <EcommerceFeatures />
+        <Footer />
+
+
       </div>
     </div>
   );
