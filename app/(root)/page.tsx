@@ -26,9 +26,9 @@ export default async function Home() {
           <p className="mt-6 max-w-prose text-lg text-muted-foreground">
             Welcome to StrathMall.Every product on this platform is verified by
             our team to ensure our highest quality standards.
-            <span className="text-blue-400">
+{/*             <span className="text-blue-400">
               Buy Strathmore Build Strathmore{" "}
-            </span>
+            </span> */}
           </p>
 
           <div className="mt-6 flex flex-col gap-4 sm:flex-row">
