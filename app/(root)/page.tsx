@@ -9,6 +9,7 @@ import {  buttonVariants } from '@/components/ui/button'
 import Link from 'next/link'
 import * as React from "react"
 import ProductList from '@/components/shared/product/home-productlist'
+import SparklesText from '@/components/magicui/sparkles-text'
  
 
 
@@ -34,9 +35,10 @@ export default async function Home() {
           
               <Link
                 href="/seller "
-                className={buttonVariants({ variant: "default" })}
+                className={buttonVariants({ variant: "secondary" })}
               >
-                Start selling
+                <SparklesText   text='🎉Start selling' className='text-base text-blue-500'>
+                </SparklesText>
               </Link>
             
           </div>
