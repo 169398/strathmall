@@ -5,117 +5,19 @@ import { insertFeeOrderSchema } from "../validator";
 
 import db from "@/db/drizzle";
 
-import { count, desc, eq, sql, sum, and } from "drizzle-orm";
-import { isRedirectError } from "next/dist/client/components/redirect";
+import { eq,  and } from "drizzle-orm";
+import { isRedirectError, redirect } from "next/dist/client/components/redirect";
 import { formatError } from "../utils";
 import { revalidatePath } from "next/cache";
-import { PAGE_SIZE } from "../constants";
-import {  feeorderItems, feeorders,    } from "@/db/schema";
+import {  feeorderItems, feeorders,  } from "@/db/schema";
 import { feeResult } from "@/types";
 import { sendPurchaseReceipt } from "@/emailonboard";
 import { paypal } from "../onboardpaypal";
+import { toast } from "@/components/ui/use-toast";
 
 
-export async function getPaidOrderSummary(sellerId: string) {
-  const ordersCount = await db
-    .select({ count: count() })
-    .from(feeorders)
-    .where(eq(feeorders.sellerId, sellerId));
-
-  
-
-  const ordersPrice = await db
-    .select({ sum: sum(feeorders.totalAmount) })
-    .from(feeorders)
-    .where(eq(feeorders.sellerId, sellerId));
-
-  const salesData = await db
-    .select({
-      months: sql<string>`to_char(${feeorders.createdAt}, 'MM/YY')`,
-      totalSales: sql<number>`sum(${feeorders.totalAmount})`.mapWith(Number),
-    })
-    .from(feeorders)
-    .where(eq(feeorders.sellerId, sellerId))
-    .groupBy(sql`to_char(${feeorders.createdAt}, 'MM/YY')`);
-
-  const latestOrders = await db.query.feeorders.findMany({
-    where: eq(feeorders.sellerId, sellerId),
-    orderBy: [desc(feeorders.createdAt)],
-    with: {
-      user: { columns: { name: true } },
-    },
-    limit: 6,
-  });
-
-  return {
-    ordersCount: ordersCount[0]?.count || 0,
-    ordersPrice: ordersPrice[0]?.sum || 0,
-    salesData,
-    latestOrders,
-  };
-}
-
-export async function getOrderSummary(sellerId: string) {
-  const ordersCount = await db
-    .select({ count: count() })
-    .from(feeorders)
-    .where(eq(feeorders.sellerId, sellerId));
 
 
-  const ordersPrice = await db
-    .select({ sum: sum(feeorders.totalAmount) })
-    .from(feeorders);
-
-  const salesData = await db
-    .select({
-      months: sql<string>`to_char(${feeorders.createdAt},'MM/YY')`,
-      totalSales: sql<number>`sum(${feeorders.totalAmount})`.mapWith(Number),
-    })
-    .from(feeorders)
-    .groupBy(sql`1`);
-
-  const latestOrders = await db.query.feeorders.findMany({
-    orderBy: [desc(feeorders.createdAt)],
-    with: {
-      user: { columns: { name: true } },
-    },
-    limit: 6,
-  });
-  return {
-    ordersCount,
-    ordersPrice,
-    salesData,
-    latestOrders,
-  };
-}
-
-export async function getAllSellerOrders({
-  limit = PAGE_SIZE,
-  page,
-  sellerId,
-}: {
-  limit?: number;
-  page: number;
-  sellerId: string;
-}) {
-  const data = await db.query.feeorders.findMany({
-    where: eq(feeorders.sellerId, sellerId),
-    orderBy: [desc(feeorders.createdAt)],
-    limit,
-    offset: (page - 1) * limit,
-    with: { user: { columns: { name: true } } },
-  });
-
-  const dataCount = await db
-    .select({ count: count() })
-    .from(feeorders)
-    .where(eq(feeorders.sellerId, sellerId));
-
-  return {
-    data,
-    totalPages: Math.ceil(dataCount[0].count / limit),
-  };
-}
 
 // CREATE
 export const createOrder = async () => {
@@ -145,7 +47,7 @@ export const createOrder = async () => {
 
       return insertedOrder[0].id;
     });
-
+console.log('insertedorder',insertedOrderId)
     if (!insertedOrderId) throw new Error("Order not created");
 
     return { success: true, orderId: insertedOrderId };
@@ -156,16 +58,25 @@ export const createOrder = async () => {
     return { success: false, message: formatError(error) };
   }
 };
-export async function getOrderById(orderId: string) {
-  console.log("orderId", orderId);
+export async function getOrderById(id: string) {
+ 
+  try {
+    console.log("Fetching order with ID:", id);
 
-  return await db.query.feeorders.findFirst({
-    where: eq(feeorders.id, feeorders.id),
-    with: {
-      feeorderItems: true,
-     
-    },
-  });
+    const order = await db.query.feeorders.findFirst({
+      where:  eq(feeorders.id,feeorders.id), // Corrected the where clause
+      with: { feeorderItems: true },
+    });
+
+    if (!order) {
+      throw new Error("Order not found");
+    }
+
+    return order;
+  } catch (error) {
+    console.error("Error fetching order:", error);
+    throw error; // Ensure errors are propagated correctly
+  }
 }
 // DELETE
 export async function deleteFeeOrder(id: string, sellerId: string) {
@@ -188,6 +99,7 @@ export async function deleteFeeOrder(id: string, sellerId: string) {
 
 //CREATE PAYPAL ORDER
 export async function createPayPalOrder(orderId: string) {
+  console.log ('Paypal order',orderId)
   try {
     const order = await db.query.feeorders.findFirst({
       where: eq(feeorders.id, orderId),
@@ -227,6 +139,7 @@ export async function approvePayPalOrder(
   orderId: string,
   data: { orderID: string }
 ) {
+  console.log('Approved PayPal order id:', orderId);
 
   try {
     const order = await db.query.feeorders.findFirst({
@@ -239,8 +152,24 @@ export async function approvePayPalOrder(
       !captureData ||
       captureData.id !== order.paymentResult?.id ||
       captureData.status !== "COMPLETED"
-    )
-      throw new Error("Error in paypal payment");
+    ) {
+      // Payment unsuccessful, delete the order
+      await deleteFeeOrder(orderId, order.sellerId);
+
+      // Show a user-friendly error toast
+      toast({
+        title: "Error",
+        description: "Payment unsuccessful",
+      });
+
+      // Redirect to /onboard after a short delay
+      setTimeout(() => {
+        redirect("/onboard");
+      }, 1000);
+
+      return { success: false, message: "Payment unsuccessful, order deleted." }; // Stop further execution
+    }
+
     await updateOrderToPaid({
       orderId,
       feeResult: {
@@ -251,14 +180,32 @@ export async function approvePayPalOrder(
           captureData.purchase_units[0]?.payments?.captures[0]?.amount?.value,
       },
     });
+
     revalidatePath("/");
+
+    // Payment successful, show a success toast and redirect to homepage
+    toast({
+      title: "Payment successful",
+      description: "Your order has been successfully paid by PayPal",
+    });
+    setTimeout(() => {
+      redirect("/");
+    }, 1000);
 
     return {
       success: true,
       message: "Your order has been successfully paid by PayPal",
     };
   } catch (err) {
-    return { success: false, message: formatError(err) };
+    console.error("Payment approval error:", err);
+
+    // Show a generic error toast
+    toast({
+      title: "Error",
+      description: "An unexpected error occurred. Please try again.",
+    });
+
+    return { success: false, message: "An unexpected error occurred." };
   }
 }
 
@@ -275,6 +222,7 @@ export const updateOrderToPaid = async ({
   orderId: string;
   feeResult?: feeResult;
 }) => {
+  console.log('order id',orderId)
   const order = await db.query.feeorders.findFirst({
     columns: { isPaid: true },
     where: and(eq(feeorders.id, orderId)),
@@ -304,9 +252,9 @@ export const updateOrderToPaid = async ({
     throw new Error("Order not found");
   }
 
-const queriedSeller = await db.query.sellers.findFirst({
-  where: (sellers, { eq }) => eq(sellers.id, feeorders.sellerId),
-});
+  const queriedSeller = await db.query.sellers.findFirst({
+    where: (sellers, { eq }) => eq(sellers.id, updatedOrder.sellerId),
+  });
 if (!queriedSeller) {
   throw new Error("Seller not found");
 }
