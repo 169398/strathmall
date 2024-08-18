@@ -27,6 +27,17 @@ export async function createSeller(prevState: unknown, formData: FormData) {
     const seller = createSellerSchema.parse(data);
     const session = await auth();
     if (!session) throw new Error("User not authenticated");
+    const existingSeller = await db.query.sellers.findFirst({
+      where: (sellers, { eq }) => eq(sellers.email, seller.email),
+    });
+
+    if (existingSeller) {
+      return {
+        success: false,
+        message: "You can only have one shop",
+      };
+    }
+
     const values = {
       id: crypto.randomUUID(),
       userId: session.user.id || "",
