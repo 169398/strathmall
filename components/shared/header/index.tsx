@@ -21,7 +21,7 @@ const Header = async () => {
         <div className="flex-start">
           <Drawer direction="left">
             <DrawerTrigger asChild>
-                <MenuIcon color='blue'className='cursor-pointer' />
+                <MenuIcon className='cursor-pointer text-blue-600' />
               
             </DrawerTrigger>
             <DrawerContent className="h-full max-w-xs  ">
@@ -30,7 +30,7 @@ const Header = async () => {
                   <DrawerTitle>Select a category</DrawerTitle>
                   <DrawerClose asChild>
                     <Button variant="outline" className="p-1">
-                      <X className="h-6 w-6 " color='blue' />
+                      <X className="h-6 w-6 text-blue-600" />
                     </Button>
                   </DrawerClose>
                 </div>

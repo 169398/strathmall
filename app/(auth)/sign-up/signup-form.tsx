@@ -96,7 +96,7 @@ export default function SignUpForm() {
           />
           <Label htmlFor="terms" className="ml-2">
             I agree to the{" "}
-            <Link href="/terms-and-conditions" target="_blank" className="link text-blue-600">
+            <Link href="/terms" target="_blank" className="link text-blue-600">
               StrathMall terms
             </Link>
           </Label>

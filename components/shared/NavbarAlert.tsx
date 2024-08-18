@@ -25,7 +25,7 @@ const Alert = () => {
   return (
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
       <AlertDialogTrigger onClick={() => setIsOpen(true)} className="text-sm">
-        <Briefcase size={20} color="blue" />
+        <Briefcase size={20} className="text-blue-600" />
       </AlertDialogTrigger>
       <AlertDialogContent ref={contentRef}>
         <AlertDialogHeader>
@@ -38,7 +38,7 @@ const Alert = () => {
               right: "10px",
             }}
           >
-            <X size={20} color="blue" />
+            <X size={20}  className="text-blue-600" />
           </Button>
           <AlertDialogTitle>
             Exciting Services Coming Your Way 🚀
