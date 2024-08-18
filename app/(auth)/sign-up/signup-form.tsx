@@ -6,8 +6,10 @@ import { useFormState, useFormStatus } from "react-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { signUp } from "@/lib/actions/user.actions";
 import { signUpDefaultValues } from "@/lib/constants";
+import { useState } from "react";
 
 export default function SignUpForm() {
   const router = useRouter();
@@ -19,10 +21,16 @@ export default function SignUpForm() {
     message: "",
   });
 
+  const [termsAccepted, setTermsAccepted] = useState(false);
+
   const SignUpButton = () => {
     const { pending } = useFormStatus();
     return (
-      <Button disabled={pending} className="w-full" variant="default">
+      <Button
+        disabled={pending || !termsAccepted}
+        className="w-full"
+        variant="default"
+      >
         {pending ? "Submitting..." : "Sign Up"}
       </Button>
     );
@@ -79,6 +87,20 @@ export default function SignUpForm() {
             defaultValue={signUpDefaultValues.confirmPassword}
           />
         </div>
+        <div className="flex items-start">
+          <Checkbox
+            id="terms"
+            checked={termsAccepted}
+            onCheckedChange={(checked) => setTermsAccepted(Boolean(checked))}
+            required
+          />
+          <Label htmlFor="terms" className="ml-2">
+            I agree to the{" "}
+            <Link href="/terms-and-conditions" target="_blank" className="link text-blue-600">
+              StrathMall terms
+            </Link>
+          </Label>
+        </div>
         <div>
           <SignUpButton />
         </div>
@@ -90,7 +112,7 @@ export default function SignUpForm() {
           Already have an account?{" "}
           <Link
             target="_self"
-            className="link"
+            className="link text-blue-600"
             href={`/sign-in?callbackUrl=${callbackUrl}`}
           >
             Sign In
