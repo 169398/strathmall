@@ -1,5 +1,4 @@
 import { auth } from "@/auth";
-import DeleteDialog from "@/components/shared/delete-dialog";
 import Pagination from "@/components/shared/pagination";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,7 +11,6 @@ import {
 } from "@/components/ui/table";
 import {
   getAllSellerOrders,
-  handleDeleteOrder,
 } from "@/lib/actions/sellerorder.actions";
 import { APP_NAME } from "@/lib/constants";
 import { formatCurrency, formatDateTime, formatId } from "@/lib/utils";
@@ -78,7 +76,6 @@ export default async function OrdersPage({
                   <Button asChild variant="outline" size="sm">
                     <Link href={`/order/${order.id}`}>Details</Link>
                   </Button>
-                  <DeleteDialog id={order.id} action={handleDeleteOrder} />
                 </TableCell>
               </TableRow>
             ))}
