@@ -1,5 +1,4 @@
 import { auth } from "@/auth";
-import DeleteDialog from "@/components/shared/delete-dialog";
 import Pagination from "@/components/shared/pagination";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {  getAllSellerOrders, handleDeleteOrder } from "@/lib/actions/sellerorder.actions";
+import {  getAllSellerOrders, } from "@/lib/actions/sellerorder.actions";
 import { APP_NAME } from "@/lib/constants";
 import { formatCurrency, formatDateTime, formatId } from "@/lib/utils";
 import { Metadata } from "next";
@@ -55,17 +54,17 @@ const sellerId = session.user.id || "";
           </TableHeader>
           <TableBody>
             {orders.data.map((order) => (
-              <TableRow key={order.id}>
-                <TableCell>{formatId(order.id)}</TableCell>
+              <TableRow key={order.orderId}>
+                <TableCell>{formatId(order.orderId)}</TableCell>
                 <TableCell>
                   {formatDateTime(order.createdAt).dateTime}
                 </TableCell>
                 <TableCell>
-                  {order.user ? order.user.name : "Deleted user"}
+                  {order.userName ? order.userName : "Deleted user"}
                 </TableCell>
                 <TableCell>{formatCurrency(order.totalPrice)}</TableCell>
                 <TableCell>
-                  {order.isPaid && order.paidAt
+                  {order.paidAt && order.paidAt
                     ? formatDateTime(order.paidAt).dateTime
                     : "not paid"}
                 </TableCell>
@@ -76,9 +75,8 @@ const sellerId = session.user.id || "";
                 </TableCell>
                 <TableCell className="flex gap-1">
                   <Button asChild variant="outline" size="sm">
-                    <Link href={`/order/${order.id}`}>Details</Link>
+                    <Link href={`/order/${order.orderId}`}>Details</Link>
                   </Button>
-                  <DeleteDialog id={order.id} action={handleDeleteOrder} />
                 </TableCell>
               </TableRow>
             ))}
