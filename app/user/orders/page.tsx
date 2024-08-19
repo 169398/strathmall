@@ -10,7 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
-  getAllSellerOrders,
+  getUserOrders,
 } from "@/lib/actions/sellerorder.actions";
 import { APP_NAME } from "@/lib/constants";
 import { formatCurrency, formatDateTime, formatId } from "@/lib/utils";
@@ -30,7 +30,7 @@ export default async function OrdersPage({
   if (session?.user.role !== "user"&&session?.user.role !== "seller"&&session?.user.role !== "admin")
     throw new Error("user permission required");
   const sellerId = session.user.id || "";
-  const orders = await getAllSellerOrders({
+  const orders = await getUserOrders({
     page: Number(page),
     sellerId,
   });

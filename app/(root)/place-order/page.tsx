@@ -35,7 +35,7 @@ export default async function PlaceOrderPage() {
     <>
       <CheckoutSteps current={3} />
       <h1 className="py-4 text-2xl">Place Order</h1>
-      <span className='text-xs text-red-600 mx-auto '>We deliver within Nairobi and orders above ksh100 a shipping fee of ksh100 is applied</span>
+      <span className='text-xs text-red-600 mx-auto '>We deliver within Nairobi and orders above ksh150 a shipping fee of ksh100 is applied</span>
 
       <div className="grid md:grid-cols-3 md:gap-5">
         <div className="overflow-x-auto md:col-span-2 space-y-4">

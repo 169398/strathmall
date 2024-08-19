@@ -13,12 +13,12 @@ const TermsAndConditions: React.FC = () => {
         </h2>
         <p className="text-sm">
           1.1 “Strathmall” is the trading name for the Strathmall
-           listed at Appendix 1. 
+           
           (“Strathmall” or “we”) operates an e-commerce platform consisting of a
           website and mobile application (“marketplace”), together with
           supporting IT, logistics, and payment infrastructure, for the sale and
           purchase of consumer products and services (“products”) in its
-          allocated territory as defined at Appendix 1 (“territory”).
+          allocated territory 
         </p>
         <p className="text-sm">
           1.2 These general terms and conditions shall apply to buyers and
@@ -35,16 +35,16 @@ const TermsAndConditions: React.FC = () => {
           1.4 If you use our marketplace in the course of a business or other
           organizational project, then by so doing you:
           <ul className="list-disc list-inside ml-6">
-            <li>
+            <li className="text-sm">
               1.4.1 Confirm that you have obtained the necessary authority to
               agree to these general terms and conditions;
             </li>
-            <li>
+            <li className="text-sm">
               1.4.2 Bind both yourself and the person, company, or other legal
               entity that operates that business or organizational project to
               these general terms and conditions; and
             </li>
-            <li>
+            <li className="text-sm">
               1.4.3 Agree that &quot;you&quot; in these general terms and
               conditions shall reference both the individual user and the
               relevant person, company, or legal entity unless the context
@@ -69,13 +69,13 @@ const TermsAndConditions: React.FC = () => {
           asked to provide an email address/user ID and password, and you agree
           to:
           <ul className="list-disc list-inside ml-6">
-            <li>2.2.1 Keep your password confidential;</li>
-            <li>
+            <li className="text-sm">2.2.1 Keep your password confidential;</li>
+            <li className="text-sm">
               2.2.2 Notify us in writing immediately (using our contact details
               provided in section 26) if you become aware of any disclosure of
               your password; and
             </li>
-            <li>
+            <li className="text-sm">
               2.2.3 Be responsible for any activity on our marketplace arising
               out of any failure to keep your password confidential, and you
               acknowledge that you may be held liable for any losses arising out
@@ -110,16 +110,16 @@ const TermsAndConditions: React.FC = () => {
         <p className="text-sm">
           3.1 You acknowledge and agree that:
           <ul className="list-disc list-inside ml-6">
-            <li>
+            <li className="text-sm">
               3.1.1 The marketplace provides an online location for sellers to
               sell and buyers to purchase products;
             </li>
-            <li>
+            <li className="text-sm">
               3.1.2 We shall accept binding sales on behalf of sellers, but
               (unless Strathmall is indicated as the seller) Strathmall is not a
               party to the transaction between the seller and the buyer; and
             </li>
-            <li>
+            <li className="text-sm">
               3.1.3 A contract for the sale and purchase of a product or
               products will come into force between the buyer and seller, and
               accordingly, you commit to buying or selling the relevant product
@@ -135,28 +135,28 @@ const TermsAndConditions: React.FC = () => {
           provisions will be incorporated into the contract of sale and purchase
           between the buyer and the seller:
           <ul className="list-disc list-inside ml-6">
-            <li>
+            <li className="text-sm">
               3.2.1 The price for a product will be as stated in the relevant
               product listing;
             </li>
-            <li>
+            <li className="text-sm">
               3.2.2 The price for the product must include all taxes and comply
               with applicable laws in force from time to time;
             </li>
-            <li>
+            <li className="text-sm">
               3.2.3 Delivery charges, packaging charges, handling charges,
               administrative charges, insurance costs, and other ancillary costs
               and charges, where applicable, will only be payable by the buyer
               if this is expressly and clearly stated in the product listing;
               and delivery of digital products may be made electronically;
             </li>
-            <li>
+            <li className="text-sm">
               3.2.4 Products must be of satisfactory quality, fit, and safe for
               any purpose specified in, and conform in all material respects to,
               the product listing and any other description of the products
               supplied or made available by the seller to the buyer;
             </li>
-            <li>
+            <li className="text-sm">
               3.2.5 In respect of physical products sold, the seller warrants
               that the seller has good title to, and is the sole legal and
               beneficial owner of, the products and/or has the right to supply
@@ -167,7 +167,7 @@ const TermsAndConditions: React.FC = () => {
               respect of digital products, the seller warrants that the seller
               has the right to supply the digital products to the buyer.
             </li>
-            <li>
+            <li className="text-sm">
               3.2.6 The Seller warrants that, where a product sold has such
               terms, the Seller will provide detailed disclosure of the product
               terms and conditions, any applicable warranty, and other terms
@@ -196,12 +196,12 @@ const TermsAndConditions: React.FC = () => {
           discretion, subject to applicable laws of the territory. We may offer
           refunds, in our discretion:
           <ul className="list-disc list-inside ml-6">
-            <li>4.2.1 In respect of the product price;</li>
-            <li>
-              4.2.2 In respect of local and/or international shipping fees (as
+            <li  className="text-sm">4.2.1 In respect of the product price;</li>
+            <li className="text-sm">
+              4.2.2 In respect of local  shipping fees (as
               stated on the refunds page); and
             </li>
-            <li>
+            <li className="text-sm">
               4.2.3 By way of store credits, vouchers, mobile money transfer,
               bank transfers, or such other methods as we may determine from
               time to time.

@@ -86,6 +86,46 @@ export async function getAllSellerOrders({
   page: number;
   sellerId: string;
 }) {
+  const data = await db
+    .select({
+      orderId: orders.id,
+      userName: users.name,
+      createdAt: orders.createdAt,
+      totalPrice: orders.totalPrice,
+      isDelivered: orders.isDelivered,
+      deliveredAt:orders.deliveredAt,
+      paidAt:orders.paidAt,
+    })
+    .from(orders)
+    .innerJoin(orderItems, eq(orderItems.orderId, orders.id))
+    .innerJoin(products, eq(orderItems.productId, products.id))
+    .innerJoin(users, eq(orders.userId, users.id))
+    .where(eq(products.sellerId, sellerId))
+    .orderBy(desc(orders.createdAt))
+    .limit(limit)
+    .offset((page - 1) * limit);
+
+  const dataCount = await db
+    .select({ count: count() })
+    .from(orders)
+    .innerJoin(orderItems, eq(orderItems.orderId, orders.id))
+    .innerJoin(products, eq(orderItems.productId, products.id))
+    .where(eq(products.sellerId, sellerId));
+
+  return {
+    data,
+    totalPages: Math.ceil(dataCount[0].count / limit),
+  };
+}
+export async function getUserOrders({
+  limit = PAGE_SIZE,
+  page,
+  sellerId,
+}: {
+  limit?: number;
+  page: number;
+  sellerId: string;
+}) {
   const data = await db.query.orders.findMany({
     where: eq(orders.sellerId, sellerId),
     orderBy: [desc(orders.createdAt)],
