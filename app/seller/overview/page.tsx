@@ -14,7 +14,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import Link from 'next/link'
-import { getOrderSummary } from '@/lib/actions/sellerorder.actions'
+import { getSellerOrderSummary } from '@/lib/actions/sellerorder.actions'
 
 export const metadata: Metadata = {
   title: `Seller Dashboard - ${APP_NAME}`,
@@ -26,7 +26,7 @@ export default async function SellerDashboardPage() {
     throw new Error('Seller permission required')
 
   const sellerId = session.user.id || ''
-  const summary = await getOrderSummary(sellerId)
+  const summary = await getSellerOrderSummary(sellerId)
 
   return (
     <div className="space-y-4">

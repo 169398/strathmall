@@ -19,83 +19,53 @@ import { carts, orderItems, orders, products } from "@/db/schema";
 
 
 
+
+
 export async function getSellerOrderSummary(sellerId: string) {
+  // Get the count of sales (orders) for the seller's products
   const ordersCount = await db
     .select({ count: count() })
     .from(orders)
-    .where(eq(orders.sellerId, sellerId));
+    .innerJoin(orderItems, eq(orderItems.orderId, orders.id))
+    .innerJoin(products, eq(orderItems.productId, products.id))
+    .where(and(eq(products.sellerId, sellerId), sql`${orders.userId} != ${sellerId}`));
 
+  // Get the total revenue for the seller's products
+  const ordersPrice = await db
+    .select({ sum: sum(orderItems.price) })
+    .from(orders)
+    .innerJoin(orderItems, eq(orderItems.orderId, orders.id))
+    .innerJoin(products, eq(orderItems.productId, products.id))
+    .where(and(eq(products.sellerId, sellerId), sql`${orders.userId} != ${sellerId}`));
 
+  // Get the count of products created by the seller
   const productsCount = await db
     .select({ count: count() })
     .from(products)
     .where(eq(products.sellerId, sellerId));
 
-  const ordersPrice = await db
-    .select({ sum: sum(orders.totalPrice) })
-    .from(orders)
-    .where(eq(orders.sellerId, sellerId));
-
+  // Get the sales data for the chart, grouped by month
   const salesData = await db
     .select({
       months: sql<string>`to_char(${orders.createdAt}, 'MM/YY')`,
-      totalSales: sql<number>`sum(${orders.totalPrice})`.mapWith(Number),
+      totalSales: sql<number>`sum(${orderItems.price})`.mapWith(Number),
     })
     .from(orders)
-    .where(eq(orders.sellerId, sellerId))
-    .groupBy(sql`to_char(${orders.createdAt}, 'MM/YY')`);
-
-  const latestOrders = await db.query.orders.findMany({
-    where: eq(orders.sellerId, sellerId),
-    orderBy: [desc(orders.createdAt)],
-    with: {
-      user: { columns: { name: true } },
-    },
-    limit: 6,
-  });
-
-  return {
-    ordersCount: ordersCount[0]?.count || 0,
-    productsCount: productsCount[0]?.count || 0,
-    ordersPrice: ordersPrice[0]?.sum || 0,
-    salesData,
-    latestOrders,
-  };
-}
-
-export async function getOrderSummary(sellerId: string) {
-  const ordersCount = await db.select({ count: count() }).from(orders)
-    .where(eq(orders.sellerId, sellerId));
-
-
-  const productsCount = await db
-    .select({ count: count() })
-    .from(products)
-    .where(eq(products.sellerId, sellerId));
-
-
-  const ordersPrice = await db
-    .select({ sum: sum(orders.totalPrice) })
-    .from(orders)
-    .where(eq(orders.sellerId, sellerId));
-
-
-
-  const salesData = await db
-    .select({
-      months: sql<string>`to_char(${orders.createdAt},'MM/YY')`,
-      totalSales: sql<number>`sum(${orders.totalPrice})`.mapWith(Number),
-    })
-    .from(orders)
+    .innerJoin(orderItems, eq(orderItems.orderId, orders.id))
+    .innerJoin(products, eq(orderItems.productId, products.id))
+    .where(eq(products.sellerId, sellerId))
     .groupBy(sql`1`);
 
+  // Get the latest orders for the seller's products
   const latestOrders = await db.query.orders.findMany({
+    where: eq(products.sellerId, sellerId),
     orderBy: [desc(orders.createdAt)],
     with: {
       user: { columns: { name: true } },
     },
     limit: 6,
   });
+
   return {
     ordersCount,
     productsCount,
@@ -104,8 +74,6 @@ export async function getOrderSummary(sellerId: string) {
     latestOrders,
   };
 }
-
-
 
 export async function getAllSellerOrders({
   limit = PAGE_SIZE,
