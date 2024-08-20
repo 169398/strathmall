@@ -12,7 +12,7 @@ import {
 } from '../validator'
 import { formatError } from '../utils'
 import { hashSync } from 'bcrypt-ts-edge'
-import { users } from '@/db/schema'
+import { sellers, users } from '@/db/schema'
 import { ShippingAddress } from '@/types'
 import { count, desc, eq } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
@@ -164,6 +164,9 @@ export async function updateUser(user: z.infer<typeof updateUserSchema>) {
     return { success: false, message: formatError(error) }
   }
 }
+
+
+
 export async function updateUserAddress(data: ShippingAddress) {
   try {
     const session = await auth()
@@ -229,6 +232,35 @@ export async function updateProfile(user: { name: string; email: string }) {
   } catch (error) {
     return { success: false, message: formatError(error) }
   }
+}
+
+
+export async function updateShop(userId:string,shopName:string){
+try {
+  const session = await auth()
+  if(!session){
+    throw new Error('User not authenticated')
+  }
+  const currentSeller= await db.query.sellers.findFirst({
+    where:(sellers,{eq} )=> eq(sellers.userId,userId),
+  })
+  if(!currentSeller) throw new Error("Seller not found")
+
+   await db
+      .update(sellers)
+      .set({
+        shopName: shopName,
+      })
+      .where(eq(sellers.id, currentSeller.id));
+
+    return {
+      success: true,
+      message: "Shop name updated successfully",
+    };
+} catch (error) {
+  return {success:false ,message:formatError(error)}
+  
+}
 }
 
 

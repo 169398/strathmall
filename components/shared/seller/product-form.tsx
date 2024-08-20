@@ -30,7 +30,9 @@ import { UploadButton } from "@/lib/uploadthing";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import {product } from "@/types/sellerindex"
+import {product } from "@/types/sellerindex";
+import imageCompression from "browser-image-compression";
+
 export default function SellerProductForm({
   type,
   product,
@@ -91,7 +93,31 @@ export default function SellerProductForm({
       }
     }
   }
+  const compressImage = async (file: File) => {
+    const options = {
+      maxSizeMB: 1,
+      maxWidthOrHeight: 1920,
+      useWebWorker: true,
+    };
+    try {
+      const compressedFile = await imageCompression(file, options);
+      return compressedFile;
+    } catch (error) {
+      console.error("Image compression error:", error);
+      return file;
+    }
+  };
 
+  const handleUploadComplete = async (res: any) => {
+    const compressedFiles = await Promise.all(
+      res.map(async (file: any) => {
+        const compressedFile = await compressImage(file.file);
+        return compressedFile;
+      })
+    );
+    const imageUrls = compressedFiles.map((file: any) => file.url);
+    form.setValue("images", [...images, ...imageUrls]);
+  };
   const images = form.watch("images");
   const isFeatured = form.watch("isFeatured");
   const banner = form.watch("banner");
@@ -233,11 +259,9 @@ export default function SellerProductForm({
                         />
                       ))}
                       <FormControl>
-                        <UploadButton
+                      <UploadButton
                           endpoint="imageUploader"
-                          onClientUploadComplete={(res: any) => {
-                            form.setValue("images", [...images, res[0].url]);
-                          }}
+                          onClientUploadComplete={handleUploadComplete}
                           onUploadError={(error: Error) => {
                             toast({
                               variant: "destructive",
@@ -245,6 +269,7 @@ export default function SellerProductForm({
                             });
                           }}
                         />
+
                       </FormControl>
                     </div>
                   </CardContent>
@@ -254,7 +279,7 @@ export default function SellerProductForm({
             )}
           />
         </div>
-        <div>
+        
           <FormField
             control={form.control}
             name="isFeatured"
@@ -270,30 +295,33 @@ export default function SellerProductForm({
               </FormItem>
             )}
           />
-          {isFeatured && banner && (
-            <Image
-              src={banner}
-              alt="banner image"
-              className="w-full object-cover object-center rounded-sm"
-              width={1920}
-              height={680}
-            />
-          )}
-          {isFeatured && !banner && (
-            <UploadButton
-              endpoint="imageUploader"
-              onClientUploadComplete={(res) => {
-                form.setValue("banner", res[0].url);
-              }}
-              onUploadError={(error: Error) => {
-                toast({
-                  variant: "destructive",
-                  description: `ERROR! ${error.message}`,
-                });
-              }}
-            />
-          )}
-        </div>
+        <div>
+  {isFeatured && (
+    banner ? (
+      <Image
+        src={banner}
+        alt="banner image"
+        className="w-full object-cover object-center rounded-sm"
+        width={1920}
+        height={680}
+      />
+    ) : (
+      <UploadButton
+        endpoint="imageUploader"
+        onClientUploadComplete={(res) => {
+          form.setValue("banner", res[0].url);
+        }}
+        onUploadError={(error: Error) => {
+          toast({
+            variant: "destructive",
+            description: `ERROR! ${error.message}`,
+          });
+        }}
+      />
+    )
+  )}
+</div>
+
         <div>
           <FormField
             control={form.control}
