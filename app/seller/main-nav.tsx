@@ -19,10 +19,10 @@ const links = [
     href: '/seller/orders',
   },
 
-  {
-    title: 'Settings',
-    href: '/seller/settings',
-  },
+  // {
+  //   title: 'Settings',
+  //   href: '/seller/settings',
+  // },
 ]
 export default function MainNav({
   className,
