@@ -41,7 +41,7 @@ export function PaymentBg() {
         </h2>
         <p className="text-white text-sm md:text-2xl max-auto mt-6 text-auto">
           To kickstart your success, we kindly request a one-time onboarding fee
-          of 300 KES. This fee enables us to provide you with exceptional
+          of 1000 KES. This fee enables us to provide you with exceptional
           services and support throughout your selling journey.
         </p>
         <div className="flex flex-col sm:flex-row items-center gap-4 mt-6">
