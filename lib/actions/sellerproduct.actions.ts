@@ -141,7 +141,7 @@ export async function getProductById(productId: string) {
 export async function getLatestProducts() {
   const data = await db.query.products.findMany({
     orderBy: [desc(products.createdAt)],
-    limit: 4,
+    limit: 10,
   });
   return data;
 }
@@ -247,7 +247,21 @@ export async function getFeaturedProducts(userId: string) {
   });
   return data;
 }
-
+export async function getRelatedProducts(category: string, excludeProductId: string) {
+  try {
+    const data = await db.query.products.findMany({
+      where: and(
+        eq(products.category, category),
+        sql`${products.id} != ${excludeProductId}` 
+      ),
+      orderBy: [desc(products.createdAt)],
+      limit: 10, 
+    });
+    return data;
+  } catch (error) {
+    return { success: false, message: formatError(error) };
+  }
+}
 // DELETE
 export async function deleteProduct(id: string, ) {
   try {

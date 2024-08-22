@@ -9,6 +9,7 @@ import Navbar from '@/components/shared/Navbar'
 import { constructMetadata } from '@/lib/paypal'
 import { Analytics } from "@vercel/analytics/react";
 import { SessionProvider } from 'next-auth/react'
+import { WelcomeToast } from '@/components/shared/welcome-toast'
 const fontSans = FontSans({
   subsets: ['latin'],
   weight: ['400', '600'],
@@ -26,15 +27,19 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
-          "min-h-screen bg-background font-sans antialiased",
+          "min-h-screen bg-background font-sans antialiased bg-neutral-50 text-black selection:bg-teal-300 dark:bg-neutral-900 dark:text-white dark:selection:bg-pink-500 dark:selection:text-white",
           fontSans.variable
         )}
       >
        
         <Navbar />
+        <main>
         <SessionProvider >{children}</SessionProvider>
-        <Analytics />
+        <WelcomeToast/>
         <Toaster />
+        <Analytics />
+
+        </main>
       </body>
     </html>
   );

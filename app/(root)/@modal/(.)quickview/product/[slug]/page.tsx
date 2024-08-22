@@ -1,5 +1,4 @@
 import AddToCart from '@/components/shared/product/add-to-cart'
-import ProductImages from '@/components/shared/product/product-images'
 import ProductPrice from '@/components/shared/product/product-price'
 import QuickViewModalWrapper from '@/components/shared/product/quickview-modal-wrapper'
 import Rating from '@/components/shared/product/rating'
@@ -7,6 +6,7 @@ import { getMyCart } from '@/lib/actions/sellercart.actions'
 import { getProductBySlug } from '@/lib/actions/sellerproduct.actions'
 import { notFound } from 'next/navigation'
 import ReloadButton from './reload-button'
+import { ProductGallery } from '@/components/shared/product/gallery'
 
 export default async function StorefrontProductQuickView(props: {
   params: { slug: string }
@@ -19,7 +19,8 @@ export default async function StorefrontProductQuickView(props: {
       <div className="flex flex-col gap-8">
         <div className="flex flex-col items-center md:items-start justify-start md:grid md:grid-cols-9 gap-8">
           <div className="col-span-4 w-full">
-            <ProductImages images={product.images!} />
+            <ProductGallery images={product.images!.map(image => ({ src: image, altText: product.name}))} />
+
           </div>
           <div className="md:col-span-5 w-full flex flex-col gap-2">
             <h3 className="h3-bold">{product.name}</h3>

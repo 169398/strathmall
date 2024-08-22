@@ -1,43 +1,48 @@
-import { notFound } from 'next/navigation'
-
-import ProductImages from '@/components/shared/product/product-images'
-import ProductPrice from '@/components/shared/product/product-price'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent } from '@/components/ui/card'
-import { getProductBySlug } from '@/lib/actions/sellerproduct.actions'
-import { APP_NAME } from '@/lib/constants'
-import AddToCart from '@/components/shared/product/add-to-cart'
-import { getMyCart } from '@/lib/actions/sellercart.actions'
-import { round2 } from '@/lib/utils'
-import ReviewList from './review-list'
-import { auth } from '@/auth'
-import Rating from '@/components/shared/product/rating'
+import { notFound } from 'next/navigation';
+import ProductImages from '@/components/shared/product/product-images';
+import ProductPrice from '@/components/shared/product/product-price';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
+import { getProductBySlug, getRelatedProducts } from '@/lib/actions/sellerproduct.actions';
+import { APP_NAME } from '@/lib/constants';
+import AddToCart from '@/components/shared/product/add-to-cart';
+import { getMyCart } from '@/lib/actions/sellercart.actions';
+import { round2 } from '@/lib/utils';
+import ReviewList from './review-list';
+import { auth } from '@/auth';
+import Rating from '@/components/shared/product/rating';
+import Link from 'next/link';
+import Image from 'next/image';
 
 export async function generateMetadata({
   params,
 }: {
-  params: { slug: string }
+  params: { slug: string };
 }) {
-  const product = await getProductBySlug(params.slug)
+  const product = await getProductBySlug(params.slug);
   if (!product) {
-    return { title: 'Product not found' }
+    return { title: 'Product not found' };
   }
   return {
     title: `${product.name} - ${APP_NAME}`,
     description: product.description,
-  }
+  };
 }
 
 const ProductDetails = async ({
   params: { slug },
 }: {
-  params: { slug: string }
-  searchParams: { page: string; color: string; size: string }
+  params: { slug: string };
 }) => {
-  const product = await getProductBySlug(slug)
-  if (!product) notFound()
-  const cart = await getMyCart()
-  const session = await auth()
+  const product = await getProductBySlug(slug);
+  if (!product) notFound();
+  
+  const cart = await getMyCart();
+  const session = await auth();
+
+  // Fetch related products
+  const relatedProducts = await getRelatedProducts(product.category, product.id);
+
   return (
     <>
       <section>
@@ -46,9 +51,9 @@ const ProductDetails = async ({
             <ProductImages images={product.images!} />
           </div>
 
-          <div className="col-span-2 flex flex-col w-full  gap-8 p-5">
+          <div className="col-span-2 flex flex-col w-full gap-8 p-5">
             <div className="flex flex-col gap-6">
-              <p className="p-medium-16 rounded-full bg-grey-500/10   text-grey-500">
+              <p className="p-medium-16 rounded-full bg-grey-500/10 text-grey-500">
                 {product.brand} {product.category}
               </p>
               <h1 className="h3-bold">{product.name}</h1>
@@ -90,7 +95,7 @@ const ProductDetails = async ({
                   )}
                 </div>
                 {product.stock !== 0 && (
-                  <div className=" flex-center">
+                  <div className="flex-center">
                     <AddToCart
                       cart={cart}
                       item={{
@@ -109,16 +114,44 @@ const ProductDetails = async ({
           </div>
         </div>
       </section>
+      
       <section className="mt-10">
-        <h2 className="h2-bold  mb-5">Customer Reviews</h2>
+        <h2 className="h2-bold mb-5">Customer Reviews</h2>
         <ReviewList
           productId={product.id}
           productSlug={product.slug}
           userId={session?.user.id!}
         />
       </section>
+      
+      {Array.isArray(relatedProducts) && relatedProducts.length > 0 && (
+        <section className="mt-10">
+          <h2 className="h2-bold mb-5">Related Products</h2>
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
+            {relatedProducts.map((relatedProduct) => (
+              <Link
+                key={relatedProduct.id}
+                href={`/product/${relatedProduct.slug}`}
+                className="flex flex-col items-center text-center"
+              >
+                <Image
+                  src={relatedProduct.images[0]}
+                  alt={relatedProduct.name}
+                  className="h-48 w-full object-cover rounded-lg"
+                  width={500}
+                  height={500}
+                />
+                <p className="mt-2 font-semibold">{relatedProduct.name}</p>
+                <p className="text-sm text-gray-500">
+                   ksh{round2(relatedProduct.price)}
+                </p>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
     </>
-  )
-}
+  );
+};
 
-export default ProductDetails
+export default ProductDetails;
