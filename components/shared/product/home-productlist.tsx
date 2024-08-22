@@ -13,13 +13,13 @@ const ProductList: React.FC<ProductListProps> = ({ title, data }) => {
       <h2 className="h2-bold mb-4">{title}</h2>
       {data.length > 0 ? (
         <div className="w-full overflow-x-auto scroll-snap-x mandatory pb-6 pt-1">
-          <div className="flex gap-4 scroll-snap-align-start">
+          <div className="flex gap-4 sm:gap-0.5 scroll-snap-align-start">
             {data.map((product: product, i: number) => (
               <div
                 key={`${product.slug}${i}`}
-                className="flex-none w-full lg:w-1/4 scroll-snap-align-start animate-carousel animate-slide"
+                className="flex-none w-1/2 sm:w-1/2 md:w-1/3 lg:w-1/4 scroll-snap-align-start animate-carousel animate-slide"
               >
-                <div className="p-1">
+                <div className="p-1 sm:p-0">
                   <ProductCard product={product} />
                 </div>
               </div>
