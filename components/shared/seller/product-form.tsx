@@ -1,3 +1,4 @@
+
 "use client";
 
 import slugify from "slugify";
@@ -12,6 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import {
+  checkSlugExists,
   createProduct,
   updateProduct,
 } from "@/lib/actions/sellerproduct.actions"; 
@@ -22,7 +24,7 @@ import {
 } from "@/lib/validator"; 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
@@ -31,7 +33,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import {product } from "@/types/sellerindex";
-import imageCompression from "browser-image-compression";
+import { useEffect } from "react";
 
 export default function SellerProductForm({
   type,
@@ -54,6 +56,31 @@ export default function SellerProductForm({
   });
 
   const { toast } = useToast();
+  const productName = useWatch({ control: form.control, name: "name" });
+
+  // Automatically generate the slug based on the product name
+  useEffect(() => {
+    const generateSlug = async () => {
+      if (productName) {
+        let slug = slugify(productName, { lower: true });
+
+        // Check if the slug is unique (pseudo-code, you need to implement the check)
+        let isUnique = await checkSlugExists(slug);
+        // If not unique, append a random number or something similar
+        if (!isUnique) {
+          slug += `-${Math.floor(Math.random() * 10000)}`;
+          isUnique = await checkSlugExists(slug);
+        }
+        if (!isUnique) {
+          slug += `-${Math.floor(Math.random() * 10000)}`;
+        }
+
+        form.setValue("slug", slug);
+      }
+    };
+
+    generateSlug();
+  }, [productName, form]);
 
   async function onSubmit(values: z.infer<typeof insertProductSchema>) {
   
@@ -93,31 +120,11 @@ export default function SellerProductForm({
       }
     }
   }
-  const compressImage = async (file: File) => {
-    const options = {
-      maxSizeMB: 1,
-      maxWidthOrHeight: 1920,
-      useWebWorker: true,
-    };
-    try {
-      const compressedFile = await imageCompression(file, options);
-      return compressedFile;
-    } catch (error) {
-      console.error("Image compression error:", error);
-      return file;
-    }
-  };
+  
+  
+  
 
-  const handleUploadComplete = async (res: any) => {
-    const compressedFiles = await Promise.all(
-      res.map(async (file: any) => {
-        const compressedFile = await compressImage(file.file);
-        return compressedFile;
-      })
-    );
-    const imageUrls = compressedFiles.map((file: any) => file.url);
-    form.setValue("images", [...images, ...imageUrls]);
-  };
+  
   const images = form.watch("images");
   const isFeatured = form.watch("isFeatured");
   const banner = form.watch("banner");
@@ -144,32 +151,18 @@ export default function SellerProductForm({
             )}
           />
 
-          <FormField
+<FormField
             control={form.control}
             name="slug"
             render={({ field }) => (
               <FormItem className="w-full">
                 <FormLabel>Your product unique code</FormLabel>
                 <FormControl>
-                  <div className="relative">
-                    <Input
-                      placeholder="Click below"
-                      className="pl-8"
-                      {...field}
-                    />
-                    <button
-                    className="text-red-500"
-                      type="button"
-                      onClick={() => {
-                        form.setValue(
-                          "slug",
-                          slugify(form.getValues("name"), { lower: true })
-                        );
-                      }}
-                    >
-                      Click here
-                    </button>
-                  </div>
+                  <Input
+                    placeholder="Slug will be generated automatically"
+                    {...field}
+                    readOnly 
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -261,12 +254,14 @@ export default function SellerProductForm({
                       <FormControl>
                       <UploadButton
                           endpoint="imageUploader"
-                          onClientUploadComplete={handleUploadComplete}
+                          onClientUploadComplete={(res: any) => {
+                            form.setValue('images', [...images, res[0].url])
+                          }}
                           onUploadError={(error: Error) => {
                             toast({
-                              variant: "destructive",
+                              variant: 'destructive',
                               description: `ERROR! ${error.message}`,
-                            });
+                            })
                           }}
                         />
 

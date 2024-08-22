@@ -65,7 +65,12 @@ export async function updateProduct(
     return { success: false, message: formatError(error) };
   }
 }
-
+export async function checkSlugExists(slug: string): Promise<boolean> {
+  const existingProduct = await db.query.products.findFirst({
+    where: eq(products.slug, slug),
+  });
+  return !!existingProduct;
+}
 export async function getAllSearchProducts({
   query,
   limit = PAGE_SIZE,
@@ -281,3 +286,4 @@ export async function deleteProduct(id: string, ) {
     return { success: false, message: formatError(error) };
   }
 }
+

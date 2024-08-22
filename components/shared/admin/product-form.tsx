@@ -1,6 +1,7 @@
-'use client'
 
-import slugify from 'slugify'
+"use client";
+
+import slugify from "slugify";
 import {
   Form,
   FormControl,
@@ -8,81 +9,127 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { useToast } from '@/components/ui/use-toast'
-import {  updateProduct } from '@/lib/actions/adminproduct.action'
-import { productDefaultValues } from '@/lib/constants'
-import { insertProductSchema, updateProductSchema } from '@/lib/validator'
-import { Product } from '@/types'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useRouter } from 'next/navigation'
-import { useForm } from 'react-hook-form'
-import { z } from 'zod'
-import { Card, CardContent } from '@/components/ui/card'
-import Image from 'next/image'
-import { UploadButton } from '@/lib/uploadthing'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Textarea } from '@/components/ui/textarea'
-import { Button } from '@/components/ui/button'
-import { createProduct } from '@/lib/actions/sellerproduct.actions'
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { useToast } from "@/components/ui/use-toast";
+import {
+  checkSlugExists,
+  createProduct,
+  
+} from "@/lib/actions/sellerproduct.actions"; 
+import {  productDefaultValues } from "@/lib/constants"; 
+import {
+  insertProductSchema,
+  updateProductSchema,
+} from "@/lib/validator"; 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { useForm, useWatch } from "react-hook-form";
+import { z } from "zod";
+import { Card, CardContent } from "@/components/ui/card";
+import Image from "next/image";
+import { UploadButton } from "@/lib/uploadthing";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import {product } from "@/types/sellerindex";
+import { useEffect } from "react";
+import { updateProduct } from "@/lib/actions/adminproduct.action";
 
-export default function ProductForm({
+export default function SellerProductForm({
   type,
   product,
   productId,
 }: {
-  type: 'Create' | 'Update'
-  product?: Product
-  productId?: string
+  type: "Create" | "Update";
+  product?: product;
+  productId?: string;
 }) {
-  const router = useRouter()
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof insertProductSchema>>({
     resolver:
-      type === 'Update'
+      type === "Update"
         ? zodResolver(updateProductSchema)
         : zodResolver(insertProductSchema),
     defaultValues:
-      product && type === 'Update' ? product : productDefaultValues,
-  })
+      product && type === "Update" ? product : productDefaultValues,
+  });
 
-  const { toast } = useToast()
+  const { toast } = useToast();
+  const productName = useWatch({ control: form.control, name: "name" });
+
+  // Automatically generate the slug based on the product name
+  useEffect(() => {
+    const generateSlug = async () => {
+      if (productName) {
+        let slug = slugify(productName, { lower: true });
+
+        // Check if the slug is unique (pseudo-code, you need to implement the check)
+        let isUnique = await checkSlugExists(slug);
+        // If not unique, append a random number or something similar
+        if (!isUnique) {
+          slug += `-${Math.floor(Math.random() * 10000)}`;
+          isUnique = await checkSlugExists(slug);
+        }
+        if (!isUnique) {
+          slug += `-${Math.floor(Math.random() * 10000)}`;
+        }
+
+        form.setValue("slug", slug);
+      }
+    };
+
+    generateSlug();
+  }, [productName, form]);
 
   async function onSubmit(values: z.infer<typeof insertProductSchema>) {
-    if (type === 'Create') {
-      const res = await createProduct(values)
+  
+  
+      if (type === "Create") {
+        const res = await createProduct(values, );
       if (!res.success) {
         toast({
-          variant: 'destructive',
+          variant: "destructive",
           description: res.message,
-        })
+        });
       } else {
         toast({
           description: res.message,
-        })
-        router.push(`/admin/products`)
+        });
+        router.push(`/seller/products`); 
       }
     }
-    if (type === 'Update') {
+    if (type === "Update") {
       if (!productId) {
-        router.push(`/admin/products`)
-        return
+        router.push(`/seller/products`);
+        return;
       }
-      const res = await updateProduct({ ...values, id: productId })
+      const res = await updateProduct(
+        {
+          ...values, id: productId,
+        },
+      
+      );
       if (!res.success) {
         toast({
-          variant: 'destructive',
+          variant: "destructive",
           description: res.message,
-        })
+        });
       } else {
-        router.push(`/admin/products`)
+        router.push(`/seller/products`);
       }
     }
   }
-  const images = form.watch('images')
-  const isFeatured = form.watch('isFeatured')
-  const banner = form.watch('banner')
+  
+  
+  
+
+  
+  const images = form.watch("images");
+  const isFeatured = form.watch("isFeatured");
+  const banner = form.watch("banner");
+
   return (
     <Form {...form}>
       <form
@@ -94,46 +141,30 @@ export default function ProductForm({
           <FormField
             control={form.control}
             name="name"
-            render={({ field }: { field: any }) => (
+            render={({ field }) => (
               <FormItem className="w-full">
-                <FormLabel>Name</FormLabel>
+                <FormLabel>Product Name</FormLabel>
                 <FormControl>
                   <Input placeholder="Enter product name" {...field} />
                 </FormControl>
-
                 <FormMessage />
               </FormItem>
             )}
           />
 
-          <FormField
+<FormField
             control={form.control}
             name="slug"
-            render={({ field }: { field: any }) => (
+            render={({ field }) => (
               <FormItem className="w-full">
-                <FormLabel>Slug</FormLabel>
-
+                <FormLabel>Your product unique code</FormLabel>
                 <FormControl>
-                  <div className="relative">
-                    <Input
-                      placeholder="Enter product slug"
-                      className="pl-8"
-                      {...field}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        form.setValue(
-                          'slug',
-                          slugify(form.getValues('name'), { lower: true })
-                        )
-                      }}
-                    >
-                      Generate
-                    </button>
-                  </div>
+                  <Input
+                    placeholder="Slug will be generated automatically"
+                    {...field}
+                    readOnly 
+                  />
                 </FormControl>
-
                 <FormMessage />
               </FormItem>
             )}
@@ -157,13 +188,12 @@ export default function ProductForm({
           <FormField
             control={form.control}
             name="brand"
-            render={({ field }: { field: any }) => (
+            render={({ field }) => (
               <FormItem className="w-full">
                 <FormLabel>Brand</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter product brand" {...field} />
+                  <Input placeholder="Enter brand" {...field} />
                 </FormControl>
-
                 <FormMessage />
               </FormItem>
             )}
@@ -173,7 +203,7 @@ export default function ProductForm({
           <FormField
             control={form.control}
             name="price"
-            render={({ field }: { field: any }) => (
+            render={({ field }) => (
               <FormItem className="w-full">
                 <FormLabel>Price</FormLabel>
                 <FormControl>
@@ -186,13 +216,13 @@ export default function ProductForm({
           <FormField
             control={form.control}
             name="stock"
-            render={({ field }: { field: any }) => (
+            render={({ field }) => (
               <FormItem className="w-full">
                 <FormLabel>Stock</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
-                    placeholder="Enter product stock"
+                    placeholder="Enter stock quantity"
                     {...field}
                   />
                 </FormControl>
@@ -208,7 +238,7 @@ export default function ProductForm({
             name="images"
             render={() => (
               <FormItem className="w-full">
-                <FormLabel>Images</FormLabel>
+                <FormLabel>Product Images</FormLabel>
                 <Card>
                   <CardContent className="space-y-2 mt-2 min-h-48">
                     <div className="flex-start space-x-2">
@@ -223,7 +253,7 @@ export default function ProductForm({
                         />
                       ))}
                       <FormControl>
-                        <UploadButton
+                      <UploadButton
                           endpoint="imageUploader"
                           onClientUploadComplete={(res: any) => {
                             form.setValue('images', [...images, res[0].url])
@@ -235,61 +265,59 @@ export default function ProductForm({
                             })
                           }}
                         />
+
                       </FormControl>
                     </div>
                   </CardContent>
                 </Card>
-
                 <FormMessage />
               </FormItem>
             )}
           />
         </div>
+        
+          <FormField
+            control={form.control}
+            name="isFeatured"
+            render={({ field }) => (
+              <FormItem className="space-x-2 items-center">
+                <FormControl>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <FormLabel>Featured Product?</FormLabel>
+              </FormItem>
+            )}
+          />
         <div>
-          Featured Product
-          <Card>
-            <CardContent className="space-y-2 mt-2  ">
-              <FormField
-                control={form.control}
-                name="isFeatured"
-                render={({ field }) => (
-                  <FormItem className="space-x-2 items-center">
-                    <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                    <FormLabel>Is Featured?</FormLabel>
-                  </FormItem>
-                )}
-              />
-              {isFeatured && banner && (
-                <Image
-                  src={banner}
-                  alt="banner image"
-                  className=" w-full object-cover object-center rounded-sm"
-                  width={1920}
-                  height={680}
-                />
-              )}
-              {isFeatured && !banner && (
-                <UploadButton
-                  endpoint="imageUploader"
-                  onClientUploadComplete={(res) => {
-                    form.setValue('banner', res[0].url)
-                  }}
-                  onUploadError={(error: Error) => {
-                    toast({
-                      variant: 'destructive',
-                      description: `ERROR! ${error.message}`,
-                    })
-                  }}
-                />
-              )}
-            </CardContent>
-          </Card>
-        </div>
+  {isFeatured && (
+    banner ? (
+      <Image
+        src={banner}
+        alt="banner image"
+        className="w-full object-cover object-center rounded-sm"
+        width={1920}
+        height={680}
+      />
+    ) : (
+      <UploadButton
+        endpoint="imageUploader"
+        onClientUploadComplete={(res) => {
+          form.setValue("banner", res[0].url);
+        }}
+        onUploadError={(error: Error) => {
+          toast({
+            variant: "destructive",
+            description: `ERROR! ${error.message}`,
+          });
+        }}
+      />
+    )
+  )}
+</div>
+
         <div>
           <FormField
             control={form.control}
@@ -316,10 +344,10 @@ export default function ProductForm({
             disabled={form.formState.isSubmitting}
             className="button col-span-2 w-full"
           >
-            {form.formState.isSubmitting ? 'Submitting...' : `${type} Product `}
+            {form.formState.isSubmitting ? "Submitting..." : `${type} Product `}
           </Button>
         </div>
       </form>
     </Form>
-  )
+  );
 }
