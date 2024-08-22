@@ -100,7 +100,7 @@ export const metadata = {
                 If you have any questions or concerns about this Privacy Policy or your personal information, please contact us at:
               </p>
               <p className="text-gray-700">
-                <strong>Email:</strong> strathmall.com
+                <strong>Email:</strong>support@strathmall.com
                 <br />
               </p>
   

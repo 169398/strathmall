@@ -1,5 +1,6 @@
 import { toast } from "@/components/ui/use-toast";
 import { Metadata } from "next"
+import { ensureStartsWith } from "./utils";
 
 
 
@@ -87,12 +88,16 @@ async function handleResponse(response: any) {
   throw new Error(errorMessage)
 }
 
+const { TWITTER_CREATOR, TWITTER_SITE  } = process.env;
+const twitterCreator = TWITTER_CREATOR ? ensureStartsWith(TWITTER_CREATOR, '@') : undefined;
+const twitterSite = TWITTER_SITE ? ensureStartsWith(TWITTER_SITE, 'https://') : undefined;
 export function constructMetadata({
   title = "StrathMall - Your Campus & Community Marketplace",
   description = "Discover StrathMall, the ultimate  marketplace for premium goods, connecting university  sellers with savvy shoppers",
   image = "/thumbnail.png",
   icons = "/favicon.ico",
   noIndex = false,
+
 }: {
   title?: string;
   description?: string;
@@ -112,21 +117,25 @@ export function constructMetadata({
         },
       ],
     },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: [image],
-      creator: "idriskulubi",
-    },
+    ...(twitterCreator &&
+      twitterSite && {
+        twitter: {
+          card: 'summary_large_image',
+          creator: twitterCreator,
+          site: twitterSite
+        }
+      }),
     icons,
     metadataBase: new URL("https://strathmall.com/"),
     ...(noIndex && {
       robots: {
-        index: false,
-        follow: false,
+        index: true,
+        follow: true,
       },
     }),
   };
 }
 
+
+ 
+  

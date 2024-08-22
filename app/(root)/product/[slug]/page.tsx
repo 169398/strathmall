@@ -125,29 +125,35 @@ const ProductDetails = async ({
       </section>
       
       {Array.isArray(relatedProducts) && relatedProducts.length > 0 && (
-        <section className="mt-10">
-          <h2 className="h2-bold mb-5">Related Products</h2>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
+        <section className="py-8">
+          <h2 className="mb-4 text-2xl font-bold">Related Products</h2>
+          <ul className="flex w-full gap-4 overflow-x-auto pt-1">
             {relatedProducts.map((relatedProduct) => (
-              <Link
+              <li
                 key={relatedProduct.id}
-                href={`/product/${relatedProduct.slug}`}
-                className="flex flex-col items-center text-center"
+                className="aspect-square w-full flex-none min-[475px]:w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5"
               >
-                <Image
-                  src={relatedProduct.images[0]}
-                  alt={relatedProduct.name}
-                  className="h-48 w-full object-cover rounded-lg"
-                  width={500}
-                  height={500}
-                />
-                <p className="mt-2 font-semibold">{relatedProduct.name}</p>
-                <p className="text-sm text-gray-500">
-                   ksh{round2(relatedProduct.price)}
-                </p>
-              </Link>
+                <Link
+                  className="relative h-full w-full"
+                  href={`/product/${relatedProduct.slug}`}
+                >
+                  <div className="relative h-full w-full">
+                    <Image
+                      src={relatedProduct.images[0]}
+                      alt={relatedProduct.name}
+                      className="h-full w-full object-cover rounded-lg"
+                      fill
+                      sizes="(min-width: 1024px) 20vw, (min-width: 768px) 25vw, (min-width: 640px) 33vw, (min-width: 475px) 50vw, 100vw"
+                    />
+                    <div className="absolute bottom-0 left-0 p-2 bg-black bg-opacity-50 text-white">
+                      <p className="text-sm font-semibold">{relatedProduct.name}</p>
+                      <p className="text-sm">Ksh {round2(relatedProduct.price)}</p>
+                    </div>
+                  </div>
+                </Link>
+              </li>
             ))}
-          </div>
+          </ul>
         </section>
       )}
     </>
