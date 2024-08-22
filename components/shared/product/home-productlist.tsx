@@ -15,15 +15,21 @@ interface ProductListProps {
 }
 
 const ProductList: React.FC<ProductListProps> = ({ title, data }) => {
+  // Duplicate the products to create a looping effect
+  const carouselProducts = [...data, ...data, ...data];
+
   return (
     <div className="relative">
       <h2 className="h2-bold mb-4">{title}</h2>
       {data.length > 0 ? (
         <div className="relative">
-          <Carousel className="w-full overflow-x-auto scroll-snap-x mandatory">
-            <CarouselContent className="flex space-x-4 scroll-snap-align-start">
-              {data.map((product: product) => (
-                <CarouselItem key={product.slug} className="flex-none w-1/2 lg:w-1/4 scroll-snap-align-start">
+          <Carousel className="w-full overflow-x-auto scroll-snap-x mandatory pb-6 pt-1">
+            <CarouselContent className="flex animate-carousel gap-4 scroll-snap-align-start">
+              {carouselProducts.map((product: product, i: number) => (
+                <CarouselItem
+                  key={`${product.slug}${i}`}
+                  className="flex-none w-1/2 lg:w-1/4 scroll-snap-align-start"
+                >
                   <div className="p-1">
                     <ProductCard product={product} />
                   </div>
