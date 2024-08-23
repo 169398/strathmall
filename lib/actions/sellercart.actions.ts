@@ -39,7 +39,7 @@ export const addItemToCart = async (data: cartItem) => {
       if (product.stock < 1) throw new Error("Not enough stock");
       await db.insert(carts).values({
         userId: userId,
-        items: [{...item,productId:item.productId,}],
+        items: [{ ...item, productId: item.productId }],
         sessionCartId: sessionCartId,
         ...calcPrice([item]),
       });
@@ -57,13 +57,13 @@ export const addItemToCart = async (data: cartItem) => {
           existItem.qty + 1;
       } else {
         if (product.stock < 1) throw new Error("Not enough stock");
-        cart.items.push({...item,productId:item.productId,});
+        cart.items.push({ ...item, productId: item.productId });
       }
       await db
         .update(carts)
         .set({
           items: cart.items,
-          ...calcPrice([{...item,productId:item.productId}]),
+          ...calcPrice([{ ...item, productId: item.productId }]),
         })
         .where(eq(carts.id, cart.id));
 
@@ -87,14 +87,12 @@ export async function getMyCart() {
   const userId = session?.user.id;
 
   const cart = await db.query.carts.findFirst({
-    where:userId? eq(carts.userId, userId):eq(carts.sessionCartId, sessionCartId),
+    where: userId
+      ? eq(carts.userId, userId)
+      : eq(carts.sessionCartId, sessionCartId),
   });
   return cart;
 }
-
-
-
-
 
 export const removeItemFromCart = async (productId: string) => {
   try {
@@ -113,15 +111,20 @@ export const removeItemFromCart = async (productId: string) => {
     if (!exist) throw new Error("Item not found");
 
     if (exist.qty === 1) {
-      sellerCart.items = sellerCart.items.filter((x) => x.productId !== exist.productId);
+      sellerCart.items = sellerCart.items.filter(
+        (x) => x.productId !== exist.productId
+      );
     } else {
-      sellerCart.items.find((x) => x.productId === productId)!.qty = exist.qty - 1;
+      sellerCart.items.find((x) => x.productId === productId)!.qty =
+        exist.qty - 1;
     }
     await db
       .update(carts)
       .set({
         items: sellerCart.items,
-        ...calcPrice(sellerCart.items.map(i=>({...i,productId:i.productId}))),
+        ...calcPrice(
+          sellerCart.items.map((i) => ({ ...i, productId: i.productId }))
+        ),
       })
       .where(eq(carts.id, sellerCart.id));
     revalidatePath(`/product/${product.slug}`);

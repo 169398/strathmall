@@ -23,10 +23,10 @@ const AllProductList: React.FC<AllProductListProps> = ({ title, data }) => {
       <h2 className="h2-bold mb-4">{title}</h2>
       {data.length > 0 ? (
         <>
-         <div className="grid grid-cols-12 gap-2 sm:gap-3">
-  {data.slice(0, visibleCount).map((product: product, i: number) => (
+<div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
+{data.slice(0, visibleCount).map((product: product, i: number) => (
     <React.Suspense fallback={<ProductSkeleton />} key={`${product.slug}${i}`}>
-      <div className="col-span-3 flex-none p-0.5 sm:p-1">
+      <div className="  flex-none p-0.5 sm:p-1">
         <ProductCard product={product} />
       </div>
     </React.Suspense>
