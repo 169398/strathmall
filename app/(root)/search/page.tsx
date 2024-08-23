@@ -7,8 +7,10 @@ import Link from 'next/link';
 const sortOrders = ['newest', 'lowest', 'highest', 'rating'];
 const prices = [
   { name: 'ksh1 to ksh100', value: '1-100' },
-  { name: 'ksh101 to ksh200', value: '101-200' },
   { name: 'ksh201 to ksh1000', value: '201-1000' },
+  { name: 'ksh1001 to ksh5000', value: '1001-5000' },
+  { name: 'ksh5001 to ksh10000', value: '5001-10000' },
+
 ];
 const ratings = [4, 3, 2, 1];
 
