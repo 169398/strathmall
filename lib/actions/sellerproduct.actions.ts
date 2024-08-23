@@ -87,8 +87,6 @@ export async function getAllProducts() {
 }
 export async function getAllSearchProducts({
   query,
-  limit = PAGE_SIZE,
-  page,
   category,
   price,
   rating,
@@ -96,8 +94,6 @@ export async function getAllSearchProducts({
 }: {
   query: string;
   category: string;
-  limit?: number;
-  page: number;
   price?: string;
   rating?: string;
   sort?: string;
@@ -136,17 +132,11 @@ export async function getAllSearchProducts({
     .from(products)
     .where(condition)
     .orderBy(order)
-    .offset((page - 1) * limit)
-    .limit(limit);
 
-  const dataCount = await db
-    .select({ count: count() })
-    .from(products)
-    .where(condition);
+  
 
   return {
     data,
-    totalPages: Math.ceil(dataCount[0].count / limit),
   };
 }
 
