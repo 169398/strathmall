@@ -3,6 +3,7 @@ import EcommerceFeatures from '@/components/shared/product/ecommerce-features'
 import ProductPromotion from '@/components/shared/product/product-promotion'
 import {
 
+  getAllProducts,
   getLatestProducts,
 } from '@/lib/actions/sellerproduct.actions'
 import {  buttonVariants } from '@/components/ui/button'
@@ -11,11 +12,13 @@ import * as React from "react"
 import ProductList from '@/components/shared/product/home-productlist'
 import SparklesText from '@/components/magicui/sparkles-text'
 import Footer from '@/components/shared/footer'
+import AllProductList from '@/components/shared/product/all-products'
  
 
 
 export default async function Home() {
   const latestProducts = await getLatestProducts()
+  const allProducts = await getAllProducts() 
   return (
    
 
@@ -50,9 +53,10 @@ export default async function Home() {
       </MaxWidthWrapper>
       <div className="space-y-8">
        
-        <ProductList title="Newest Arrivals" data={latestProducts} />
-        
+        <ProductList title="Newest Arrivals ✨ " data={latestProducts} />
         <ProductPromotion />
+        <AllProductList title='More to love 💖' data={allProducts.data || []}/>
+
         <EcommerceFeatures />
         <Footer />
 

@@ -71,6 +71,20 @@ export async function checkSlugExists(slug: string): Promise<boolean> {
   });
   return !!existingProduct;
 }
+//all products
+export async function getAllProducts() {
+  try {
+    // Fetch all products without any specific order or filters
+    const data = await db.select().from(products);
+    
+    return {
+      success: true,
+      data,
+    };
+  } catch (error) {
+    return { success: false, message: formatError(error) };
+  }
+}
 export async function getAllSearchProducts({
   query,
   limit = PAGE_SIZE,
