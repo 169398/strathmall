@@ -14,7 +14,7 @@ import { Suspense } from 'react'
 
 // Skeleton fallback for carousel item
 const CarouselItemSkeleton = () => (
-  <div className="relative w-full h-64 bg-neutral-200 dark:bg-neutral-700 animate-pulse" />
+  <div className="relative w-full h-64 bg-gray-600 dark:bg-neutral-700 animate-pulse" />
 )
 
 export default function ProductCarousel({ data }: { data: product[] }) {
