@@ -15,6 +15,7 @@ import { useToast } from "@/components/ui/use-toast";
 import {
   checkSlugExists,
   createProduct,
+ 
   
 } from "@/lib/actions/sellerproduct.actions"; 
 import {  productDefaultValues } from "@/lib/constants"; 
@@ -97,12 +98,12 @@ export default function SellerProductForm({
         toast({
           description: res.message,
         });
-        router.push(`/seller/products`); 
+        router.push(`/admin/products`); 
       }
     }
     if (type === "Update") {
       if (!productId) {
-        router.push(`/seller/products`);
+        router.push(`/admin/products`);
         return;
       }
       const res = await updateProduct(
@@ -117,7 +118,7 @@ export default function SellerProductForm({
           description: res.message,
         });
       } else {
-        router.push(`/seller/products`);
+        router.push(`/admin/products`);
       }
     }
   }
