@@ -12,9 +12,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useToast } from "@/components/ui/use-toast";
-import { addItemToCart, removeItemFromCart } from "@/lib/actions/sellercart.actions";
+import {
+  addItemToCart,
+  removeItemFromCart,
+} from "@/lib/actions/sellercart.actions";
 import { formatCurrency } from "@/lib/utils";
-import {cart } from "@/types/sellerindex";
+import { CartItem } from "@/types";
+import { cart } from "@/types/sellerindex";
 import { ArrowRight, Loader, Minus, Plus } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -23,39 +27,62 @@ import { useTransition } from "react";
 
 export default function CartForm({ cart }: { cart?: cart }) {
   const router = useRouter();
-
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
-  return (
-    <>
-     <Sheet>
-          <h1 className="py-4 h2-bold">Shopping Cart</h1>
 
-          {!cart || cart.items.length === 0 ? (
-            <div className="flex h-full flex-col items-center justify-center space-y-2 mb-5">
-              <div
-                aria-hidden="true"
-                className="relative mb-4 h-60 w-60 text-muted-foreground"
-              >
-                <Image
-                  src="/emptycart.png"
-                 fill
-                  alt="empty shopping cart hippo"
-                />
-              </div>
-              <div className="text-xl font-semibold">Your cart is empty</div>
-              <SheetTrigger asChild>
-                <Link
-                  href="/search"
-                  className={buttonVariants({
-                    variant: "link",
-                    size: "sm",
-                    className: "text-sm text-muted-foreground",
-                  })}
-                >
-                  Add items to your cart to checkout
-                </Link>
-              </SheetTrigger>
+  const handleRemoveItem = async (productId: string) => {
+    startTransition(async () => {
+      const res = await removeItemFromCart(productId);
+      if (!res.success) {
+        toast({
+          variant: "destructive",
+          description: res.message,
+        });
+      }
+    });
+  };
+
+  const handleAddItem = async (item: CartItem) => {
+    startTransition(async () => {
+      const res = await addItemToCart({ ...item, productId: item.productId });
+      if (!res.success) {
+        toast({
+          variant: "destructive",
+          description: res.message,
+        });
+      }
+    });
+  };
+
+  const handleCheckout = () => {
+    startTransition(() => router.push("/shipping-address"));
+  };
+
+  return (
+    <Sheet>
+      <h1 className="py-4 h2-bold">Shopping Cart</h1>
+
+      {!cart || cart.items.length === 0 ? (
+        <div className="flex h-full flex-col items-center justify-center space-y-2 mb-5">
+          <div
+            aria-hidden="true"
+            className="relative mb-4 h-60 w-60 text-muted-foreground"
+          >
+            <Image src="/emptycart.png" fill alt="empty shopping cart hippo" />
+          </div>
+          <div className="text-xl font-semibold">Your cart is empty</div>
+          <SheetTrigger asChild>
+            <Link
+              href="/search"
+              className={buttonVariants({
+                variant: "link",
+                size: "sm",
+                className: "text-sm text-muted-foreground",
+              })}
+            >
+              Add items to your cart to checkout
+            </Link>
+          </SheetTrigger>
         </div>
       ) : (
         <div className="grid md:grid-cols-4 md:gap-5">
@@ -81,7 +108,7 @@ export default function CartForm({ cart }: { cart?: cart }) {
                           alt={item.name}
                           width={50}
                           height={50}
-                        ></Image>
+                        />
                         <span className="px-2">{item.name}</span>
                       </Link>
                     </TableCell>
@@ -90,19 +117,7 @@ export default function CartForm({ cart }: { cart?: cart }) {
                         disabled={isPending}
                         variant="outline"
                         type="button"
-                        onClick={() =>
-                          startTransition(async () => {
-                            const res = await removeItemFromCart(
-                              item.productId
-                            );
-                            if (!res.success) {
-                              toast({
-                                variant: "destructive",
-                                description: res.message,
-                              });
-                            }
-                          })
-                        }
+                        onClick={() => handleRemoveItem(item.productId)}
                       >
                         {isPending ? (
                           <Loader className="w-4 h-4  animate-spin" />
@@ -115,17 +130,7 @@ export default function CartForm({ cart }: { cart?: cart }) {
                         disabled={isPending}
                         variant="outline"
                         type="button"
-                        onClick={() =>
-                          startTransition(async () => {
-                            const res = await addItemToCart({...item,productId:item.productId});
-                            if (!res.success) {
-                              toast({
-                                variant: "destructive",
-                                description: res.message,
-                              });
-                            }
-                          })
-                        }
+                        onClick={() => handleAddItem(item)}
                       >
                         {isPending ? (
                           <Loader className="w-4 h-4  animate-spin" />
@@ -150,9 +155,7 @@ export default function CartForm({ cart }: { cart?: cart }) {
                   {formatCurrency(cart.itemsPrice)}
                 </div>
                 <Button
-                  onClick={() =>
-                    startTransition(() => router.push("/shipping-address"))
-                  }
+                  onClick={handleCheckout}
                   className="w-full"
                   disabled={isPending}
                 >
@@ -168,8 +171,6 @@ export default function CartForm({ cart }: { cart?: cart }) {
           </div>
         </div>
       )}
-
-      </Sheet>
-    </>
+    </Sheet>
   );
 }

@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import ProductPrice from "./product-price";
@@ -6,6 +5,7 @@ import Rating from "./rating";
 import { Button } from "@/components/ui/button";
 import { product } from "@/types/sellerindex";
 import { Suspense } from "react";
+import ImageSlider from "../ImageSlider";
 
 const skeleton = 'w-full h-6 animate-pulse rounded bg-neutral-200 dark:bg-neutral-700';
 
@@ -14,21 +14,15 @@ const ProductCard = ({ product }: { product: product }) => {
     <Card className="w-full max-w-sm sm:max-w-xs">
       <Suspense
         fallback={
-          <div className="flex justify-center items-center h-[200px] sm:h-[300px] w-full bg-neutral-200 dark:bg-neutral-700 animate-pulse rounded">
+          <div className="flex justify-center items-center h-[200px] sm:h-[300px] w-full bg-neutral-600 dark:bg-neutral-700 animate-pulse rounded">
             <div className="aspect-square object-cover rounded" />
           </div>
         }
       >
-       <CardHeader className="p-1">
+        <CardHeader className="p-1">
           <Link href={`/product/${product.slug}`}>
             <div className="relative w-full aspect-square overflow-hidden rounded-sm">
-              <Image
-                alt={product.name}
-                className="object-cover"
-                fill
-                src={product.images![0]}
-                sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
-              />
+              <ImageSlider slug={product.images!} /> 
             </div>
           </Link>
         </CardHeader>
@@ -45,10 +39,9 @@ const ProductCard = ({ product }: { product: product }) => {
         }
       >
         <CardContent className="p-2 sm:p-4 grid gap-1 sm:gap-2">
-          
           <div>
             <Link href={`/product/${product.slug}`}>
-              <h2 className="text-xs sm:text-sm font-medium">{product.name}</h2>
+              <h2 className="text-xs sm:text-sm font-medium overflow-hidden">{product.name}</h2>
             </Link>
           </div>
           <div className="flex flex-col gap-1">
