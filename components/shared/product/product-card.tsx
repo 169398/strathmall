@@ -30,7 +30,7 @@ const ProductCard = ({ product }: { product: product }) => {
 
       <Suspense
         fallback={
-          <div className="p-2 sm:p-4 grid gap-1 sm:gap-4">
+          <div className="p-2 sm:p-4 grid gap-1 sm:gap-4 bg-slate-600">
             <div className={skeleton} />
             <div className={skeleton} />
             <div className={skeleton} />
@@ -49,7 +49,7 @@ const ProductCard = ({ product }: { product: product }) => {
             {product.stock > 0 ? (
               <ProductPrice
                 value={Number(product.price)}
-                className="text-xs sm:text-sm"
+                className="text-2xl sm:text-sm font-black"
               />
             ) : (
               <p className="text-xs sm:text-sm text-destructive">Out of Stock</p>

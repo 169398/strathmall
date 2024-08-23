@@ -6,14 +6,14 @@ import { Suspense } from 'react'
 
 // Skeleton fallback for main image
 const MainImageSkeleton = () => (
-  <div className="min-h-[300px] flex justify-center items-center bg-neutral-200 dark:bg-neutral-700 animate-pulse">
+  <div className="min-h-[300px] flex justify-center items-center bg-gray-600 dark:bg-neutral-700 animate-pulse">
     <div className="h-full w-full object-cover object-center" />
   </div>
 )
 
 // Skeleton fallback for thumbnails
 const ThumbnailSkeleton = () => (
-  <div className="w-[100px] h-[100px] bg-neutral-200 dark:bg-neutral-700 animate-pulse mr-2" />
+  <div className="w-[100px] h-[100px] bg-gray-600 dark:bg-neutral-700 animate-pulse mr-2" />
 )
 
 export default function ProductImages({ images }: { images: string[] }) {
