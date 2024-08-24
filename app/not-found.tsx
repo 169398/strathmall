@@ -1,23 +1,35 @@
-'use client'
-import React from 'react'
+'use client';
 
-import { Button } from '@/components/ui/button'
+import React from 'react';
+import Image from 'next/image';
+import { Button } from '@/components/ui/button';
 
-export default function NotFound() {
+export default function NotFoundPage() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen ">
-      <div className="p-6 rounded-lg shadow-md w-1/3 text-center">
-        <h1 className="text-3xl font-bold mb-4">The feature is coming soon😔</h1>
-        <p className="text-destructive">Could not find requested resource</p>
-        <Button
-          variant="outline"
-          className="mt-4 ml-2"
+    <div className="flex flex-col items-center justify-center min-h-screen bg-white text-gray-800">
+      <div className="relative w-full max-w-lg mx-auto">
+        <Image
+          src="/not-found.svg"
+          alt="Not Found"
+          width={400}
+          height={400}
+          className="mx-auto"
+        />
+      </div>
+      <h1 className="mt-2 text-4xl font-bold">Oops! Page not found.</h1>
+      <p className="mt-2 text-lg text-center">
+        Sorry, the page you&apos;re looking for doesn&apos;t exist. You may have mistyped
+        the address 
+      </p>
+      <Button
+          variant="default"
+          className="mt-4 ml-2 "
           
           onClick={() => (window.location.href = "/")}
         >
-          Back to home
-        </Button>
-      </div>
+      
+          Take me home
+      </Button>
     </div>
   );
 }
