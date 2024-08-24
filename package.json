@@ -73,6 +73,7 @@
     "react-toastify": "^10.0.5",
     "recharts": "^2.12.7",
     "resend": "^3.3.0",
+    "sharp": "^0.33.5",
     "simplex-noise": "^4.0.3",
     "slugify": "^1.6.6",
     "stripe": "^16.0.0",
