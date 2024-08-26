@@ -5,8 +5,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { Suspense } from "react";
 import MaxWidthWrapper from "./MaxWidthWrapper";
+import { FaFacebook, FaInstagram, FaTiktok, FaTwitter } from "react-icons/fa";
+import { Skeleton } from "../ui/skeleton";
 
-const skeleton = 'w-full h-6 animate-pulse rounded bg-neutral-200 dark:bg-neutral-700';
+const skeleton =
+  "w-full h-6 animate-pulse rounded bg-neutral-200 dark:bg-neutral-700";
 
 const Footer = () => {
   const pathname = usePathname();
@@ -41,8 +44,8 @@ const Footer = () => {
           <Suspense
             fallback={
               <div className="px-6 py-6">
-                <div className={skeleton} />
-                <div className={`${skeleton} mt-2`} />
+                <Skeleton className={skeleton} />
+                <Skeleton className={`${skeleton} mt-2`} />
               </div>
             }
           >
@@ -61,8 +64,8 @@ const Footer = () => {
                       Become a seller
                     </h3>
                     <p className="mt-2 text-sm text-muted-foreground">
-                      If you&apos;d like to sell high-quality products, you can do
-                      so in minutes.{" "}
+                      If you&apos;d like to sell high-quality products, you can
+                      do so in minutes.{" "}
                       <Link
                         href="/seller"
                         className="whitespace-nowrap font-medium text-black hover:text-zinc-900"
@@ -82,6 +85,33 @@ const Footer = () => {
             <p className="text-sm text-muted-foreground">
               &copy; {new Date().getFullYear()} All Rights Reserved
             </p>
+          </div>
+
+          <div className="mt-4 flex items-center justify-center md:mt-0 space-x-4">
+            <Link href="/" aria-label="Instagram">
+              <FaInstagram
+                className="text-muted-foreground hover:text-gray-600"
+                size={24}
+              />
+            </Link>
+            <Link href="/" aria-label="Facebook">
+              <FaFacebook
+                className="text-muted-foreground hover:text-gray-600"
+                size={24}
+              />
+            </Link>
+            <Link href="/" aria-label="TikTok">
+              <FaTiktok
+                className="text-muted-foreground hover:text-gray-600"
+                size={24}
+              />
+            </Link>
+            <Link href="/" aria-label="Twitter/X">
+              <FaTwitter
+                className="text-muted-foreground hover:text-gray-600"
+                size={24}
+              />
+            </Link>
           </div>
 
           <div className="mt-4 flex items-center justify-center md:mt-0">

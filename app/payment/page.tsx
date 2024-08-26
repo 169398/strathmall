@@ -16,7 +16,6 @@ const OrderDetailsPage = async ({
 }) => {
   const order = await getOrderById(id);
 
-  console.log('order',order)
   if (!order) notFound();
 
 
