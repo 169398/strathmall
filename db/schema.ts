@@ -29,6 +29,8 @@ export const users = pgTable(
     address: json("address").$type<ShippingAddress>(),
     paymentMethod: text("paymentMethod"),
     createdAt: timestamp("createdAt").defaultNow(),
+    resetToken: text("resetToken"), 
+    resetTokenExpires: timestamp("resetTokenExpires"),
   },
   (table) => {
     return {
