@@ -36,6 +36,8 @@ import { Button } from "@/components/ui/button";
 import {product } from "@/types/sellerindex";
 import { useEffect } from "react";
 import { updateProduct } from "@/lib/actions/adminproduct.action";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { categories } from "@/lib/categories";
 
 export default function SellerProductForm({
   type,
@@ -59,12 +61,19 @@ export default function SellerProductForm({
 
   const { toast } = useToast();
   const productName = useWatch({ control: form.control, name: "name" });
+  
 
   // Automatically generate the slug based on the product name
   useEffect(() => {
     const generateSlug = async () => {
       if (productName) {
-        let slug = slugify(productName, { lower: true });
+        
+        const sanitizedProductName = productName
+        .replace(/[^a-zA-Z0-9\s]/g, "") 
+        .replace(/\s+/g, " ") 
+        .trim(); 
+
+        let slug = slugify(sanitizedProductName, { lower: true });
 
         // Check if the slug is unique (pseudo-code, you need to implement the check)
         let isUnique = await checkSlugExists(slug);
@@ -153,7 +162,7 @@ export default function SellerProductForm({
             )}
           />
 
-<FormField
+          <FormField
             control={form.control}
             name="slug"
             render={({ field }) => (
@@ -163,7 +172,7 @@ export default function SellerProductForm({
                   <Input
                     placeholder="Slug will be generated automatically"
                     {...field}
-                    readOnly 
+                    readOnly
                   />
                 </FormControl>
                 <FormMessage />
@@ -178,9 +187,28 @@ export default function SellerProductForm({
             render={({ field }) => (
               <FormItem className="w-full">
                 <FormLabel>Category</FormLabel>
-                <FormControl>
-                  <Input placeholder="Enter category" {...field} />
-                </FormControl>
+                <DropdownMenu>
+                  <DropdownMenuTrigger>
+                    <Input
+                      placeholder="Select a category"
+                      value={field.value || ""}
+                      readOnly
+                      className="cursor-pointer"
+                    />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuLabel>Choose a Category</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    {categories.map((category) => (
+                      <DropdownMenuItem
+                        key={category}
+                        onSelect={() => field.onChange(category)}
+                      >
+                        {category}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
                 <FormMessage />
               </FormItem>
             )}
@@ -254,19 +282,18 @@ export default function SellerProductForm({
                         />
                       ))}
                       <FormControl>
-                      <UploadButton
+                        <UploadButton
                           endpoint="imageUploader"
                           onClientUploadComplete={(res: any) => {
-                            form.setValue('images', [...images, res[0].url])
+                            form.setValue("images", [...images, res[0].url]);
                           }}
                           onUploadError={(error: Error) => {
                             toast({
-                              variant: 'destructive',
+                              variant: "destructive",
                               description: `ERROR! ${error.message}`,
-                            })
+                            });
                           }}
                         />
-
                       </FormControl>
                     </div>
                   </CardContent>
@@ -276,48 +303,47 @@ export default function SellerProductForm({
             )}
           />
         </div>
-        
-          <FormField
-            control={form.control}
-            name="isFeatured"
-            render={({ field }) => (
-              <FormItem className="space-x-2 items-center">
-                <FormControl>
-                  <Checkbox
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-                <FormLabel>Featured Product?</FormLabel>
-              </FormItem>
-            )}
-          />
+
+        <FormField
+          control={form.control}
+          name="isFeatured"
+          render={({ field }) => (
+            <FormItem className="space-x-2 items-center">
+              <FormControl>
+                <Checkbox
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              </FormControl>
+              <FormLabel>Featured Product?</FormLabel>
+            </FormItem>
+          )}
+        />
         <div>
-  {isFeatured && (
-    banner ? (
-      <Image
-        src={banner}
-        alt="banner image"
-        className="w-full object-cover object-center rounded-sm"
-        width={1920}
-        height={680}
-      />
-    ) : (
-      <UploadButton
-        endpoint="imageUploader"
-        onClientUploadComplete={(res) => {
-          form.setValue("banner", res[0].url);
-        }}
-        onUploadError={(error: Error) => {
-          toast({
-            variant: "destructive",
-            description: `ERROR! ${error.message}`,
-          });
-        }}
-      />
-    )
-  )}
-</div>
+          {isFeatured &&
+            (banner ? (
+              <Image
+                src={banner}
+                alt="banner image"
+                className="w-full object-cover object-center rounded-sm"
+                width={1920}
+                height={680}
+              />
+            ) : (
+              <UploadButton
+                endpoint="imageUploader"
+                onClientUploadComplete={(res) => {
+                  form.setValue("banner", res[0].url);
+                }}
+                onUploadError={(error: Error) => {
+                  toast({
+                    variant: "destructive",
+                    description: `ERROR! ${error.message}`,
+                  });
+                }}
+              />
+            ))}
+        </div>
 
         <div>
           <FormField
