@@ -1,3 +1,4 @@
+import { SearchSkeleton } from '@/components/shared/skeletons/SearchSkeleton';
 import ViewMore from '@/components/shared/view-more-product';
 import { Button } from '@/components/ui/button';
 import { getAllCategories, getAllSearchProducts } from '@/lib/actions/sellerproduct.actions';
@@ -37,6 +38,9 @@ export default async function SearchPage({
 }) {
   const categories = await getAllCategories();
   const products = await getAllSearchProducts({ category, query: q, price, rating, sort });
+  if(!categories|| !products) {
+   return  <SearchSkeleton/>
+  }
 
   return (
     <div className="grid md:grid-cols-5 md:gap-5">
