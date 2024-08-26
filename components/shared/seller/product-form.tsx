@@ -68,9 +68,9 @@ export default function SellerProductForm({
     const generateSlug = async () => {
       if (productName) {
         const sanitizedProductName = productName
-        .replace(/[^a-zA-Z0-9\s]/g, "") 
-        .replace(/\s+/g, " ") 
-        .trim(); 
+          .replace(/[^a-zA-Z0-9\s]/g, "")
+          .replace(/\s+/g, " ")
+          .trim();
 
         let slug = slugify(sanitizedProductName, { lower: true });
 
@@ -170,39 +170,38 @@ export default function SellerProductForm({
           />
         </div>
         <div className="flex flex-col gap-5 md:flex-row">
-        <FormField
-  control={form.control}
-  name="category"
-  render={({ field }) => (
-    <FormItem className="w-full">
-      <FormLabel>Category</FormLabel>
-      <DropdownMenu>
-        <DropdownMenuTrigger >
-          <Input
-            placeholder="Select a category"
-            value={field.value || ""}
-            readOnly
-            className="cursor-pointer"
+          <FormField
+            control={form.control}
+            name="category"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>Category</FormLabel>
+                <DropdownMenu>
+                  <DropdownMenuTrigger>
+                    <Input
+                      placeholder="Select a category"
+                      value={field.value || ""}
+                      readOnly
+                      className="cursor-pointer"
+                    />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuLabel>Choose a Category</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    {categories.map((category) => (
+                      <DropdownMenuItem
+                        key={category}
+                        onSelect={() => field.onChange(category)}
+                      >
+                        {category}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-        </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <DropdownMenuLabel>Choose a Category</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          {categories.map((category) => (
-            <DropdownMenuItem
-              key={category}
-              onSelect={() => field.onChange(category)}
-            >
-              {category}
-            </DropdownMenuItem>
-          ))}
-        </DropdownMenuContent>
-      </DropdownMenu>
-      <FormMessage />
-    </FormItem>
-  )}
-/>
-
 
           <FormField
             control={form.control}
