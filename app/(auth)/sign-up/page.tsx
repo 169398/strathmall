@@ -43,7 +43,11 @@ export default async function SignUp({
               alt={`${APP_NAME} logo`}
             />
           </Link>
+          <div className="text-xs text-center  text-muted-foreground bg-blue-200 mt-4">
+            🛡️Your information is protected{" "}
+          </div>
           <CardTitle className="text-center">Create Account</CardTitle>
+
           <CardDescription className="text-center">
             Enter your information below to create your account
           </CardDescription>
@@ -53,5 +57,5 @@ export default async function SignUp({
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

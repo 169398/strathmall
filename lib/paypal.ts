@@ -92,8 +92,8 @@ const { TWITTER_CREATOR, TWITTER_SITE  } = process.env;
 const twitterCreator = TWITTER_CREATOR ? ensureStartsWith(TWITTER_CREATOR, '@') : undefined;
 const twitterSite = TWITTER_SITE ? ensureStartsWith(TWITTER_SITE, 'https://') : undefined;
 export function constructMetadata({
-  title = "StrathMall - Your Campus & Community Marketplace",
-  description = "Discover StrathMall, the ultimate  marketplace for premium goods, connecting university  sellers with savvy shoppers",
+  title = "StrathMall - Affordable prices on Top local goods",
+  description = "Discover StrathMall, the ultimate  marketplace for premium goods, connecting Top local  sellers with savvy shoppers",
   image = "/thumbnail.png",
   icons = "/favicon.ico",
   noIndex = false,
