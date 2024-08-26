@@ -78,6 +78,10 @@ export default function CredentialsSignInForm() {
             Sign Up
           </Link>
         </div>
+        <div className="text-sm text-center text-muted-foreground">
+  <Link href="/request-reset" className="link">Forgot Password?</Link>
+</div>
+
       </div>
     </form>
   )

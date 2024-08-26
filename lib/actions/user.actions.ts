@@ -21,6 +21,8 @@ import { PAGE_SIZE } from '../constants'
 import db from "@/db/drizzle";
 
 import { sendVerificationEmail } from '@/emailverify'
+import { sendResetPasswordEmail } from '@/emailreset-password'
+import { addMinutes } from 'date-fns'
 
 
 
@@ -47,6 +49,8 @@ try {
  
     await sendVerificationEmail({
       name: "",
+      resetToken: "",
+      resetTokenExpires: null,
       email: user.email ?? "",
       password: null,
       id: "",
@@ -102,6 +106,90 @@ export const SignInWithGoogle = async () => {
 export const SignOut = async () => {
   await signOut()
 }
+
+//RESET PASSWORD
+const requestResetSchema = z.object({
+  email: z.string().email(),
+});
+
+// Reset Password Schema
+const resetPasswordSchema = z.object({
+  token: z.string(),
+  newPassword: z.string().min(8),
+});
+
+export const requestPasswordReset = async (formData: FormData) => {
+  try {
+    const data = requestResetSchema.parse({
+      email: formData.get('email'),
+    });
+
+    const user = await db.query.users.findFirst({
+      where: (users, { eq }) => eq(users.email, data.email),
+    });
+
+    if (!user) {
+      throw new Error('No user found with this email address.');
+    }
+
+    // Generate a reset token
+    const resetToken = crypto.randomUUID();
+    const expiresAt = addMinutes(new Date(), 60); 
+console.log(resetToken)
+    await db
+      .update(users)
+      .set({ resetToken, resetTokenExpires: expiresAt }) 
+      .where(eq(users.id, user.id));
+
+    // Send reset email
+    await sendResetPasswordEmail(user, resetToken);
+
+
+    return { success: true, message: 'Password reset email sent successfully.' };
+  } catch (error) {
+    return { success: false, message: formatError(error) };
+  }
+};
+
+export const resetPassword = async (formData: FormData) => {
+  try {
+    const token = formData.get('token') as string;
+    const newPassword = formData.get('newPassword') as string;
+
+    const data = resetPasswordSchema.parse({
+      token,
+      newPassword,
+    });
+
+
+    const user = await db.query.users.findFirst({
+      where: (users, { eq }) => eq(users.resetToken, data.token),
+    });
+
+
+    if (!user) {
+      throw new Error('Invalid or expired reset token.');
+    }
+
+    if (user.resetTokenExpires && new Date() > new Date(user.resetTokenExpires)) {
+      throw new Error('Reset token has expired.');
+    }
+
+    const hashedPassword = hashSync(data.newPassword, 10);
+    await db
+      .update(users)
+      .set({ password: hashedPassword, resetToken: null, resetTokenExpires: null })
+      .where(eq(users.id, user.id));
+
+    revalidatePath('/sign-in');
+
+    return { success: true, message: 'Password reset successfully.' };
+  } catch (error) {
+    return { success: false, message: formatError(error) };
+  }
+};
+
+
 // GET
 export async function getAllUsers({
   limit = PAGE_SIZE,
