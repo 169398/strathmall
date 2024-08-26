@@ -6,8 +6,9 @@ import { Button } from "@/components/ui/button";
 import { product } from "@/types/sellerindex";
 import { Suspense } from "react";
 import ImageSlider from "../ImageSlider";
+import { Skeleton } from "@/components/ui/skeleton";
 
-const skeleton = 'w-full h-6 animate-pulse rounded bg-neutral-200 dark:bg-neutral-700';
+const skeleton = 'w-full h-6 animate-pulse rounded bg-gray-300 dark:bg-neutral-700';
 
 const ProductCard = ({ product }: { product: product }) => {
   return (
@@ -31,10 +32,10 @@ const ProductCard = ({ product }: { product: product }) => {
       <Suspense
         fallback={
           <div className="p-2 sm:p-4 grid gap-1 sm:gap-4 bg-slate-600">
-            <div className={skeleton} />
-            <div className={skeleton} />
-            <div className={skeleton} />
-            <div className={skeleton} />
+            <Skeleton className={skeleton} />
+            <Skeleton className={skeleton} />
+            <Skeleton className={skeleton} />
+            <Skeleton className={skeleton} />
           </div>
         }
       >
