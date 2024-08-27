@@ -35,11 +35,13 @@ export default function OrderDetailsForm({
   order,
   paypalClientId,
   isAdmin,
+  isDelivery,
   stripeClientSecret,
 }: {
   order: order;
   paypalClientId: string;
-  isAdmin: boolean;
+    isAdmin: boolean;
+    isDelivery: boolean;
   stripeClientSecret: string | null;
 }) {
   const {
@@ -259,10 +261,12 @@ export default function OrderDetailsForm({
                   clientSecret={stripeClientSecret}
                 />
               )}
-              {isAdmin && !isPaid && paymentMethod === "CashOnDelivery" && (
+              {!isPaid && paymentMethod === "CashOnDelivery" && isAdmin && (
                 <MarkAsPaidButton />
               )}
-              {isAdmin && isPaid && !isDelivered && <MarkAsDeliveredButton />}
+              {isPaid && !isDelivered && (isAdmin || isDelivery) && (
+                <MarkAsDeliveredButton />
+              )}
             </CardContent>
           </Card>
         </div>
