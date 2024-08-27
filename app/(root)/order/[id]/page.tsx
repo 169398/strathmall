@@ -37,8 +37,7 @@ const OrderDetailsPage = async ({
       order={order}
       paypalClientId={process.env.PAYPAL_CLIENT_ID || "sb"}
       isAdmin={session?.user.role === "admin" || false}
-      stripeClientSecret={client_secret}
-    />
+      stripeClientSecret={client_secret} isDelivery={session?.user.role==="delivery" || false}    />
   );
 };
 
