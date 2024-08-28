@@ -1,20 +1,26 @@
-import React from 'react';
-import MaxWidthWrapper from '@/components/shared/MaxWidthWrapper'
-import EcommerceFeatures from '@/components/shared/product/ecommerce-features'
-import ProductPromotion from '@/components/shared/product/product-promotion'
-import ProductList from '@/components/shared/product/home-productlist'
-import SparklesText from '@/components/magicui/sparkles-text'
-import Footer from '@/components/shared/footer'
-import AllProductList from '@/components/shared/product/all-products'
-import Link from 'next/link';
-import { buttonVariants } from '../ui/button';
+import React from "react";
+import MaxWidthWrapper from "@/components/shared/MaxWidthWrapper";
+import EcommerceFeatures from "@/components/shared/product/ecommerce-features";
+import ProductPromotion from "@/components/shared/product/product-promotion";
+import ProductList from "@/components/shared/product/home-productlist";
+import SparklesText from "@/components/magicui/sparkles-text";
+import Footer from "@/components/shared/footer";
+import AllProductList from "@/components/shared/product/all-products";
+import DiscountProductList from "@/components/shared/product/discountedProductList"; // Import the new component
+import Link from "next/link";
+import { buttonVariants } from "../ui/button";
 
 interface HomeContentProps {
   latestProducts: any;
   allProducts: any;
+  discountedProducts: any; // Add this prop
 }
 
-const HomeContent: React.FC<HomeContentProps> = ({ latestProducts, allProducts }) => {
+const HomeContent: React.FC<HomeContentProps> = ({
+  latestProducts,
+  allProducts,
+  discountedProducts,
+}) => {
   return (
     <div>
       <MaxWidthWrapper>
@@ -31,8 +37,11 @@ const HomeContent: React.FC<HomeContentProps> = ({ latestProducts, allProducts }
             <Link
               href="/seller"
               className={buttonVariants({ variant: "secondary" })}
-              >
-              <SparklesText text="🎉Start selling" className="text-base text-blue-500" />
+            >
+              <SparklesText
+                text="🎉Start selling"
+                className="text-base text-blue-500"
+              />
             </Link>
           </div>
         </div>
@@ -40,6 +49,10 @@ const HomeContent: React.FC<HomeContentProps> = ({ latestProducts, allProducts }
       <div className="space-y-8">
         <ProductList title="Newest Arrivals ✨" data={latestProducts} />
         <ProductPromotion />
+        <DiscountProductList
+          title="Discounted Products 💸"
+          data={discountedProducts.data || []}
+        />{" "}
         <AllProductList title="More to love 💖" data={allProducts.data || []} />
         <EcommerceFeatures />
         <Footer />

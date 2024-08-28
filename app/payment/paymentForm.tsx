@@ -94,7 +94,7 @@ export default function PaymentForm({
   return (
     <div className="payment-page">
       {/* Hero Section */}
-      <div className="hero-section bg-blue-800 text-white text-center py-8 container">
+      <div className="hero-section bg-[radial-gradient(circle_at_bottom_left,_var(--tw-gradient-stops))] from-[#ff00ff] to-[#00ffff] text-white text-center py-8 container">
         <h1 className="text-4xl font-bold mb-2">Complete Your Payment</h1>
         <p className="text-lg">
           Securely pay the onboarding fee to join our marketplace.

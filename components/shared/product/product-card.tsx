@@ -8,9 +8,28 @@ import { Suspense } from "react";
 import ImageSlider from "../ImageSlider";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const skeleton = 'w-full h-6 animate-pulse rounded bg-gray-300 dark:bg-neutral-700';
+const skeleton =
+  "w-full h-6 animate-pulse rounded bg-gray-300 dark:bg-neutral-700";
+
+// Helper function to calculate the discounted price
+const calculateDiscountedPrice = (price: string, discount: string | null) => {
+  if (discount && parseFloat(discount) > 0) {
+    const originalPrice = parseFloat(price);
+    const discountValue = parseFloat(discount);
+    const discountedPrice =
+      originalPrice - (originalPrice * discountValue) / 100;
+    return discountedPrice.toFixed(2);
+  }
+  return price;
+};
 
 const ProductCard = ({ product }: { product: product }) => {
+  const isDiscounted = product.discount && parseInt(product.discount) > 0;
+  const discountedPrice = calculateDiscountedPrice(
+    product.price,
+    product.discount
+  );
+
   return (
     <Card className="w-full max-w-sm sm:max-w-xs">
       <Suspense
@@ -23,7 +42,7 @@ const ProductCard = ({ product }: { product: product }) => {
         <CardHeader className="p-1">
           <Link href={`/product/${product.slug}`}>
             <div className="relative w-full aspect-square overflow-hidden rounded-sm">
-              <ImageSlider slug={product.images!} /> 
+              <ImageSlider slug={product.images!} />
             </div>
           </Link>
         </CardHeader>
@@ -42,22 +61,37 @@ const ProductCard = ({ product }: { product: product }) => {
         <CardContent className="p-2 sm:p-4 grid gap-1 sm:gap-2">
           <div>
             <Link href={`/product/${product.slug}`}>
-              <h2 className="text-xs sm:text-sm font-medium overflow-hidden">{product.name}</h2>
+              <h2 className="text-xs sm:text-sm font-medium overflow-hidden">
+                {product.name}
+              </h2>
             </Link>
           </div>
           <div className="flex flex-col gap-1">
             <Rating value={Number(product.rating)} />
             {product.stock > 0 ? (
-              <ProductPrice
-                value={Number(product.price)}
-                className="text-2xl sm:text-sm font-black"
-              />
+              isDiscounted ? (
+                <div className="flex flex-col">
+                  <span className="text-red-500 line-through">{`Ksh ${product.price}`}</span>
+                  <span className="text-2xl sm:text-sm font-black">{`Ksh ${discountedPrice}`}</span>
+                  <span className="text-red-500">{`-${product.discount}%`}</span>
+                </div>
+              ) : (
+                <ProductPrice
+                  value={Number(product.price)}
+                  className="text-2xl sm:text-sm font-black"
+                />
+              )
             ) : (
-              <p className="text-xs sm:text-sm text-destructive">Out of Stock</p>
+              <p className="text-xs sm:text-sm text-destructive">
+                Out of Stock
+              </p>
             )}
           </div>
           <div>
-            <Link href={`/quickview/product/${[product.slug]}`} className="w-full">
+            <Link
+              href={`/quickview/product/${product.slug}`}
+              className="w-full"
+            >
               <Button
                 variant="outline"
                 size="sm"

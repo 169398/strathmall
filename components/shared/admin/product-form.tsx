@@ -38,6 +38,7 @@ import { useEffect } from "react";
 import { updateProduct } from "@/lib/actions/adminproduct.action";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { categories } from "@/lib/categories";
+import { discounts } from "@/lib/discount";
 
 export default function SellerProductForm({
   type,
@@ -238,6 +239,39 @@ export default function SellerProductForm({
                 <FormControl>
                   <Input placeholder="Enter product price" {...field} />
                 </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="discount"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Discount</FormLabel>
+                <DropdownMenu>
+                  <DropdownMenuTrigger>
+                    <Input
+                      placeholder="Select discount"
+                      value={field.value || ""}
+                      readOnly
+                      className="cursor-pointer"
+                    />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuLabel>Choose a Discount</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    {discounts.map((discount) => (
+                      <DropdownMenuItem
+                        key={discount}
+                        onSelect={() => field.onChange(discount)}
+                      >
+                        {discount}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
                 <FormMessage />
               </FormItem>
             )}
