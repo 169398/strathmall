@@ -8,7 +8,7 @@ export const categories = [
     "Gaming",
     "Earphones",
     "Earpods",
-    "Phone-accessories"
+    "Phone-accessories",
     "Men's Clothing",
     "Cleaning-Supplies",
     "Women's Clothing",
