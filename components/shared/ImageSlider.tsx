@@ -19,7 +19,7 @@ const ImageSlider = ({ slug }: ImageSliderProps) => {
 
   const [slideConfig, setSlideConfig] = useState({
     isBeginning: true,
-    isEnd: activeIndex === (slug.length ?? 0) - 1,
+    isEnd: activeIndex === (slug?.length ?? 0) - 1,
   })
 
   useEffect(() => {
@@ -29,7 +29,7 @@ const ImageSlider = ({ slug }: ImageSliderProps) => {
       setActiveIndex(swiper.activeIndex)
       setSlideConfig({
         isBeginning: swiper.activeIndex === 0,
-        isEnd: swiper.activeIndex === (slug.length ?? 0) - 1,
+        isEnd: swiper.activeIndex === (slug?.length ?? 0) - 1,
       })
     }
 
@@ -90,7 +90,7 @@ const ImageSlider = ({ slug }: ImageSliderProps) => {
         modules={[Pagination]}
         slidesPerView={1}
         className='h-full w-full'>
-        {slug.map((url, i) => (
+        {slug?.map((url, i) => (
           <SwiperSlide
             key={i}
             className='-z-10 relative h-full w-full'>

@@ -154,6 +154,37 @@ export async function getLatestProducts() {
   });
   return data;
 }
+//Discounted products
+export async function getDiscountedProducts() {
+  try {
+    const data = await db
+      .select({
+        id: products.id,
+        slug: products.slug,
+        images: products.images,
+        name: products.name,
+        originalPrice: products.price,
+        discount: products.discount,
+        discountedPrice:
+          sql<number>`(${products.price} - (${products.price} * ${products.discount} / 100))`.as(
+            "discountedPrice"
+          ),
+      })
+      .from(products)
+      .where(sql`${products.discount} > 0`)
+      .orderBy(desc(products.createdAt));
+
+    console.log(data); 
+
+    return {
+      success: true,
+      data,
+    };
+  } catch (error) {
+    console.error("Error fetching discounted products:", error);
+    return { success: false, message: "Failed to fetch discounted products" };
+  }
+}
 
 export async function getProductBySlug(slug: string) {
   return await db.query.products.findFirst({
@@ -228,6 +259,7 @@ export async function getAllproducts({
     .select({ count: count() })
     .from(products)
     .where(condition);
+  
 
   return {
     data,
