@@ -74,9 +74,21 @@ export async function checkSlugExists(slug: string): Promise<boolean> {
 //all products
 export async function getAllProducts() {
   try {
-    // Fetch all products without any specific order or filters
-    const data = await db.select().from(products);
-    
+    const data = await db
+      .select({
+        id: products.id,
+        slug: products.slug,
+        images: products.images,
+        name: products.name,
+        originalPrice: products.price,
+        discount: products.discount,
+        discountedPrice:
+          sql<number>`(${products.price} - (${products.price} * ${products.discount} / 100))`.as(
+            "discountedPrice"
+          ),
+      })
+      .from(products);
+
     return {
       success: true,
       data,
@@ -85,6 +97,7 @@ export async function getAllProducts() {
     return { success: false, message: formatError(error) };
   }
 }
+
 export async function getAllSearchProducts({
   query,
   category,
@@ -174,7 +187,6 @@ export async function getDiscountedProducts() {
       .where(sql`${products.discount} > 0`)
       .orderBy(desc(products.createdAt));
 
-    console.log(data); 
 
     return {
       success: true,
