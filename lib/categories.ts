@@ -13,7 +13,7 @@ export const categories = [
     "Toys & Entertainment",
     "Beauty & Personal Care",
     "Bakery",
-    "Jewellery & Watches",
+    "Watches",
     "Furniture",
     "Sports and Entertainment",
     "Hair extensions & Wigs"
