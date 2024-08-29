@@ -2,10 +2,15 @@ export const categories = [
     "Electronics",
     "Shoes",
     "Phones",
-    "Computer accessories",
+    "Computer-accessories",
+    "BluetoothSpeakers",
+    "Phonecovers",
     "Gaming",
+    "Earphones",
     "Earpods",
+    "Phone-accessories",
     "Men's Clothing",
+    "Cleaning-Supplies",
     "Women's Clothing",
     "Books",
     "Luggages & Bags",
@@ -16,7 +21,7 @@ export const categories = [
     "Watches",
     "Furniture",
     "Sports and Entertainment",
-    "Hair extensions & Wigs"
+    "Hair extensions & Wigs",
 
 
    
