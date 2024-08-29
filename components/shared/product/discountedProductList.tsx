@@ -1,43 +1,91 @@
 import * as React from "react";
-import DiscountedProductCard from "./discountedProductCard";
-import DiscountedProductSkeleton from "./discountedProductSkeleton";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { Button } from "@/components/ui/button";
+
+interface Product {
+  slug: string;
+  name: string;
+  originalPrice: number;
+  discountedPrice: number;
+  images: string[];
+}
 
 interface DiscountedProductListProps {
   title: string;
-  data: any[];
+  data: Product[];
 }
 
-const DiscountedProductList: React.FC<DiscountedProductListProps> = ({
+const DiscountedProductCard = React.lazy(
+  () => import("./discountedProductCard")
+);
+
+export default function DiscountedProductList({
   title,
   data,
-}) => {
+}: DiscountedProductListProps) {
+  const scrollContainerRef = React.useRef<HTMLDivElement>(null);
+
+  const scroll = (direction: "left" | "right") => {
+    if (scrollContainerRef.current) {
+      const scrollAmount = direction === "left" ? -300 : 300;
+      scrollContainerRef.current.scrollBy({
+        left: scrollAmount,
+        behavior: "smooth",
+      });
+    }
+  };
+
   return (
-    <div className="relative">
-      <h2 className="h2-bold mb-4">{title}</h2>
-      {data.length > 0 ? (
-        <div className="w-full overflow-x-auto scroll-snap-x mandatory pb-6 pt-1">
-          <div className="flex gap-4 sm:gap-0.5 scroll-snap-align-start">
-            {data.map((product, i) => (
-              <React.Suspense
-                fallback={<DiscountedProductSkeleton />}
-                key={`${product.slug}${i}`}
-              >
-                <div className="flex-none w-1/2 sm:w-1/2 md:w-1/3 lg:w-1/4 scroll-snap-align-start  animate-slide">
-                  <div className="p-1 sm:p-0">
+    <Card className="relative w-full bg-gradient-to-r from-blue-500 to-pink-500 shadow-lg rounded-lg overflow-hidden">
+      <CardContent className="p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-3xl font-bold text-white">{title}</h2>
+        </div>
+        {data.length > 0 ? (
+          <ScrollArea>
+            <div
+              ref={scrollContainerRef}
+              className="flex space-x-6 pb-4 transition-transform duration-500 ease-in-out"
+            >
+              {data.map((product, i) => (
+                <React.Suspense
+                  fallback={
+                    <div className="w-[250px] h-[350px] bg-muted animate-pulse rounded-lg" />
+                  }
+                  key={`${product.slug}${i}`}
+                >
+                  <div className="w-[250px] flex-none transition-transform transform hover:-translate-y-2 hover:scale-105 duration-300 ease-in-out">
                     <DiscountedProductCard product={product} />
                   </div>
-                </div>
-              </React.Suspense>
-            ))}
-          </div>
-        </div>
-      ) : (
-        <div>
-          <p>No discounted products found</p>
-        </div>
-      )}
-    </div>
+                </React.Suspense>
+              ))}
+            </div>
+            <ScrollBar orientation="horizontal" />
+          </ScrollArea>
+        ) : (
+          <p className="text-center text-white">No discounted products found</p>
+        )}
+      </CardContent>
+      <div className="hidden lg:flex justify-between items-center w-full absolute top-1/2 transform -translate-y-1/2 px-4">
+        <Button
+          variant="outline"
+          size="icon"
+          className="bg-gray-600 hover:bg-gray-500 text-white"
+          onClick={() => scroll("left")}
+        >
+          <ChevronLeft className="h-5 w-5" />
+        </Button>
+        <Button
+          variant="outline"
+          size="icon"
+          className="bg-gray-600 hover:bg-gray-500 text-white"
+          onClick={() => scroll("right")}
+        >
+          <ChevronRight className="h-5 w-5" />
+        </Button>
+      </div>
+    </Card>
   );
-};
-
-export default DiscountedProductList;
+}
