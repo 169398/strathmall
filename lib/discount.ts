@@ -4,5 +4,5 @@ export const discounts = [
   "30",
   "40",
   "50",
-  "No Discount",
+  "0",
 ];

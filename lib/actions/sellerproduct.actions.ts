@@ -76,7 +76,11 @@ export async function getAllProducts() {
   try {
     const data = await db
       .select({
+
         id: products.id,
+        stock: products.stock,
+        price: products.price,
+      
         slug: products.slug,
         images: products.images,
         name: products.name,
