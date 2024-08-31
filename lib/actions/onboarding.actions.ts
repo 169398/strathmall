@@ -22,7 +22,7 @@ import { toast } from "@/components/ui/use-toast";
 // CREATE
 export const createOrder = async () => {
   try {
-    const totalAmount = 1000;
+    const totalAmount = 500;
     const session = await auth();
     const user = await getUserById(session?.user.id!);
 

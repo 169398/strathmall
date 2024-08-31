@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
+import ConfettiCannon from "@/components/magicui/confetti";
 
 interface Product {
   slug: string;
@@ -86,6 +87,7 @@ export default function DiscountedProductList({
           <ChevronRight className="h-5 w-5" />
         </Button>
       </div>
+      <ConfettiCannon />
     </Card>
   );
 }
