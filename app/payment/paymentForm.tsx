@@ -108,7 +108,7 @@ export default function PaymentForm({
         </h2>
         <div className="flex justify-between text-lg mb-4">
           <div className="font-medium">Total:</div>
-          <div className="font-medium">1000 KES</div>
+          <div className="font-medium">500 KES</div>
         </div>
         <div>
           <PayPalScriptProvider options={{ clientId: paypalClientId }}>

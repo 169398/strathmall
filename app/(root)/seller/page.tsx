@@ -29,27 +29,17 @@ import { UserCard } from "@/components/shared/card";
 import { UserCard2 } from "@/components/shared/WhyStrathCard";
 import { createSeller } from "@/lib/actions/selleractions";
 import { CardSpot } from "@/components/shared/how-to-start";
-import { useCustomToasts } from "@/hooks/use-custom-toasts";
-import { useEffect } from "react";
-import { useSession } from "next-auth/react";
+
 
 
 const OnboardingForm = () => {
   // eslint-disable-next-line no-unused-vars
-  const { data: session, status } = useSession();
 
   const form = useForm<z.infer<typeof createSellerSchema>>({
     resolver: zodResolver(createSellerSchema),
   });
-  const { loginToast } = useCustomToasts();
   const { toast } = useToast();
-  const router = useRouter();
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      loginToast();
-      router.push("/sign-up");
-    }
-  }, [status, router, loginToast]);
+ const router = useRouter();
 
   async function onSubmit(values: z.infer<typeof createSellerSchema>) {
     const formData = new FormData();
