@@ -5,7 +5,6 @@ import { Poppins as FontSans } from 'next/font/google'
 import { cn } from '@/lib/utils'
 import { Toaster } from '@/components/ui/toaster'
 import React from 'react'
-import Navbar from '@/components/shared/Navbar'
 import { constructMetadata } from '@/lib/paypal'
 import { Analytics } from "@vercel/analytics/react";
 import { SessionProvider } from 'next-auth/react'
@@ -32,7 +31,6 @@ export default function RootLayout({
         )}
       >
        
-        <Navbar />
         <main>
         <SessionProvider >{children}</SessionProvider>
         <WelcomeToast/>
