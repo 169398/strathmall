@@ -1,16 +1,17 @@
 import Search from "./header/search";
-import Header from "./header";
-import Alert from "./NavbarAlert";
+import { HoverDrawer } from "./HoverDrawer";
+import { getAllCategories } from "@/lib/actions/sellerproduct.actions";
 
-export default function MobileNav() {
+export default async function MobileNav() {
+  const categories = await getAllCategories();
+
   return (
     <div className="flex flex-col items-center lg:hidden w-full mt-4">
       <div className="flex items-center w-full space-x-4">
-        <div className="h-8 w-full max-w-xs text-sm">
+        <HoverDrawer categories={categories} />
+        <div className="h-8 w-full max-w-screen-lg text-sm">
           <Search />
         </div>
-        <Alert />
-        <Header />
       </div>
     </div>
   );

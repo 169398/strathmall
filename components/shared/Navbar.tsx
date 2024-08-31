@@ -8,7 +8,6 @@ import MobileNav from "./MobileNav";
 import Search from "./header/search";
 import Header from "./header";
 import { auth } from "@/auth";
-import Alert from "./NavbarAlert";
 
 export default async function Navbar() {
   const session = await auth();
@@ -33,12 +32,10 @@ export default async function Navbar() {
               <div className="hidden lg:block lg:flex-1 ml-1 lg:ml-4">
                 <Header />
               </div>
-              <div className=" size-4 hidden lg:block lg:flex-1 ml-1 lg:ml-4">
-                <Alert />
-              </div>
+             
 
               <div className="hidden lg:flex lg:flex-1 lg:ml-8">
-                <div className="  h-8 w-full max-w-md text-sm">
+                <div className="  h-8 w-full max-w-md text-sm px-8">
                   {" "}
                   <Search />
                 </div>
