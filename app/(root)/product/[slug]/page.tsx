@@ -1,18 +1,21 @@
-import { notFound } from 'next/navigation';
-import ProductImages from '@/components/shared/product/product-images';
-import ProductPrice from '@/components/shared/product/product-price';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
-import { getProductBySlug, getRelatedProducts } from '@/lib/actions/sellerproduct.actions';
-import { APP_NAME } from '@/lib/constants';
-import AddToCart from '@/components/shared/product/add-to-cart';
-import { getMyCart } from '@/lib/actions/sellercart.actions';
-import { round2 } from '@/lib/utils';
-import ReviewList from './review-list';
-import { auth } from '@/auth';
-import Rating from '@/components/shared/product/rating';
-import Link from 'next/link';
-import Image from 'next/image';
+import { notFound } from "next/navigation";
+import ProductImages from "@/components/shared/product/product-images";
+import ProductPrice from "@/components/shared/product/product-price";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  getProductBySlug,
+  getRelatedProducts,
+} from "@/lib/actions/sellerproduct.actions";
+import { APP_NAME } from "@/lib/constants";
+import AddToCart from "@/components/shared/product/add-to-cart";
+import { getMyCart } from "@/lib/actions/sellercart.actions";
+import { round2 } from "@/lib/utils";
+import ReviewList from "./review-list";
+import { auth } from "@/auth";
+import Rating from "@/components/shared/product/rating";
+import Link from "next/link";
+import Image from "next/image";
 
 export async function generateMetadata({
   params,
@@ -21,7 +24,7 @@ export async function generateMetadata({
 }) {
   const product = await getProductBySlug(params.slug);
   if (!product) {
-    return { title: 'Product not found' };
+    return { title: "Product not found" };
   }
   return {
     title: `${product.name} - ${APP_NAME}`,
@@ -36,12 +39,20 @@ const ProductDetails = async ({
 }) => {
   const product = await getProductBySlug(slug);
   if (!product) notFound();
-  
+
   const cart = await getMyCart();
   const session = await auth();
 
   // Fetch related products
-  const relatedProducts = await getRelatedProducts(product.category, product.id);
+  const relatedProducts = await getRelatedProducts(
+    product.category,
+    product.id
+  );
+
+  // Calculate discounted price if there's a discount
+  const discountedPrice = product.discount
+        ? round2(Number(product.price) * (1 - Number(product.discount) / 100))
+        : null;
 
   return (
     <>
@@ -64,10 +75,23 @@ const ProductDetails = async ({
 
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                 <div className="flex gap-3">
-                  <ProductPrice
-                    value={Number(product.price)}
-                    className="p-bold-20 rounded-full bg-green-500/10 px-5 py-2 text-green-700"
-                  />
+                  {discountedPrice ? (
+                    <>
+                      <ProductPrice
+                        value={discountedPrice}
+                        className="p-bold-20 rounded-full bg-green-500/10 px-5 py-2 text-green-700"
+                      />
+                      <ProductPrice
+                        value={Number(product.price)}
+                        className="p-medium-16 line-through text-red-500"
+                      />
+                    </>
+                  ) : (
+                    <ProductPrice
+                      value={Number(product.price)}
+                      className="p-bold-20 rounded-full bg-green-500/10 px-5 py-2 text-green-700"
+                    />
+                  )}
                 </div>
               </div>
             </div>
@@ -83,7 +107,17 @@ const ProductDetails = async ({
                 <div className="mb-2 flex justify-between">
                   <div>Price</div>
                   <div>
-                    <ProductPrice value={Number(product.price)} />
+                    {discountedPrice ? (
+                      <>
+                        <ProductPrice value={discountedPrice} />
+                        <ProductPrice
+                          value={Number(product.price)}
+                          className="line-through text-red-500 ml-2"
+                        />
+                      </>
+                    ) : (
+                      <ProductPrice value={Number(product.price)} />
+                    )}
                   </div>
                 </div>
                 <div className="mb-2 flex justify-between">
@@ -102,7 +136,7 @@ const ProductDetails = async ({
                         productId: product.id,
                         name: product.name,
                         slug: product.slug,
-                        price: round2(product.price),
+                        price: discountedPrice ?? round2(product.price),
                         qty: 1,
                         image: product.images![0],
                       }}
@@ -114,7 +148,7 @@ const ProductDetails = async ({
           </div>
         </div>
       </section>
-      
+
       <section className="mt-10">
         <h2 className="h2-bold mb-5">Customer Reviews</h2>
         <ReviewList
@@ -123,7 +157,7 @@ const ProductDetails = async ({
           userId={session?.user.id!}
         />
       </section>
-      
+
       {Array.isArray(relatedProducts) && relatedProducts.length > 0 && (
         <section className="py-8">
           <h2 className="mb-4 text-2xl font-bold">Related Products</h2>
@@ -146,8 +180,12 @@ const ProductDetails = async ({
                       sizes="(min-width: 1024px) 20vw, (min-width: 768px) 25vw, (min-width: 640px) 33vw, (min-width: 475px) 50vw, 100vw"
                     />
                     <div className="absolute bottom-0 left-0 p-2 bg-black bg-opacity-50 text-white">
-                      <p className="text-sm font-semibold">{relatedProduct.name}</p>
-                      <p className="text-sm">Ksh {round2(relatedProduct.price)}</p>
+                      <p className="text-sm font-semibold">
+                        {relatedProduct.name}
+                      </p>
+                      <p className="text-sm">
+                        Ksh {round2(relatedProduct.price)}
+                      </p>
                     </div>
                   </div>
                 </Link>

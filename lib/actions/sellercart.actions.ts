@@ -9,12 +9,14 @@ import { formatError, round2 } from "../utils";
 import { cartItem } from "@/types/sellerindex";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
+import { towns } from "@/lib/address";
 
-const calcPrice = (items: cartItem[]) => {
+const calcPrice = (items: cartItem[], townName: string) => {
   const itemsPrice = round2(
       items.reduce((acc, item) => acc + item.price * item.qty, 0)
     ),
-    shippingPrice = round2(itemsPrice < 100 ? 0 : 150),
+    town = towns.find((t) => t.name === townName),
+    shippingPrice = round2(town ? town.shippingPrice : 0),
     totalPrice = round2(itemsPrice + shippingPrice);
   return {
     itemsPrice: itemsPrice.toFixed(2),
@@ -23,10 +25,11 @@ const calcPrice = (items: cartItem[]) => {
   };
 };
 
-export const addItemToCart = async (data: cartItem) => {
+export const addItemToCart = async (data: cartItem, townName: string) => {
   try {
     const sessionCartId = cookies().get("sessionCartId")?.value;
     if (!sessionCartId) throw new Error("Cart Session not found");
+
     const session = await auth();
     const userId = session?.user.id as string | undefined;
     const cart = await getMyCart();
@@ -35,14 +38,17 @@ export const addItemToCart = async (data: cartItem) => {
       where: eq(products.id, item.productId),
     });
     if (!product) throw new Error("Product not found");
+
     if (!cart) {
       if (product.stock < 1) throw new Error("Not enough stock");
+
       await db.insert(carts).values({
         userId: userId,
         items: [{ ...item, productId: item.productId }],
         sessionCartId: sessionCartId,
-        ...calcPrice([item]),
+        ...calcPrice([item], townName),
       });
+
       revalidatePath(`/product/${product.slug}`);
       return {
         success: true,
@@ -53,17 +59,20 @@ export const addItemToCart = async (data: cartItem) => {
       if (existItem) {
         if (product.stock < existItem.qty + 1)
           throw new Error("Not enough stock");
+
         cart.items.find((x) => x.productId === item.productId)!.qty =
           existItem.qty + 1;
       } else {
         if (product.stock < 1) throw new Error("Not enough stock");
+
         cart.items.push({ ...item, productId: item.productId });
       }
+
       await db
         .update(carts)
         .set({
           items: cart.items,
-          ...calcPrice([{ ...item, productId: item.productId }]),
+          ...calcPrice(cart.items, townName),
         })
         .where(eq(carts.id, cart.id));
 
@@ -83,6 +92,7 @@ export const addItemToCart = async (data: cartItem) => {
 export async function getMyCart() {
   const sessionCartId = cookies().get("sessionCartId")?.value;
   if (!sessionCartId) return undefined;
+
   const session = await auth();
   const userId = session?.user.id;
 
@@ -91,10 +101,14 @@ export async function getMyCart() {
       ? eq(carts.userId, userId)
       : eq(carts.sessionCartId, sessionCartId),
   });
+
   return cart;
 }
 
-export const removeItemFromCart = async (productId: string) => {
+export const removeItemFromCart = async (
+  productId: string,
+  townName: string
+) => {
   try {
     const sessionCartId = cookies().get("sessionCartId")?.value;
     if (!sessionCartId) throw new Error("Cart Session not found");
@@ -118,15 +132,15 @@ export const removeItemFromCart = async (productId: string) => {
       sellerCart.items.find((x) => x.productId === productId)!.qty =
         exist.qty - 1;
     }
+
     await db
       .update(carts)
       .set({
         items: sellerCart.items,
-        ...calcPrice(
-          sellerCart.items.map((i) => ({ ...i, productId: i.productId }))
-        ),
+        ...calcPrice(sellerCart.items, townName),
       })
       .where(eq(carts.id, sellerCart.id));
+
     revalidatePath(`/product/${product.slug}`);
     return {
       success: true,

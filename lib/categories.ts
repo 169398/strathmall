@@ -13,15 +13,15 @@ export const categories = [
     "Cleaning-Supplies",
     "Women's Clothing",
     "Books",
-    "Luggages & Bags",
-    "Home & Kitchen",
-    "Toys & Entertainment",
-    "Beauty & Personal Care",
+    "Luggages-Bags",
+    "Home-Kitchen",
+    "Toys-Entertainment",
+    "Beauty-Personal Care",
     "Bakery",
     "Watches",
     "Furniture",
     "Sports and Entertainment",
-    "Hair extensions & Wigs",
+    "Hair extensions-Wigs",
 
 
    
