@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { ToastAction } from '@/components/ui/toast'
 import { useToast } from '@/components/ui/use-toast'
 import { addItemToCart, removeItemFromCart } from '@/lib/actions/sellercart.actions'
+import { towns } from '@/lib/address'
 import { cart, cartItem } from '@/types/sellerindex'
 import { Loader, Minus, Plus } from 'lucide-react'
 import { useRouter } from 'next/navigation'
@@ -18,6 +19,7 @@ export default function AddToCart({
 }) {
   const router = useRouter()
   const { toast } = useToast()
+  const townName = towns[0].name
   const [isPending, startTransition] = useTransition()
   const existItem =
     cart && cart.items.find((x) => x.productId === item.productId)
@@ -29,7 +31,7 @@ export default function AddToCart({
         disabled={isPending}
         onClick={() => {
           startTransition(async () => {
-            const res = await removeItemFromCart(item.productId)
+            const res = await removeItemFromCart(item.productId, townName)
             toast({
               variant: res.success ? 'default' : 'destructive',
               description: res.message,
@@ -51,7 +53,7 @@ export default function AddToCart({
         disabled={isPending}
         onClick={() => {
           startTransition(async () => {
-            const res = await addItemToCart(item)
+            const res = await addItemToCart(item, townName)
             toast({
               variant: res.success ? 'default' : 'destructive',
               description: res.message,
@@ -74,7 +76,7 @@ export default function AddToCart({
       disabled={isPending}
       onClick={() => {
         startTransition(async () => {
-          const res = await addItemToCart(item)
+          const res = await addItemToCart(item, townName)
           if (!res.success) {
             toast({
               variant: 'destructive',

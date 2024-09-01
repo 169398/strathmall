@@ -16,6 +16,7 @@ import {
   addItemToCart,
   removeItemFromCart,
 } from "@/lib/actions/sellercart.actions";
+import { towns } from "@/lib/address";
 import { formatCurrency } from "@/lib/utils";
 import { CartItem } from "@/types";
 import { cart } from "@/types/sellerindex";
@@ -29,10 +30,11 @@ export default function CartForm({ cart }: { cart?: cart }) {
   const router = useRouter();
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
+  const townName = towns[0].name;
 
   const handleRemoveItem = async (productId: string) => {
     startTransition(async () => {
-      const res = await removeItemFromCart(productId);
+      const res = await removeItemFromCart(productId, townName);
       if (!res.success) {
         toast({
           variant: "destructive",
@@ -44,7 +46,7 @@ export default function CartForm({ cart }: { cart?: cart }) {
 
   const handleAddItem = async (item: CartItem) => {
     startTransition(async () => {
-      const res = await addItemToCart({ ...item, productId: item.productId });
+      const res = await addItemToCart({ ...item, productId: item.productId },townName);
       if (!res.success) {
         toast({
           variant: "destructive",

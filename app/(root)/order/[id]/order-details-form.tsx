@@ -5,7 +5,6 @@ import {
   PayPalScriptProvider,
   usePayPalScriptReducer,
 } from "@paypal/react-paypal-js";
-
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -40,10 +39,13 @@ export default function OrderDetailsForm({
 }: {
   order: order;
   paypalClientId: string;
-    isAdmin: boolean;
-    isDelivery: boolean;
+  isAdmin: boolean;
+  isDelivery: boolean;
   stripeClientSecret: string | null;
 }) {
+  const { toast } = useToast();
+  const [isPending, startTransition] = useTransition();
+
   const {
     shippingAddress,
     orderItems,
@@ -57,91 +59,69 @@ export default function OrderDetailsForm({
     deliveredAt,
   } = order;
 
-  const { toast } = useToast();
-
-
   function PrintLoadingState() {
     const [{ isPending, isRejected }] = usePayPalScriptReducer();
-    let status = "";
-    if (isPending) {
-      status = "Loading PayPal...";
-    } else if (isRejected) {
-      status = "Error in loading PayPal.";
-    }
-    return status;
+    if (isPending) return "Loading PayPal...";
+    if (isRejected) return "Error in loading PayPal.";
+    return null;
   }
+
   const handleCreatePayPalOrder = async () => {
-
-    
-    const res = await createPayPalOrder(order.id,);
-    if (!res.success)
-      return toast({
-        description: res.message,
-        variant: "destructive",
-      });
+    const res = await createPayPalOrder(order.id);
+    if (!res.success) {
+      toast({ description: res.message, variant: "destructive" });
+      return null;
+    }
     return res.data;
-    
   };
+
   const handleApprovePayPalOrder = async (data: { orderID: string }) => {
-   
-
-    const res = await approvePayPalOrder(  order.id,data
-   )
-   ;
-
+    const res = await approvePayPalOrder(order.id, data);
     toast({
       description: res.message,
       variant: res.success ? "default" : "destructive",
     });
   };
 
-  const MarkAsPaidButton = () => {
-    const [isPending, startTransition] = useTransition();
-    const { toast } = useToast();
-    return (
-      <Button
-        type="button"
-        disabled={isPending}
-        onClick={() =>
-          startTransition(async () => {
-            const res = await updateOrderToPaidByCOD(order.id, );
-            toast({
-              variant: res.success ? "default" : "destructive",
-              description: res.message,
-            });
-          })
-        }
-      >
-        {isPending ? "processing..." : "Mark As Paid"}
-      </Button>
-    );
-  };
+  const MarkAsPaidButton = () => (
+    <Button
+      type="button"
+      disabled={isPending}
+      onClick={() =>
+        startTransition(async () => {
+          const res = await updateOrderToPaidByCOD(order.id);
+          toast({
+            variant: res.success ? "default" : "destructive",
+            description: res.message,
+          });
+        })
+      }
+    >
+      {isPending ? "Processing..." : "Mark As Paid"}
+    </Button>
+  );
 
-  const MarkAsDeliveredButton = () => {
-    const [isPending, startTransition] = useTransition();
-    const { toast } = useToast();
-    return (
-      <Button
-        type="button"
-        disabled={isPending}
-        onClick={() =>
-          startTransition(async () => {
-            const res = await deliverOrder(order.id);
-            toast({
-              variant: res.success ? "default" : "destructive",
-              description: res.message,
-            });
-          })
-        }
-      >
-        {isPending ? "processing..." : "Mark As Delivered"}
-      </Button>
-    );
-  };
+  const MarkAsDeliveredButton = () => (
+    <Button
+      type="button"
+      disabled={isPending}
+      onClick={() =>
+        startTransition(async () => {
+          const res = await deliverOrder(order.id);
+          toast({
+            variant: res.success ? "default" : "destructive",
+            description: res.message,
+          });
+        })
+      }
+    >
+      {isPending ? "Processing..." : "Mark As Delivered"}
+    </Button>
+  );
 
   return (
     <>
-      <h1 className="py-4 text-2xl"> Order {formatId(order.id)}</h1>
+      <h1 className="py-4 text-2xl">Order {formatId(order.id)}</h1>
       <div className="grid md:grid-cols-3 md:gap-5">
         <div className="overflow-x-auto md:col-span-2 space-y-4">
           <Card>
@@ -162,19 +142,10 @@ export default function OrderDetailsForm({
               <h2 className="text-xl pb-4">Shipping Address</h2>
               <p>{shippingAddress.fullName}</p>
               <p>
-                {shippingAddress.streetAddress}, {shippingAddress.city},{" "}
-                {shippingAddress.postalCode}, {shippingAddress.country}{" "}
+                {shippingAddress.fullName}, {shippingAddress.town},{" "}
+                {shippingAddress.phoneNumber}
               </p>
-              <p className="py-2">
-                <Button asChild variant="outline">
-                  <a
-                    target="_new"
-                    href={`https://maps.google.com?q=${shippingAddress.lat},${shippingAddress.lng}`}
-                  >
-                    Show On Map
-                  </a>
-                </Button>
-              </p>
+             
 
               {isDelivered ? (
                 <Badge variant="secondary">
@@ -209,7 +180,7 @@ export default function OrderDetailsForm({
                             alt={item.name}
                             width={50}
                             height={50}
-                          ></Image>
+                          />
                           <span className="px-2">{item.name}</span>
                         </Link>
                       </TableCell>
@@ -217,7 +188,7 @@ export default function OrderDetailsForm({
                         <span className="px-2">{item.qty}</span>
                       </TableCell>
                       <TableCell className="text-right">
-                        ksh{item.price}
+                        {formatCurrency(item.price)}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -234,7 +205,6 @@ export default function OrderDetailsForm({
                 <div>Items</div>
                 <div>{formatCurrency(itemsPrice)}</div>
               </div>
-
               <div className="flex justify-between">
                 <div>Shipping</div>
                 <div>{formatCurrency(shippingPrice)}</div>
