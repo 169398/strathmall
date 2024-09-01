@@ -32,10 +32,7 @@ PurchaseReceiptEmail.PreviewProps = {
     paymentMethod: "Stripe",
     shippingAddress: {
       fullName: "John Doe",
-      streetAddress: "123 Main St",
-      city: "Nairobi",
-      postalCode: "10001",
-      country: "Kenya",
+      town: "Nairobi",
       phoneNumber: "0712345678",
     },
     createdAt: new Date(),
@@ -71,7 +68,7 @@ const dateFormatter = new Intl.DateTimeFormat("en", { dateStyle: "medium" });
 export default function PurchaseReceiptEmail({ order }: OrderInformationProps) {
   return (
     <Html>
-      <Preview>📦 View your StrathMall order receipt 🧾✨ </Preview>
+      <Preview>📦 View your StrathMall order receipt  </Preview>
       <Tailwind>
         <Head />
         <Body className="font-sans bg-white">

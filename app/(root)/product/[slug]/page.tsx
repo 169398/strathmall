@@ -50,7 +50,8 @@ const ProductDetails = async ({
   );
 
   // Calculate discounted price if there's a discount
-  const discountedPrice = product.discount
+  const discountedPrice =
+      product.discount && Number(product.discount) > 0
         ? round2(Number(product.price) * (1 - Number(product.discount) / 100))
         : null;
 
@@ -149,7 +150,7 @@ const ProductDetails = async ({
         </div>
       </section>
 
-      <section className="mt-10">
+      <section className="mt-10">,
         <h2 className="h2-bold mb-5">Customer Reviews</h2>
         <ReviewList
           productId={product.id}
@@ -162,35 +163,55 @@ const ProductDetails = async ({
         <section className="py-8">
           <h2 className="mb-4 text-2xl font-bold">Related Products</h2>
           <ul className="flex w-full gap-4 overflow-x-auto pt-1">
-            {relatedProducts.map((relatedProduct) => (
-              <li
-                key={relatedProduct.id}
-                className="aspect-square w-full flex-none min-[475px]:w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5"
-              >
-                <Link
-                  className="relative h-full w-full"
-                  href={`/product/${relatedProduct.slug}`}
+            {relatedProducts.map((relatedProduct) => {
+              const relatedDiscountedPrice =
+                relatedProduct.discount && Number(relatedProduct.discount)> 0
+                  ? round2(
+                      Number(relatedProduct.price) *
+                        (1 - Number(relatedProduct.discount) / 100)
+                    )
+                  : null;
+              return (
+                <li
+                  key={relatedProduct.id}
+                  className="aspect-square w-full flex-none min-[475px]:w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5"
                 >
-                  <div className="relative h-full w-full">
-                    <Image
-                      src={relatedProduct.images[0]}
-                      alt={relatedProduct.name}
-                      className="h-full w-full object-cover rounded-lg"
-                      fill
-                      sizes="(min-width: 1024px) 20vw, (min-width: 768px) 25vw, (min-width: 640px) 33vw, (min-width: 475px) 50vw, 100vw"
-                    />
-                    <div className="absolute bottom-0 left-0 p-2 bg-black bg-opacity-50 text-white">
-                      <p className="text-sm font-semibold">
-                        {relatedProduct.name}
-                      </p>
-                      <p className="text-sm">
-                        Ksh {round2(relatedProduct.price)}
-                      </p>
+                  <Link
+                    className="relative h-full w-full"
+                    href={`/product/${relatedProduct.slug}`}
+                  >
+                    <div className="relative h-full w-full">
+                      <Image
+                        src={relatedProduct.images[0]}
+                        alt={relatedProduct.name}
+                        className="h-full w-full object-cover rounded-lg"
+                        fill
+                        sizes="(min-width: 1024px) 20vw, (min-width: 768px) 25vw, (min-width: 640px) 33vw, (min-width: 475px) 50vw, 100vw"
+                      />
+                      <div className="absolute bottom-0 left-0 p-2 bg-black bg-opacity-50 text-white">
+                        <p className="text-sm font-semibold">
+                          {relatedProduct.name}
+                        </p>
+                        {relatedDiscountedPrice ? (
+                          <>
+                            <p className="text-sm">
+                              Ksh {relatedDiscountedPrice}
+                            </p>
+                            <p className="text-sm line-through text-red-500">
+                              Ksh {round2(relatedProduct.price)}
+                            </p>
+                          </>
+                        ) : (
+                          <p className="text-sm">
+                            Ksh {round2(relatedProduct.price)}
+                          </p>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                </Link>
-              </li>
-            ))}
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </section>
       )}
