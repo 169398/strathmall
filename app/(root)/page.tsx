@@ -4,7 +4,6 @@ import {
   getDiscountedProducts,
 } from "@/lib/actions/sellerproduct.actions";
 import HomeLoader from "@/components/shared/loader/HomeLoader";
-import Navbar from "@/components/shared/Navbar";
 
 export default async function Home() {
   const latestProducts = await getLatestProducts();
@@ -13,7 +12,6 @@ export default async function Home() {
 
   return (
     <div>
-      <Navbar />
 
       <HomeLoader
         latestProducts={latestProducts}

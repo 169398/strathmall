@@ -1,4 +1,3 @@
-import Navbar from "@/components/shared/Navbar";
 import { SearchSkeleton } from "@/components/shared/skeletons/SearchSkeleton";
 import ViewMore from "@/components/shared/view-more-product";
 import { Button } from "@/components/ui/button";
@@ -84,7 +83,6 @@ export default async function SearchPage({
 
   return (
     <>
-      <Navbar />
       <div className="grid md:grid-cols-5 md:gap-5">
         {/* Filters Dropdown */}
         <div className="md:col-span-1 sticky">
