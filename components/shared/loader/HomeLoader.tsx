@@ -7,13 +7,15 @@ import HomeContent from "../HomeContent";
 interface HomeLoaderProps {
   latestProducts: any;
   allProducts: any;
-  discountedProducts: any; // Add this prop
+  discountedProducts: any;
+  Ads: any;
 }
 
 const HomeLoader: React.FC<HomeLoaderProps> = ({
   latestProducts,
   allProducts,
   discountedProducts,
+  Ads,
 }) => {
   const [loading, setLoading] = useState(true);
 
@@ -30,7 +32,8 @@ const HomeLoader: React.FC<HomeLoaderProps> = ({
     <HomeContent
       latestProducts={latestProducts}
       allProducts={allProducts}
-      discountedProducts={discountedProducts}
+        discountedProducts={discountedProducts}
+      Ads={Ads}
     />
   );
 };

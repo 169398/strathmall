@@ -11,6 +11,7 @@ import confetti from "canvas-confetti";
 import Link from "next/link";
 import { buttonVariants } from "../ui/button";
 import { Infinitetestimonials } from "./Testimonials";
+import Ads from "./Ads";
 
 
    const handleClick = () => {
@@ -42,13 +43,15 @@ import { Infinitetestimonials } from "./Testimonials";
 interface HomeContentProps {
   latestProducts: any;
   allProducts: any;
-  discountedProducts: any; // Add this prop
+  discountedProducts: any; 
+  Ads: any;
 }
 
 const HomeContent: React.FC<HomeContentProps> = ({
   latestProducts,
   allProducts,
   discountedProducts,
+  
 }) => {
   return (
     <div>
@@ -83,6 +86,8 @@ const HomeContent: React.FC<HomeContentProps> = ({
           title="Discounted Products 💸"
           data={discountedProducts.data || []}
         />{" "}
+        <Ads />
+       
         <AllProductList title="More to love 💖" data={allProducts.data || []} />
         <EcommerceFeatures />
         <Infinitetestimonials />
