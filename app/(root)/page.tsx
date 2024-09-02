@@ -4,12 +4,12 @@ import {
   getDiscountedProducts,
 } from "@/lib/actions/sellerproduct.actions";
 import HomeLoader from "@/components/shared/loader/HomeLoader";
+import Ads from "@/components/shared/Ads";
 
 export default async function Home() {
   const latestProducts = await getLatestProducts();
   const allProducts = await getAllProducts();
-  const discountedProducts = await getDiscountedProducts(); // Fetch discounted products
-
+  const discountedProducts = await getDiscountedProducts(); 
   return (
     <div>
 
@@ -17,6 +17,7 @@ export default async function Home() {
         latestProducts={latestProducts}
         allProducts={allProducts}
         discountedProducts={discountedProducts}
+        Ads={Ads}
       />
     </div>
   );
