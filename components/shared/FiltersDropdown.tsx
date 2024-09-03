@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -16,11 +17,11 @@ const FiltersDropdown = ({
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="sticky top-0 bg-white z-10 shadow-md p-4">
-          <Button
-              variant={"secondary"}
+    <div>
+      <Button
+        variant="secondary"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex justify-between items-center"
+        className="w-full flex justify-between items-center text-left"
       >
         Filters
         {isOpen ? (
@@ -30,44 +31,56 @@ const FiltersDropdown = ({
         )}
       </Button>
       {isOpen && (
-        <div className="mt-4 space-y-6">
+        <div className="mt-4 space-y-4">
           <div>
-            <div className="text-xl pt-3">Category</div>
+            <div className="text-lg font-semibold">Category</div>
             <ul className="space-y-2">
               <li>
-                <Link href={`/search?category=all`}>Any</Link>
+                <Link href={`/search?category=all`} className="text-sm">
+                  Any
+                </Link>
               </li>
               {categories.map((c) => (
                 <li key={c.name}>
-                  <Link href={`/search?category=${c.name}`}>{c.name}</Link>
+                  <Link href={`/search?category=${c.name}`} className="text-sm">
+                    {c.name}
+                  </Link>
                 </li>
               ))}
             </ul>
           </div>
 
           <div>
-            <div className="text-xl pt-3">Price</div>
+            <div className="text-lg font-semibold">Price</div>
             <ul className="space-y-2">
               <li>
-                <Link href={`/search?price=all`}>Any</Link>
+                <Link href={`/search?price=all`} className="text-sm">
+                  Any
+                </Link>
               </li>
               {prices.map((p) => (
                 <li key={p.value}>
-                  <Link href={`/search?price=${p.value}`}>{p.name}</Link>
+                  <Link href={`/search?price=${p.value}`} className="text-sm">
+                    {p.name}
+                  </Link>
                 </li>
               ))}
             </ul>
           </div>
 
           <div>
-            <div className="text-xl pt-3">Customer Review</div>
+            <div className="text-lg font-semibold">Customer Review</div>
             <ul className="space-y-2">
               <li>
-                <Link href={`/search?rating=all`}>Any</Link>
+                <Link href={`/search?rating=all`} className="text-sm">
+                  Any
+                </Link>
               </li>
               {ratings.map((r) => (
                 <li key={r}>
-                  <Link href={`/search?rating=${r}`}>{`${r} stars & up`}</Link>
+                  <Link href={`/search?rating=${r}`} className="text-sm">
+                    {`${r} stars & up`}
+                  </Link>
                 </li>
               ))}
             </ul>

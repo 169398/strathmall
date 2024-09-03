@@ -7,6 +7,7 @@ import { product } from "@/types/sellerindex";
 import { Suspense } from "react";
 import ImageSlider from "../ImageSlider";
 import { Skeleton } from "@/components/ui/skeleton";
+import FavoriteButton from "../FavoriteButton";
 
 const skeleton =
   "w-full h-6 animate-pulse rounded bg-gray-300 dark:bg-neutral-700";
@@ -31,7 +32,7 @@ const ProductCard = ({ product }: { product: product }) => {
   );
 
   return (
-    <Card className="w-full max-w-sm sm:max-w-xs">
+    <Card className="w-full max-w-sm sm:max-w-xs relative">
       <Suspense
         fallback={
           <div className="flex justify-center items-center h-[200px] sm:h-[300px] w-full bg-neutral-600 dark:bg-neutral-700 animate-pulse rounded">
@@ -39,7 +40,10 @@ const ProductCard = ({ product }: { product: product }) => {
           </div>
         }
       >
-        <CardHeader className="p-1">
+        <div className="absolute top-2 right-2 z-20">
+          <FavoriteButton productId={product.id} />
+        </div>
+        <CardHeader className="p-1 relative z-10">
           <Link href={`/product/${product.slug}`}>
             <div className="relative w-full aspect-square overflow-hidden rounded-sm">
               <ImageSlider slug={product.images!} />

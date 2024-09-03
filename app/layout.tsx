@@ -34,7 +34,8 @@ export default function RootLayout({
         <main>
         <SessionProvider >{children}</SessionProvider>
         <WelcomeToast/>
-        <Toaster />
+          <Toaster />
+          
         <Analytics />
 
         </main>
