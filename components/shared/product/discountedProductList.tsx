@@ -39,10 +39,10 @@ export default function DiscountedProductList({
   };
 
   return (
-    <Card className="relative w-full h-65 bg-gradient-to-r from-blue-500 to-pink-500 shadow-lg rounded-lg overflow-hidden">
+    <Card className="relative w-full h-65 bg-white rounded-lg overflow-hidden">
       <CardContent className="p-4 sm:p-6">
         <div className="flex items-center justify-between mb-1 sm:mb-4">
-          <h2 className="text-2xl sm:text-3xl font-bold text-white">{title}</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-slate-500">{title}</h2>
         </div>
         {data.length > 0 ? (
           <ScrollArea>
