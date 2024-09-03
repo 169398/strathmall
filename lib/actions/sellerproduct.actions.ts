@@ -105,6 +105,13 @@ export async function addProductToFavorites(productId: string) {
     const session = await auth();
     const userId = session?.user.id || "";
 
+     if (!session?.user) {
+       return {
+         success: false,
+         message: "Login  to favorite a product",
+       };
+     }
+
     // Check if the product is already favorited
     const existingFavorite = await db.query.favorites.findFirst({
       where: and(eq(favorites.userId, userId), eq(favorites.productId, productId)),
