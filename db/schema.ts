@@ -181,6 +181,27 @@ export const products = pgTable(
   }
 );
 
+//Favourite Products
+
+export const favorites = pgTable("favorites", {
+  id: uuid("id").defaultRandom().primaryKey().notNull(),
+  userId: uuid("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  productId: uuid("productId")
+    .notNull()
+    .references(() => products.id, { onDelete: "cascade" }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export const favoritesRelations = relations(favorites, ({ one }) => ({
+  user: one(users, { fields: [favorites.userId], references: [users.id] }),
+  product: one(products, {
+    fields: [favorites.productId],
+    references: [products.id],
+  }),
+}));
+
 // SELLER REVIEWS
 export const reviews = pgTable("reviews", {
   id: uuid("id").defaultRandom().primaryKey().notNull(),

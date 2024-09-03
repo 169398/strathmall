@@ -2,16 +2,13 @@
 
 import { desc } from "drizzle-orm";
 import db from "@/db/drizzle";
-import { products } from "@/db/schema";
+import { favorites, products } from "@/db/schema";
 import { and, count, eq, ilike, sql } from "drizzle-orm/sql";
 import { PAGE_SIZE } from "../constants";
 import { revalidatePath } from "next/cache";
 import { formatError } from "../utils";
 import { z } from "zod";
-import {
-  insertProductSchema,
-  updateProductSchema,
-} from "../validator";
+import { insertProductSchema, updateProductSchema } from "../validator";
 import { auth } from "@/auth";
 
 // CREATE
@@ -20,7 +17,7 @@ export async function createProduct(
   data: z.infer<typeof insertProductSchema>
 ) {
   try {
-const session = await auth();
+    const session = await auth();
 
   const sellerId = session?.user.id ||'';
 
@@ -80,7 +77,7 @@ export async function getAllProducts() {
         id: products.id,
         stock: products.stock,
         price: products.price,
-      
+
         slug: products.slug,
         images: products.images,
         name: products.name,
@@ -92,6 +89,93 @@ export async function getAllProducts() {
           ),
       })
       .from(products);
+
+    return {
+      success: true,
+      data,
+    };
+  } catch (error) {
+    return { success: false, message: formatError(error) };
+  }
+}
+
+// Add a product to favorites
+export async function addProductToFavorites(productId: string) {
+  try {
+    const session = await auth();
+    const userId = session?.user.id || "";
+
+    // Check if the product is already favorited
+    const existingFavorite = await db.query.favorites.findFirst({
+      where: and(eq(favorites.userId, userId), eq(favorites.productId, productId)),
+    });
+
+    if (existingFavorite) {
+      return {
+        success: true,
+        message: "Product is already in favorites",
+      };
+    }
+
+    // Add to favorites
+    await db.insert(favorites).values({
+      userId,
+      productId,
+    });
+
+    revalidatePath("/favorites");
+    return {
+      success: true,
+      message: "Product added to favorites successfully",
+    };
+  } catch (error) {
+    return { success: false, message: formatError(error) };
+  }
+}
+
+// Remove a product from favorites
+export async function removeProductFromFavorites(productId: string) {
+  try {
+    const session = await auth();
+    const userId = session?.user.id || "";
+
+    await db.delete(favorites).where(
+      and(eq(favorites.userId, userId), eq(favorites.productId, productId))
+    );
+    console.log("productId", productId);
+
+    revalidatePath("/favorites");
+    return {
+      success: true,
+      message: "Product removed from favorites successfully",
+    };
+  } catch (error) {
+    return { success: false, message: formatError(error) };
+  }
+}
+
+// Get a user's favorite products
+export async function getUserFavorites() {
+  try {
+    const session = await auth();
+    const userId = session?.user.id || "";
+
+    const data = await db
+      .select({
+        id: products.id,
+        slug: products.slug,
+        images: products.images,
+        name: products.name,
+        originalPrice: products.price,
+        discount: products.discount,
+        discountedPrice: sql<number>`(${products.price} - (${products.price} * ${products.discount} / 100))`.as(
+          "discountedPrice"
+        ),
+      })
+      .from(products)
+      .innerJoin(favorites, eq(products.id, favorites.productId))
+      .where(eq(favorites.userId, userId))
+      .orderBy(desc(favorites.createdAt));
 
     return {
       success: true,
@@ -117,8 +201,8 @@ export async function getAllSearchProducts({
 }) {
   const queryFilter =
     query && query !== "all"
-      ? ilike(products.name, `%${query}%`)
-      : undefined;
+? ilike(products.name, `%${query}%`)
+: undefined;
   const categoryFilter =
     category && category !== "all"
       ? eq(products.category, category)
@@ -309,10 +393,10 @@ export async function getRelatedProducts(category: string, excludeProductId: str
     const data = await db.query.products.findMany({
       where: and(
         eq(products.category, category),
-        sql`${products.id} != ${excludeProductId}` 
+        sql`${products.id} != ${excludeProductId}`
       ),
       orderBy: [desc(products.createdAt)],
-      limit: 10, 
+      limit: 10,
     });
     return data;
   } catch (error) {
