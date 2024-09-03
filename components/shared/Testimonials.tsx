@@ -6,8 +6,8 @@ import AnimatedShinyText from "../magicui/animated-shiny-text";
 
 export function Infinitetestimonials() {
   return (
-    <div className="container flex flex-col items-center justify-center relative bg-white dark:bg-black dark:bg-grid-white/[0.05] rounded-sm p-4 sm:p-6 md:p-8 h-[24rem] sm:h-[30rem] md:h-[36rem]">
-      <AnimatedShinyText className="inline-flex text-xl sm:text-2xl items-center justify-center px-4 py-1 transition ease-out hover:text-blue-600 hover:duration-300 hover:dark:text-neutral-400">
+    <div className="container flex flex-col items-center justify-center relative bg-white  dark:bg-grid-white/[0.05] rounded-sm p-4 sm:p-6 md:p-8 h-[24rem] sm:h-[30rem] md:h-[36rem]">
+      <AnimatedShinyText className="inline-flex text-xl sm:text-2xl items-center justify-center px-4 py-1 transition ease-out font-bold hover:text-blue-600 hover:duration-300 hover:dark:text-neutral-400">
         What people say
       </AnimatedShinyText>
       <div className="relative w-full h-full mt-4 overflow-hidden">
