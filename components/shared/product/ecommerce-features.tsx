@@ -7,7 +7,7 @@ const EcommerceFeatures = () => {
       <span className='text-2xl font-bold text-gray-700'>Why StrathMall</span>
 
       <Card>
-        <CardContent className="grid gap-4 md:grid-cols-4 p-4 bg-gray-50">
+        <CardContent className="grid h-56 gap-4 md:grid-cols-4 p-4 bg-gray-50">
           <div className="space-y-2">
             <ShoppingBag />
             <div className="text-sm font-bold text-blue-600">Faster Shipping</div>

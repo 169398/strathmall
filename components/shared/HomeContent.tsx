@@ -13,6 +13,8 @@ import { buttonVariants } from "../ui/button";
 import { Infinitetestimonials } from "./Testimonials";
 import Ads from "./Ads";
 import ShoesCategory from "./product/shoesCategory";
+import Electronics from "./product/techCategory";
+import Watches from "./product/watchesCategory";
 
 
    const handleClick = () => {
@@ -84,6 +86,8 @@ const HomeContent: React.FC<HomeContentProps> = ({
         <ProductList title="Newest Arrivals ✨" data={latestProducts} />
         <ProductPromotion />
         <ShoesCategory />
+        <Electronics />
+        <Watches />
         <DiscountProductList
           title="Discounted Products 💸"
           data={discountedProducts.data || []}

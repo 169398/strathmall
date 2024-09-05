@@ -57,7 +57,7 @@ const ShoesCategory = () => {
 
   return (
     <section className="p-4 bg-white border-2 border-gray-200 rounded-lg shadow-lg">
-      <h2 className="text-2xl font-bold mb-4">Best Selling Shoes</h2>
+      <h2 className="text-2xl font-bold mb-4 sm-text-sm">Level up your shoe game</h2>
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
         {displayedShoes.map((product) => (
           <a
