@@ -12,6 +12,7 @@ import Link from "next/link";
 import { buttonVariants } from "../ui/button";
 import { Infinitetestimonials } from "./Testimonials";
 import Ads from "./Ads";
+import ShoesCategory from "./product/shoesCategory";
 
 
    const handleClick = () => {
@@ -82,12 +83,12 @@ const HomeContent: React.FC<HomeContentProps> = ({
       <div className="space-y-8">
         <ProductList title="Newest Arrivals ✨" data={latestProducts} />
         <ProductPromotion />
+        <ShoesCategory />
         <DiscountProductList
           title="Discounted Products 💸"
           data={discountedProducts.data || []}
         />{" "}
         <Ads />
-       
         <AllProductList title="More to love 💖" data={allProducts.data || []} />
         <EcommerceFeatures />
         <Infinitetestimonials />

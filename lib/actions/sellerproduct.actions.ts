@@ -248,6 +248,35 @@ export async function getAllSearchProducts({
   };
 }
 
+export async function getProductsByCategory(category: string, limit = 10) {
+  try {
+    const data = await db
+      .select({
+        id: products.id,
+        slug: products.slug,
+        images: products.images,
+        name: products.name,
+        originalPrice: products.price,
+        discount: products.discount,
+        discountedPrice:
+          sql<number>`(${products.price} - (${products.price} * ${products.discount} / 100))`.as(
+            "discountedPrice"
+          ),
+      })
+      .from(products)
+      .where(eq(products.category, category))
+      .orderBy(desc(products.createdAt))
+      .limit(limit);
+
+    return {
+      success: true,
+      data,
+    };
+  } catch (error) {
+    return { success: false, message: formatError(error) };
+  }
+}
+
 // GET
 export async function getProductById(productId: string) {
   return await db.query.products.findFirst({
