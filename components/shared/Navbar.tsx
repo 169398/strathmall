@@ -53,7 +53,8 @@ export default async function Navbar() {
                         })}
                       >
                         Log in
-                      </Link>
+                        </Link>
+                        
                       <span
                         className="h-6 w-px bg-gray-200"
                         aria-hidden="true"
@@ -65,7 +66,7 @@ export default async function Navbar() {
                           className: "text-sm",
                         })}
                       >
-                        Create account
+                        Sign up
                       </Link>
                     </>
                   )}
