@@ -82,9 +82,10 @@ export default async function SearchPage({
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-5 gap-4 p-4">
+    <div className="flex flex-col md:grid md:grid-cols-5 gap-4 p-4 pt-10 relative">
       {/* Filters Dropdown */}
-      <div className="md:col-span-1 top-12">
+      <div className="md:col-span-1 top-12 sticky hidden md:block">
+        {/* Filters always shown on medium and above */}
         <FiltersDropdown
           categories={categories}
           prices={prices}
@@ -92,6 +93,17 @@ export default async function SearchPage({
         />
       </div>
 
+      {/* For small screens: Floating Filters */}
+
+
+      
+      <div className="block md:hidden fixed left-0 top-40 z-50 w-[50%] max-w-[250px] p-4 mr-2 ">
+        <FiltersDropdown
+          categories={categories}
+          prices={prices}
+          ratings={ratings}
+        />
+</div>
       {/* Product Listing Section */}
       <div className="md:col-span-4">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0 my-4">

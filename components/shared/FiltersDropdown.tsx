@@ -1,9 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { FilterIcon, X } from "lucide-react";
 import Link from "next/link";
-import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 
 const FiltersDropdown = ({
   categories,
@@ -17,32 +16,22 @@ const FiltersDropdown = ({
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div>
-      <Button
-        variant="secondary"
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex justify-between items-center text-left"
-      >
-        Filters
-        {isOpen ? (
-          <ChevronUpIcon className="w-5 h-5" />
-        ) : (
-          <ChevronDownIcon className="w-5 h-5" />
-        )}
-      </Button>
-      {isOpen && (
-        <div className="mt-4 space-y-4">
+    <div className="relative">
+      {/* Show filters as a sidebar on large screens */}
+      <div className="hidden lg:block w-[100%] max-w-[300px] p-4 bg-white shadow-lg">
+        <div className="space-y-4">
+          {/* Category Section */}
           <div>
-            <div className="text-lg font-semibold">Category</div>
-            <ul className="space-y-2">
+            <div className="text-sm font-semibold">Category</div>
+            <ul className="space-y-1">
               <li>
-                <Link href={`/search?category=all`} className="text-sm">
+                <Link href="/search?category=all" className="text-xs">
                   Any
                 </Link>
               </li>
               {categories.map((c) => (
                 <li key={c.name}>
-                  <Link href={`/search?category=${c.name}`} className="text-sm">
+                  <Link href={`/search?category=${c.name}`} className="text-xs">
                     {c.name}
                   </Link>
                 </li>
@@ -50,17 +39,18 @@ const FiltersDropdown = ({
             </ul>
           </div>
 
+          {/* Price Section */}
           <div>
-            <div className="text-lg font-semibold">Price</div>
-            <ul className="space-y-2">
+            <div className="text-sm font-semibold">Price</div>
+            <ul className="space-y-1">
               <li>
-                <Link href={`/search?price=all`} className="text-sm">
+                <Link href="/search?price=all" className="text-xs">
                   Any
                 </Link>
               </li>
               {prices.map((p) => (
                 <li key={p.value}>
-                  <Link href={`/search?price=${p.value}`} className="text-sm">
+                  <Link href={`/search?price=${p.value}`} className="text-xs">
                     {p.name}
                   </Link>
                 </li>
@@ -68,17 +58,18 @@ const FiltersDropdown = ({
             </ul>
           </div>
 
+          {/* Customer Review Section */}
           <div>
-            <div className="text-lg font-semibold">Customer Review</div>
-            <ul className="space-y-2">
+            <div className="text-sm font-semibold">Customer Review</div>
+            <ul className="space-y-1">
               <li>
-                <Link href={`/search?rating=all`} className="text-sm">
+                <Link href="/search?rating=all" className="text-xs">
                   Any
                 </Link>
               </li>
               {ratings.map((r) => (
                 <li key={r}>
-                  <Link href={`/search?rating=${r}`} className="text-sm">
+                  <Link href={`/search?rating=${r}`} className="text-xs">
                     {`${r} stars & up`}
                   </Link>
                 </li>
@@ -86,7 +77,97 @@ const FiltersDropdown = ({
             </ul>
           </div>
         </div>
-      )}
+      </div>
+
+      {/* Dropdown for small screens */}
+      <div className="lg:hidden  ">
+        <button
+          className="p-0 m-0 bg-transparent flex items-center"
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          <FilterIcon className="w-6 h-6" />
+        </button>
+
+        {isOpen && (
+          <div className="absolute top-12 container rounded-sm left-0 w-full max-w-[300px] max-h-[calc(100vh-3rem)] p-4 bg-white shadow-lg z-50 overflow-y-auto">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-semibold">Filters</h2>
+              <button
+                onClick={() => setIsOpen(false)}
+                className="p-0 m-0 bg-transparent"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            {/* Filter Sections */}
+            <div className="space-y-4">
+              {/* Category Section */}
+              <div>
+                <div className="text-sm font-semibold">Category</div>
+                <ul className="space-y-1">
+                  <li>
+                    <Link href="/search?category=all" className="text-xs">
+                      Any
+                    </Link>
+                  </li>
+                  {categories.map((c) => (
+                    <li key={c.name}>
+                      <Link
+                        href={`/search?category=${c.name}`}
+                        className="text-xs"
+                      >
+                        {c.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Price Section */}
+              <div>
+                <div className="text-sm font-semibold">Price</div>
+                <ul className="space-y-1">
+                  <li>
+                    <Link href="/search?price=all" className="text-xs">
+                      Any
+                    </Link>
+                  </li>
+                  {prices.map((p) => (
+                    <li key={p.value}>
+                      <Link
+                        href={`/search?price=${p.value}`}
+                        className="text-xs"
+                      >
+                        {p.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Customer Review Section */}
+              <div>
+                <div className="text-sm font-semibold">Customer Review</div>
+                <ul className="space-y-1">
+                  <li>
+                    <Link href="/search?rating=all" className="text-xs">
+                      Any
+                    </Link>
+                  </li>
+                  {ratings.map((r) => (
+                    <li key={r}>
+                      <Link href={`/search?rating=${r}`} className="text-xs">
+                        {`${r} stars & up`}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

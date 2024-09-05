@@ -6,9 +6,12 @@ import { getAllCategories } from "@/lib/actions/sellerproduct.actions";
 import CartButton from "./header/cart-button";
 import UserButton from "./header/user-button";
 import FavoriteProductsSheet from "./product/favoriteProducts";
+import { buttonVariants } from "../ui/button";
+import { auth } from "@/auth";
 
 export default async function MobileNav() {
-  const categories = await getAllCategories();
+  const session = await auth(); // Fetch session server-side
+  const categories = await getAllCategories(); // Fetch categories server-side
 
   return (
     <div className="lg:hidden fixed inset-x-0 top-0 z-50 bg-white shadow-md">
@@ -18,22 +21,48 @@ export default async function MobileNav() {
             <Image
               src="/logo.png"
               alt="strathmall logo"
-              width={120}
-              height={120}
-              className="h-14 w-14"
+              width={150} // Larger logo
+              height={150}
+              className="h-20 w-20" // Adjusted size for a bigger appearance
             />
           </Link>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2">
             <FavoriteProductsSheet />
-            <div className="h-10 w-10 flex items-center justify-center">
-              <UserButton />
-            </div>
-            <div className="h-10 w-10 flex items-center justify-center">
+            {session ? (
+              <div className="h-8 w-8 flex items-center justify-center">
+                {" "}
+                {/* Smaller buttons */}
+                <UserButton />
+              </div>
+            ) : (
+              <>
+                <Link
+                  href="/sign-in"
+                  className={buttonVariants({
+                    variant: "secondary",
+                    className: "text-xs", // Smaller text for links
+                  })}
+                >
+                  Log in
+                </Link>
+                <span className="h-4 w-px bg-gray-200" aria-hidden="true" />
+                <Link
+                  href="/sign-up"
+                  className={buttonVariants({
+                    variant: "default",
+                    className: "text-xs",
+                  })}
+                >
+                  Sign up
+                </Link>
+              </>
+            )}
+            <div className="h-8 w-8 flex items-center justify-center">
               <CartButton />
             </div>
           </div>
         </div>
-        <div className="flex items-center w-full mt-4 space-x-4">
+        <div className="flex items-center w-full mt-1 space-x-2">
           <HoverDrawer categories={categories} />
           <Search />
         </div>
