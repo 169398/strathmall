@@ -33,7 +33,8 @@ const HomeLoader: React.FC<HomeLoaderProps> = ({
       latestProducts={latestProducts}
       allProducts={allProducts}
         discountedProducts={discountedProducts}
-      Ads={Ads}
+        Ads={Ads}
+        
     />
   );
 };
