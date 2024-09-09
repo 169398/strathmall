@@ -23,16 +23,7 @@ const WelcomeSellerPage = () => {
             More Than Just Onboarding: Your Fee Unlocks a World of Value
           </h2>
           <div className="space-y-6">
-            <div className="bg-white p-6 rounded shadow-md">
-              <h3 className="text-2xl font-semibold mb-2">
-                Professional Photoshoot 📸
-              </h3>
-              <p>
-                A picture is worth a thousand words. Our professional photoshoot
-                services ensure your products look their best, attracting more
-                customers and driving sales.
-              </p>
-            </div>
+            
             <div className="bg-white p-6 rounded shadow-md">
               <h3 className="text-2xl font-semibold mb-2">Free Marketing 📢</h3>
               <p>
