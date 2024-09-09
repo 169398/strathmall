@@ -18,7 +18,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Accordion,
   AccordionDetails,
@@ -136,7 +135,7 @@ const OnboardingForm = () => {
                 render={() => (
                   <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
                     <FormLabel>
-                      <Checkbox />
+                      
                       <span className="text-xs">
                         By selecting &quot;I agree,&quot; you as an authorized
                         representative of your shop on Strathmall, consent to
@@ -206,9 +205,9 @@ const OnboardingForm = () => {
             <AccordionDetails id="panel1-content">
               <span className="text-xs">
                 StrathMall pricing has two parts. A one-time activation fee sets
-                shop up and a professional photo shoot. A service fee is
+                shop up . A service fee is
                 calculated as a percentage of each shop order made through
-                StrathMall. W
+                StrathMall. The service fee is deducted from the order amount .
               </span>
             </AccordionDetails>
           </Accordion>
@@ -223,8 +222,7 @@ const OnboardingForm = () => {
             <AccordionDetails id="panel1-content">
               <span className="text-xs">
                 StrathMall has a delivery service that handles delivery of
-                products to customers.But if you have your own we are
-                flexible-you can use them too. Sellers are responsible for
+                products to customers. Sellers are responsible for
                 packaging the products and handing them over to the delivery
                 service.
               </span>
