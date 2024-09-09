@@ -1,18 +1,41 @@
+"use client";
 
-'use client';
-
+import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import { PaymentBg } from "@/components/shared/Payment-bg";
 import Footer from "@/components/shared/footer";
 
-
+const Confetti = dynamic(() => import("react-confetti"), { ssr: false });
 
 const WelcomeSellerPage = () => {
- 
+  const [showConfetti, setShowConfetti] = useState(true);
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowConfetti(false); 
+    }, 10000); 
+     if (typeof window !== "undefined") {
+       setDimensions({ width: window.innerWidth, height: window.innerHeight });
+     }
+
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
-    <div className="min-h-screen   flex flex-col">
+    <div className="min-h-screen flex flex-col">
+      {showConfetti && (
+        <Confetti
+          width={dimensions.width}
+          height={dimensions.height}
+          numberOfPieces={500}
+          gravity={0.2}
+          initialVelocityX={10}
+        />
+      )}
+
       {/* Hero Section */}
-      <div className="flex-1 w-full  container mx-auto  items-center text-center">
+      <div className="flex-1 w-full container mx-auto items-center text-center">
         <PaymentBg />
       </div>
 
@@ -23,7 +46,6 @@ const WelcomeSellerPage = () => {
             More Than Just Onboarding: Your Fee Unlocks a World of Value
           </h2>
           <div className="space-y-6">
-            
             <div className="bg-white p-6 rounded shadow-md">
               <h3 className="text-2xl font-semibold mb-2">Free Marketing 📢</h3>
               <p>
@@ -65,7 +87,7 @@ const WelcomeSellerPage = () => {
       </div>
 
       {/* Footer Section */}
-      <div className="  container rounded-sm">
+      <div className="container rounded-sm">
         <Footer />
       </div>
     </div>
