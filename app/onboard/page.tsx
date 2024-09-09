@@ -9,11 +9,15 @@ const Confetti = dynamic(() => import("react-confetti"), { ssr: false });
 
 const WelcomeSellerPage = () => {
   const [showConfetti, setShowConfetti] = useState(true);
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowConfetti(false); 
     }, 10000); 
+     if (typeof window !== "undefined") {
+       setDimensions({ width: window.innerWidth, height: window.innerHeight });
+     }
 
     return () => clearTimeout(timer);
   }, []);
@@ -22,14 +26,11 @@ const WelcomeSellerPage = () => {
     <div className="min-h-screen flex flex-col">
       {showConfetti && (
         <Confetti
-          width={window.innerWidth}
-          height={window.innerHeight}
+          width={dimensions.width}
+          height={dimensions.height}
           numberOfPieces={500}
           gravity={0.2}
           initialVelocityX={10}
-          initialVelocityY={30}
-          colors={["#FFC700", "#FF5733", "#C70039", "#900C3F", "#007BFF"]} // Customize confetti colors
-          confettiSource={{ x: window.innerWidth / 2, y: 0, w: 100, h: 100 }} // Position the
         />
       )}
 
