@@ -137,7 +137,7 @@ const OnboardingForm = () => {
                     <FormLabel>
                       
                       <span className="text-xs">
-                        By selecting &quot;I agree,&quot; you as an authorized
+                        By submitting  this form you agree to be  an authorized
                         representative of your shop on Strathmall, consent to
                         receive communications from Strathmall via WhatsApp,
                         email, and phone calls regarding your shop&quot;s
