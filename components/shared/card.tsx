@@ -26,7 +26,7 @@ export function UserCard() {
           Step 3
         </h2>
         <p className="mt-4 max-w-[26rem] text-left  text-base/6 text-neutral-200">
-        You send your product to us ,we deliver it to the customer
+        You send your product to our delivery service and it is deliverd to the customer
         </p>
       </WobbleCard>
     </div>
