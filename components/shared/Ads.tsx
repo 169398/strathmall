@@ -35,7 +35,7 @@ export default function Ads() {
   return (
     <div className="relative w-full bg-red-500 shadow-lg rounded-sm overflow-hidden">
       <div className="flex items-center justify-between p-4">
-        <h2 className="text-2xl font-bold text-white">Best Rice Deals 🎉</h2>
+        <h2 className="text-2xl font-bold text-white">Best  Deals 🎉</h2>
       </div>
 
       <div className="relative">

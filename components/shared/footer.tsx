@@ -88,13 +88,23 @@ const Footer = () => {
           </div>
 
           <div className="mt-4 flex items-center justify-center md:mt-0 space-x-4">
-            <Link href="/" aria-label="Instagram">
+            <Link
+              href="https://www.instagram.com/strathmall/"
+              aria-label="Instagram"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <FaInstagram
                 className="text-muted-foreground hover:text-gray-600"
                 size={24}
               />
             </Link>
-            <Link href="/" aria-label="Facebook">
+            <Link
+              href="https://www.facebook.com/profile.php?id=61565062336250"
+              aria-label="Facebook"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <FaFacebook
                 className="text-muted-foreground hover:text-gray-600"
                 size={24}
@@ -106,7 +116,12 @@ const Footer = () => {
                 size={24}
               />
             </Link>
-            <Link href="/" aria-label="Twitter/X">
+            <Link
+              href="https://x.com/strathmallkenya"
+              aria-label="Twitter/X"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <FaTwitter
                 className="text-muted-foreground hover:text-gray-600"
                 size={24}
@@ -119,12 +134,16 @@ const Footer = () => {
               <Link
                 href="/terms"
                 className="text-sm text-muted-foreground hover:text-gray-600"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 Terms
               </Link>
               <Link
                 href="/privacy"
                 className="text-sm text-muted-foreground hover:text-gray-600"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 Privacy Policy
               </Link>
