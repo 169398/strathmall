@@ -26,7 +26,7 @@ export async function createSeller(prevState: unknown, formData: FormData) {
 
     const seller = createSellerSchema.parse(data);
     const session = await auth();
-    if (!session) throw new Error("User not authenticated");
+    if (!session) throw new Error("Sign in to add your shop");
     const existingSeller = await db.query.sellers.findFirst({
       where: (sellers, { eq }) => eq(sellers.email, seller.email),
     });

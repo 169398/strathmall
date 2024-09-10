@@ -40,8 +40,8 @@ export function PaymentBg() {
           Welcome to {APP_NAME} Seller Community
         </h2>
         <p className="text-white text-sm md:text-2xl max-auto mt-6 text-auto">
-          To kickstart your success, we kindly request a one-time onboarding fee
-          of 500 KES. This fee enables us to provide you with exceptional
+          To kickstart your success, we kindly request an annual service fee
+          of 1000 KES. This fee enables us to provide you with exceptional
           services and support throughout your selling journey.For support call 0714594345
         </p>
         <div className="flex flex-col sm:flex-row items-center gap-4 mt-6">

@@ -1,11 +1,12 @@
 
 const base = process.env.PAYPAL_API_URL || "https://api-m.sandbox.paypal.com";
-
 export const paypal = {
-  createOrder: async function createOrder(totalAmount: number) {
+  createOrder: async function createOrder() {
     // Conversion rate from KES to USD, ensure it's up-to-date
-    const conversionRate = 0.0074103;
+    const totalAmount = 1000;
+    const conversionRate = 0.0074477; 
     const convertedPrice = (totalAmount * conversionRate).toFixed(2);
+console.log(`Converted Price: ${convertedPrice}`);
 
     try {
       const accessToken = await generateAccessToken();
