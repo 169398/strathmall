@@ -152,7 +152,13 @@ export const insertOrderItemSchema = createInsertSchema(orderItems, {
 
 export const createSellerSchema = z.object({
   shopName: z.string().min(3, "Shop name must be at least 3 characters"),
-  email: z.string().email("Invalid email address"),
+  email: z
+    .string()
+    .email("Invalid email address")
+    .regex(
+      /^[\w.%+-]+@strathmore\.edu$/,
+      "Email must be a @strathmore.edu address"
+    ),
   phoneNumber: z
     .string()
     .regex(
@@ -168,7 +174,7 @@ export const updateSellerSchema = createSellerSchema.extend({
 export const insertFeeOrderSchema = z.object({
   userId: z.string().uuid(),
   sellerId: z.string().uuid(),
-  paymentMethod: z.enum(["PayPal", "CreditCard", "DebitCard"]), // Add other payment methods if needed
+  paymentMethod: z.enum(["PayPal", "CreditCard", "DebitCard"]), 
   totalAmount: z.string(),
   feeResult: z
     .object({

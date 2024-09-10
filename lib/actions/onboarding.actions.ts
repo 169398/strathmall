@@ -22,7 +22,7 @@ import { toast } from "@/components/ui/use-toast";
 // CREATE
 export const createOrder = async () => {
   try {
-    const totalAmount = 500;
+    const totalAmount = 1000;
     const session = await auth();
     const user = await getUserById(session?.user.id!);
 
@@ -183,7 +183,6 @@ export async function approvePayPalOrder(
 
     revalidatePath("/");
 
-    // Payment successful, show a success toast and redirect to homepage
     toast({
       title: "Payment successful",
       description: "Your order has been successfully paid by PayPal",
@@ -199,7 +198,6 @@ export async function approvePayPalOrder(
   } catch (err) {
     console.error("Payment approval error:", err);
 
-    // Show a generic error toast
     toast({
       title: "Error",
       description: "An unexpected error occurred. Please try again.",
