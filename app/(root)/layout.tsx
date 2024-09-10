@@ -1,4 +1,3 @@
-import Navbar from '@/components/shared/Navbar';
 import { WelcomeToast } from '@/components/shared/welcome-toast';
 import React from 'react'
 
@@ -11,7 +10,6 @@ export default function RootLayout({
 }) {
   return (
     <>
-      <Navbar />
 
       <div className="flex h-screen flex-col">
         <WelcomeToast />

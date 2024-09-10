@@ -9,6 +9,7 @@ import { constructMetadata } from '@/lib/paypal'
 import { Analytics } from "@vercel/analytics/react";
 import { SessionProvider } from 'next-auth/react'
 import { WelcomeToast } from '@/components/shared/welcome-toast'
+import Navbar from '@/components/shared/Navbar'
 const fontSans = FontSans({
   subsets: ['latin'],
   weight: ['400', '600'],
@@ -30,14 +31,14 @@ export default function RootLayout({
           fontSans.variable
         )}
       >
-       
-        <main>
-        <SessionProvider >{children}</SessionProvider>
-        <WelcomeToast/>
-          <Toaster />
-          
-        <Analytics />
+        <Navbar />
 
+        <main>
+          <SessionProvider>{children}</SessionProvider>
+          <WelcomeToast />
+          <Toaster />
+
+          <Analytics />
         </main>
       </body>
     </html>
