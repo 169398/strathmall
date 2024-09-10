@@ -64,7 +64,7 @@ export async function getOrderById(id: string) {
     console.log("Fetching order with ID:", id);
 
     const order = await db.query.feeorders.findFirst({
-      where:  eq(feeorders.id,feeorders.id), // Corrected the where clause
+      where:  eq(feeorders.id,feeorders.id), 
       with: { feeorderItems: true },
     });
 
@@ -99,13 +99,12 @@ export async function deleteFeeOrder(id: string, sellerId: string) {
 
 //CREATE PAYPAL ORDER
 export async function createPayPalOrder(orderId: string) {
-  console.log ('Paypal order',orderId)
   try {
     const order = await db.query.feeorders.findFirst({
       where: eq(feeorders.id, orderId),
     });
     if (order) {
-      const paypalOrder = await paypal.createOrder(Number(order.totalAmount));
+      const paypalOrder = await paypal.createOrder();
       await db
         .update(feeorders)
         .set({
