@@ -1,0 +1,5 @@
+{
+  "rewrites": [
+    { "source": "/pulse/:path*", "destination": "https://strathmallpulse.vercel.app/:path*" }
+  ]
+}
