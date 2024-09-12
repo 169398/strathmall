@@ -92,6 +92,7 @@
     "zustand": "^4.5.5"
   },
   "devDependencies": {
+    "@babel/preset-react": "^7.24.7",
     "@next/env": "^14.2.3",
     "@types/canvas-confetti": "^1.6.4",
     "@types/node": "^20",

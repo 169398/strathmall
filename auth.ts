@@ -121,6 +121,8 @@ export const config = {
         /\/payment-method/,
         /\/place-order/,
         /\/profile/,
+        /\/onboard/,
+        /\/payment\/(.*)/,
         /\/user\/(.*)/,
         /\/order\/(.*)/,
         /\/admin/,

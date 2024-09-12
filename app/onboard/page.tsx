@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { PaymentBg } from "@/components/shared/Payment-bg";
@@ -13,11 +12,12 @@ const WelcomeSellerPage = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setShowConfetti(false); 
-    }, 10000); 
-     if (typeof window !== "undefined") {
-       setDimensions({ width: window.innerWidth, height: window.innerHeight });
-     }
+      setShowConfetti(false);
+    }, 10000);
+
+    if (typeof window !== "undefined") {
+      setDimensions({ width: window.innerWidth, height: window.innerHeight });
+    }
 
     return () => clearTimeout(timer);
   }, []);
@@ -43,43 +43,55 @@ const WelcomeSellerPage = () => {
       <div className="flex-1 bg-gray-100 py-16 px-8">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl font-semibold mb-8">
-            More Than Just Onboarding: Your Fee Unlocks a World of Value
+            Seller Onboarding: Here&apos;s What You Need to Know 🚀
           </h2>
           <div className="space-y-6">
             <div className="bg-white p-6 rounded shadow-md">
+              <h3 className="text-2xl font-semibold mb-2">
+                Access Your Dashboard 🛠️
+              </h3>
+              <p>
+                Once your payment is completed, you can access your seller
+                dashboard by clicking on your user profile and selecting{" "}
+                <strong>&quot;My Shop.&quot;</strong> This is where you can
+                manage your products and track orders
+              </p>
+            </div>
+            <div className="bg-white p-6 rounded shadow-md">
+              <h3 className="text-2xl font-semibold mb-2">
+                Delivery Service 🚚
+              </h3>
+              <p>
+                Send your orders to Mithoo House (Opposite Popman House), near
+                Khoja stage, 1st floor, room M22. Make sure to bring the
+                products there within 24 hours for timely delivery
+              </p>
+            </div>
+            <div className="bg-white p-6 rounded shadow-md">
+              <h3 className="text-2xl font-semibold mb-2">
+                Receive Your Payment 💵
+              </h3>
+              <p>
+                After your order has been delivered, payments will be processed.
+                Please note that a 5% commission will be deducted from your
+                earnings.
+              </p>
+            </div>
+            <div className="bg-white p-6 rounded shadow-md">
               <h3 className="text-2xl font-semibold mb-2">Free Marketing 📢</h3>
               <p>
-                Benefit from our extensive marketing campaigns. We promote your
-                products across various platforms, giving you maximum exposure
-                without any additional cost.
+                We run extensive marketing campaigns across various platforms to
+                give your products maximum exposure, at no additional cost to
+                you.
               </p>
             </div>
             <div className="bg-white p-6 rounded shadow-md">
               <h3 className="text-2xl font-semibold mb-2">
-                Server Hosting & Maintenance 💻
+                Support & Maintenance 🔧
               </h3>
               <p>
-                The last thing you want to worry about is server downtime. Our
-                team of experts will ensure your shop is always up and running,
-                so you can focus on what you do best.
-              </p>
-            </div>
-            <div className="bg-white p-6 rounded shadow-md">
-              <h3 className="text-2xl font-semibold mb-2">
-                Seller Dashboard 📊
-              </h3>
-              <p>
-                Get access to our seller dashboard, where you can manage your
-                products, track sales, and monitor your performance. It&apos;s
-                your one-stop shop for all things selling.
-              </p>
-            </div>
-            <div className="bg-white p-6 rounded shadow-md">
-              <h3 className="text-2xl font-semibold mb-2">Seller Support 🧑‍💻</h3>
-              <p>
-                Our dedicated support team is here to help you every step of the
-                way. From setting up your shop to managing orders, we&apos;ve
-                got you covered.
+                We take care of hosting, maintenance, and server uptime, so you
+                can focus on running your business with peace of mind.
               </p>
             </div>
           </div>
