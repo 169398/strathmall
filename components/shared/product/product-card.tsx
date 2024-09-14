@@ -46,7 +46,7 @@ const ProductCard = ({ product }: { product: product }) => {
         <CardHeader className="p-1 relative z-10">
           <Link href={`/product/${product.slug}`}>
             <div className="relative w-full aspect-square overflow-hidden rounded-sm">
-              <ImageSlider slug={product.images!} />
+              <ImageSlider slug={product.images!}  />
             </div>
           </Link>
         </CardHeader>

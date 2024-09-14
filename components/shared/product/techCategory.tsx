@@ -99,6 +99,7 @@ const Electronics = () => {
                       alt={product.name}
                       className="w-full h-60 rounded-sm object-cover "
                       width={300}
+                      loading="lazy"
                       height={300}
                     />
                   </div>

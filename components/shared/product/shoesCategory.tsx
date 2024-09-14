@@ -71,6 +71,7 @@ const ShoesCategory = () => {
                 alt={product.name}
                 className="w-full h-60 object-cover group-hover:scale-105 transition-transform duration-300"
                 width={300}
+                loading="lazy"
                 height={300}
               />
               <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black via-transparent to-transparent text-white text-center">
