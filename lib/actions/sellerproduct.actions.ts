@@ -10,6 +10,8 @@ import { formatError } from "../utils";
 import { z } from "zod";
 import { insertProductSchema, updateProductSchema } from "../validator";
 import { auth } from "@/auth";
+import redis from "../redis";
+
 
 // CREATE
 export async function createProduct(
@@ -68,36 +70,7 @@ export async function checkSlugExists(slug: string): Promise<boolean> {
   });
   return !!existingProduct;
 }
-//all products
-export async function getAllProducts() {
-  try {
-    const data = await db
-      .select({
 
-        id: products.id,
-        stock: products.stock,
-        price: products.price,
-
-        slug: products.slug,
-        images: products.images,
-        name: products.name,
-        originalPrice: products.price,
-        discount: products.discount,
-        discountedPrice:
-          sql<number>`(${products.price} - (${products.price} * ${products.discount} / 100))`.as(
-            "discountedPrice"
-          ),
-      })
-      .from(products);
-
-    return {
-      success: true,
-      data,
-    };
-  } catch (error) {
-    return { success: false, message: formatError(error) };
-  }
-}
 
 // Add a product to favorites
 export async function addProductToFavorites(productId: string) {
@@ -192,7 +165,36 @@ export async function getUserFavorites() {
     return { success: false, message: formatError(error) };
   }
 }
+//all products
+export async function getAllProducts() {
+  try {
+    const data = await db
+      .select({
 
+        id: products.id,
+        stock: products.stock,
+        price: products.price,
+
+        slug: products.slug,
+        images: products.images,
+        name: products.name,
+        originalPrice: products.price,
+        discount: products.discount,
+        discountedPrice:
+          sql<number>`(${products.price} - (${products.price} * ${products.discount} / 100))`.as(
+            "discountedPrice"
+          ),
+      })
+      .from(products);
+
+    return {
+      success: true,
+      data,
+    };
+  } catch (error) {
+    return { success: false, message: formatError(error) };
+  }
+}
 export async function getAllSearchProducts({
   query,
   category,
@@ -456,6 +458,62 @@ export async function deleteProduct(id: string, ) {
     };
   } catch (error) {
     return { success: false, message: formatError(error) };
+  }
+}const CACHE_EXPIRATION_TIME = 60 * 30; 
+
+export async function getHomePageData() {
+  try {
+    // Try fetching cached homepage data from Redis
+    const cachedData = await redis.get("homepage:data");
+
+    if (cachedData) {
+
+      
+
+      try {
+        const parsedData = JSON.parse(cachedData as string);
+        console.log("Parsed cached data:", parsedData);
+        return parsedData; 
+      } catch (parseError) {
+        console.error("Error parsing cached homepage data:", parseError);
+      }
+    }
+
+
+    const latestProducts = await getLatestProducts();
+    const allProducts = await getAllProducts();
+    const discountedProducts = await getDiscountedProducts();
+    const Ads = null; 
+
+    if (!latestProducts || !allProducts || !discountedProducts) {
+      throw new Error("Missing homepage product data from the database");
+    }
+
+    // Structure the data
+    const homePageData = {
+      latestProducts,
+      allProducts,
+      discountedProducts,
+      Ads, 
+    };
+
+    // Try to cache the data in Redis
+    try {
+      await redis.set("homepage:data", JSON.stringify(homePageData), {
+        ex: CACHE_EXPIRATION_TIME, 
+      });
+    } catch (redisError) {
+      console.error("Error caching homepage data in Redis:", redisError);
+    }
+
+    return homePageData;
+  } catch (error) {
+    console.error("Error fetching or caching homepage data:", error);
+    if (error instanceof Error) {
+      throw new Error(`Failed to fetch homepage data: ${error.message}`);
+    } else {
+      throw new Error("Failed to fetch homepage data: Unknown error");
+    }
   }
 }
 

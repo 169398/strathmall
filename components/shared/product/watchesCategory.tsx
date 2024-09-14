@@ -96,6 +96,7 @@ const Watches = () => {
                         alt={watch.name}
                         width={300}
                         height={300}
+                        loading="lazy"
                         className="w-full h-64 object-cover rounded-t-lg"
                       />
                       {/* Overlay */}
