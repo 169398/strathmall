@@ -61,6 +61,7 @@ export default function ResetPasswordPage({ params }: { params: { token: string 
           type="submit"
           className="w-full bg-blue-600 text-white py-2 px-4 rounded-md"
           disabled={loading}
+          aria-label='reset password'
         >
           {loading ? 'Resetting...' : 'Reset Password'}
         </button>

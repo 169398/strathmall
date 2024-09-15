@@ -74,7 +74,7 @@ const sellerId = session.user.id || "";
                     : "not delivered"}
                 </TableCell>
                 <TableCell className="flex gap-1">
-                  <Button asChild variant="outline" size="sm">
+                  <Button asChild variant="outline" size="sm" aria-label="details">
                     <Link href={`/order/${order.orderId}`}>Details</Link>
                   </Button>
                 </TableCell>

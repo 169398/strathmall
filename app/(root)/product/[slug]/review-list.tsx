@@ -135,7 +135,7 @@ export default function ReviewList({
       {reviews.length === 0 && <div>No reviews yet</div>}
       {userId ? (
         <Dialog open={open} onOpenChange={setOpen}>
-          <Button onClick={handleOpenForm} variant="default">
+          <Button onClick={handleOpenForm} variant="default" aria-label='review'>
             Write a review
           </Button>
 
@@ -224,6 +224,7 @@ export default function ReviewList({
                     size="lg"
                     className="w-full"
                     disabled={form.formState.isSubmitting}
+                    aria-label='submit'
                   >
                     {form.formState.isSubmitting ? 'Submitting...' : 'Submit'}
                   </Button>

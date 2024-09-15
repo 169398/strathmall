@@ -23,7 +23,7 @@ export default function QuickViewModalWrapper(props: PropsWithChildren) {
   return (
     <div className="mb-2">
       <div className="flex items-center justify-end gap-2">
-        <button onClick={() => router.back()}>
+        <button onClick={() => router.back()} aria-label=' x icon'>
           <XIcon />
         </button>
       </div>

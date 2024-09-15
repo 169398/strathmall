@@ -10,6 +10,7 @@ const ReloadButton = () => {
       onClick={() => window.location.reload()}
       variant="default"
       className="w-full"
+      aria-label="View Product"
     >
       View Product
     </Button>

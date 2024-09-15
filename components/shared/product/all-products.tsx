@@ -34,7 +34,7 @@ const AllProductList: React.FC<AllProductListProps> = ({ title, data }) => {
 </div>
           {visibleCount < data.length && (
             <div className="text-center mt-2">
-              <Button onClick={handleViewMore} variant="default">
+              <Button onClick={handleViewMore} variant="default" aria-label='view more'>
                 View More <span role="img" aria-label="sparkles"></span>
               </Button>
             </div>

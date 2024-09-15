@@ -35,6 +35,7 @@ export function ProductGallery({ images }: { images: { src: string; altText: str
                 onClick={() => handleImageChange(previousImageIndex)}
                 aria-label="Previous product image"
                 className="h-full px-6 transition-all ease-in-out hover:scale-110 hover:text-black dark:hover:text-white flex items-center justify-center"
+                
               >
                 <ArrowLeftIcon className="h-5" />
               </button>

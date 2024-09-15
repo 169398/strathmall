@@ -11,6 +11,7 @@ export default function Error({ reset }: { reset: () => void }) {
       <button
         className="mx-auto mt-4 flex w-full items-center justify-center rounded-full bg-blue-600 p-4 tracking-wide text-white hover:opacity-90"
         onClick={() => reset()}
+        aria-label="Try again"
       >
         Try Again
       </button>

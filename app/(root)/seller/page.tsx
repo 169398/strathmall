@@ -159,6 +159,7 @@ const OnboardingForm = () => {
                 disabled={form.formState.isSubmitting}
                 className="w-full"
                 variant={"default"}
+                aria-label="submit"
               >
                 {form.formState.isSubmitting ? "Submitting..." : "Submit"}
               </Button>

@@ -69,6 +69,7 @@ export default function StripePayment({
           className="w-full"
           size="lg"
           disabled={stripe == null || elements == null || isLoading}
+          aria-label='purchase'
         >
           {isLoading
             ? 'Purchasing...'

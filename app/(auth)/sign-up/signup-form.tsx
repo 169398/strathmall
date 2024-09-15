@@ -30,6 +30,7 @@ export default function SignUpForm() {
         disabled={pending || !termsAccepted}
         className="w-full"
         variant="default"
+        aria-label="sign up"
       >
         {pending ? "Submitting..." : "Sign Up"}
       </Button>

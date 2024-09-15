@@ -10,7 +10,7 @@ export default function EmailSigninForm() {
   const SignInButton = () => {
     const { pending } = useFormStatus()
     return (
-      <Button disabled={pending} className="w-full" variant="default">
+      <Button disabled={pending} className="w-full" variant="default" aria-label='sign in with email'>
         {pending ? 'sending email...' : 'Sign In with email'}
       </Button>
     )

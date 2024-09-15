@@ -28,7 +28,7 @@ export default function DeleteDialog({
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button size="sm" variant="outline">
+        <Button size="sm" variant="outline" aria-label='delete'>
           Delete
         </Button>
       </AlertDialogTrigger>
@@ -46,6 +46,7 @@ export default function DeleteDialog({
             variant="destructive"
             size="sm"
             disabled={isPending}
+            aria-label='delete'
             onClick={() =>
               startTransition(async () => {
                 const res = await action(id)

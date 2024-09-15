@@ -48,7 +48,7 @@ const sellerId = session?.user.id || ""
     <div className="space-y-2">
       <div className="flex-between">
         <h1 className="h2-bold">Products</h1>
-        <Button asChild variant="default">
+        <Button asChild variant="default" aria-label='add product'>
           <Link href="/seller/products/create">Add Product</Link>
         </Button>
       </div>

@@ -7,7 +7,7 @@ export default function GoogleSignInForm() {
   const SignInButton = () => {
     const { pending } = useFormStatus()
     return (
-      <Button disabled={pending} className="w-full" variant="default">
+      <Button disabled={pending} className="w-full" variant="default" aria-label='sign in with google'>
         {pending ? 'Redirecting to Google...' : 'Sign In with Google'}
       </Button>
     )

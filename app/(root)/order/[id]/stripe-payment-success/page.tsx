@@ -42,7 +42,7 @@ export default async function SuccessPage({
       <div className="flex flex-col gap-6 items-center ">
         <h1 className="h1-bold">Thanks for your purchase</h1>
         <div>We are now processing your order.</div>
-        <Button asChild>
+        <Button asChild aria-label='view order'>
           <Link href={`/order/${id}`}>View order</Link>
         </Button>
       </div>

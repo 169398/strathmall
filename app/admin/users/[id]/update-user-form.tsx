@@ -140,6 +140,7 @@ export default function UpdateUserForm({
             type="submit"
             className="w-full"
             disabled={form.formState.isSubmitting}
+            aria-label='update user'
           >
             {form.formState.isSubmitting ? 'Submitting...' : `Update User`}
           </Button>

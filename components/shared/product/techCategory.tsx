@@ -65,6 +65,7 @@ const Electronics = () => {
         <button
           onClick={scrollLeft}
           className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-lg hover:shadow-xl z-10"
+          aria-label="Scroll left"
         >
           <ChevronLeftIcon className="h-6 w-6 text-gray-700" />
         </button>
@@ -73,6 +74,7 @@ const Electronics = () => {
         <button
           onClick={scrollRight}
           className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-lg hover:shadow-xl z-10"
+          aria-label="Scroll right"
         >
           <ChevronRightIcon className="h-6 w-6 text-gray-700" />
         </button>

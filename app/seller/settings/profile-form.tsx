@@ -98,6 +98,7 @@ const ProfileForm = () => {
           size="lg"
           disabled={form.formState.isSubmitting}
           className="button col-span-2 w-full"
+          aria-label='update shop'
         >
           {form.formState.isSubmitting ? 'Submitting...' : 'Update Shop'}
         </Button>

@@ -35,7 +35,6 @@ export default async function PlaceOrderPage() {
     <>
       <CheckoutSteps current={3} />
       <h1 className="py-4 text-2xl">Place Order</h1>
-    
 
       <div className="grid md:grid-cols-3 md:gap-5">
         <div className="overflow-x-auto md:col-span-2 space-y-4">
@@ -45,12 +44,14 @@ export default async function PlaceOrderPage() {
               <p>{user.address.fullName}</p>
               <p>{user.address.phoneNumber}</p>
               <p>
-                {user.address.fullName}, {user.address.town},{' '}
+                {user.address.fullName}, {user.address.town},{" "}
                 {user.address.phoneNumber}
               </p>
               <div>
                 <Link href="/shipping-address">
-                  <Button variant="outline">Edit</Button>
+                  <Button variant="outline" aria-label="edit">
+                    Edit
+                  </Button>
                 </Link>
               </div>
             </CardContent>
@@ -61,7 +62,9 @@ export default async function PlaceOrderPage() {
               <p>{user.paymentMethod}</p>
               <div>
                 <Link href="/payment-method">
-                  <Button variant="outline">Edit</Button>
+                  <Button variant="outline" aria-label="edit">
+                    Edit
+                  </Button>
                 </Link>
               </div>
             </CardContent>
@@ -105,7 +108,9 @@ export default async function PlaceOrderPage() {
                 </TableBody>
               </Table>
               <Link href="/cart">
-                <Button variant="outline">Edit</Button>
+                <Button variant="outline" aria-label="edit">
+                  Edit
+                </Button>
               </Link>
             </CardContent>
           </Card>
@@ -117,7 +122,7 @@ export default async function PlaceOrderPage() {
                 <div>Items</div>
                 <div>{formatCurrency(cart.itemsPrice)}</div>
               </div>
-             
+
               <div className="flex justify-between">
                 <div>Shipping</div>
                 <div>{formatCurrency(cart.shippingPrice)}</div>
@@ -126,15 +131,11 @@ export default async function PlaceOrderPage() {
                 <div>Total</div>
                 <div>{formatCurrency(cart.totalPrice)}</div>
               </div>
-              <PlaceOrderForm 
-
-
-              
-              />
+              <PlaceOrderForm />
             </CardContent>
           </Card>
         </div>
       </div>
     </>
-  )
+  );
 }
