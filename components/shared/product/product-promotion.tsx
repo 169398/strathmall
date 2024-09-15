@@ -64,7 +64,7 @@ const ProductPromotion = () => {
           <StatBox label="Seconds" value={time.seconds} />
         </ul>
         <div className="text-center">
-          <Button asChild>
+          <Button asChild aria-label='view products'>
             <Link href="/search">View products</Link>
           </Button>
         </div>

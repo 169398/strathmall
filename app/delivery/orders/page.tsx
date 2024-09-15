@@ -68,7 +68,7 @@ export default async function OrdersPage({
                     : 'not delivered'}
                 </TableCell>
                 <TableCell className="flex gap-1">
-                  <Button asChild variant="outline" size="sm">
+                  <Button asChild variant="outline" size="sm" aria-label='details'>
                     <Link href={`/order/${order.id}`}>Details</Link>
                   </Button>
                 </TableCell>

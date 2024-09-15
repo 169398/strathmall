@@ -100,6 +100,7 @@ const ProductCard = ({ product }: { product: product }) => {
                 variant="outline"
                 size="sm"
                 className="flex gap-1 w-full text-xs sm:text-ms"
+                aria-label="Quick View"
               >
                 <span>Quick View</span>
               </Button>

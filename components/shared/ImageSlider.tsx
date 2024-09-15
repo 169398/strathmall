@@ -52,6 +52,7 @@ const ImageSlider = ({ slug }: ImageSliderProps) => {
             e.preventDefault()
             swiper?.slideNext()
           }}
+          
           className={cn(
             activeStyles,
             'right-3 transition',

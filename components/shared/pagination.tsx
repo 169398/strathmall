@@ -37,6 +37,7 @@ const Pagination = ({ page, totalPages, urlParamName }: PaginationProps) => {
         className="w-28"
         onClick={() => onClick('prev')}
         disabled={Number(page) <= 1}
+        aria-label='Previous'
       >
         Previous
       </Button>
@@ -46,6 +47,7 @@ const Pagination = ({ page, totalPages, urlParamName }: PaginationProps) => {
         className="w-28"
         onClick={() => onClick('next')}
         disabled={Number(page) >= totalPages}
+        aria-label='Next'
       >
         Next
       </Button>

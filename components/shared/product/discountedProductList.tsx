@@ -75,6 +75,7 @@ export default function DiscountedProductList({
           size="icon"
           className="bg-gray-600 hover:bg-gray-500 text-white"
           onClick={() => scroll("left")}
+          aria-label="Scroll left"
         >
           <ChevronLeft className="h-5 w-5" />
         </Button>
@@ -83,6 +84,7 @@ export default function DiscountedProductList({
           size="icon"
           className="bg-gray-600 hover:bg-gray-500 text-white"
           onClick={() => scroll("right")}
+          aria-label="Scroll right"
         >
           <ChevronRight className="h-5 w-5" />
         </Button>

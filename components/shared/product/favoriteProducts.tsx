@@ -94,12 +94,15 @@ export default function FavoriteProductsSheet() {
                   <Button
                     onClick={() => handleViewProduct(product.slug)}
                     variant="secondary"
+                    aria-label="View product"
                   >
                     View
                   </Button>
                   <Button
                     onClick={() => handleRemoveFavorite(product.id)}
                     variant="destructive"
+                    aria-label="Remove from favorites"
+                    
                   >
                     Remove
                   </Button>

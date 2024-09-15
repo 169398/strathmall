@@ -27,6 +27,7 @@ export default function AddToCart({
     <div>
       <Button
         type="button"
+        aria-label='Remove from cart'
         variant="outline"
         disabled={isPending}
         onClick={() => {
@@ -49,6 +50,7 @@ export default function AddToCart({
       <span className="px-2">{existItem.qty}</span>
       <Button
         type="button"
+        aria-label='Add to cart'
         variant="outline"
         disabled={isPending}
         onClick={() => {
@@ -72,7 +74,8 @@ export default function AddToCart({
   ) : (
     <Button
       className="w-full"
-      type="button"
+        type="button"
+        aria-label='Add to cart'
       disabled={isPending}
       onClick={() => {
         startTransition(async () => {

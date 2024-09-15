@@ -55,6 +55,7 @@ export default function RequestResetPage() {
           type="submit"
           className="w-full bg-blue-600 text-white py-2 px-4 rounded-md"
           disabled={loading}
+          aria-label='send reset email'
         >
           {loading ? 'Sending...' : 'Send Reset Email'}
         </button>

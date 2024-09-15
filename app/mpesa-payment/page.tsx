@@ -72,7 +72,8 @@ export default function Home() {
           <Button
             type="submit"
             disabled={loading}
-            className="bg-gray-900 hover:bg-gray-900/50 text-[#00FF00] dark:bg-[#00FF00] dark:hover:bg-[#00FF00]/50 dark:text-gray-900 font-bold rounded-lg px-4 py-3 w-full"
+              className="bg-gray-900 hover:bg-gray-900/50 text-[#00FF00] dark:bg-[#00FF00] dark:hover:bg-[#00FF00]/50 dark:text-gray-900 font-bold rounded-lg px-4 py-3 w-full"
+              aria-label='Pay'
           >
           {loading ? "Processing...":`Pay ${total}`}
           </Button>

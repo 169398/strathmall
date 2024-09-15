@@ -55,7 +55,7 @@ export default async function AdminUser({
                 <TableCell>{user.email}</TableCell>
                 <TableCell>{user.role}</TableCell>
                 <TableCell className="flex gap-1">
-                  <Button asChild variant="outline" size="sm">
+                  <Button asChild variant="outline" size="sm" aria-label='edit'>
                     <Link href={`/admin/users/${user.id}`}>Edit</Link>
                   </Button>
                   <DeleteDialog id={user.id} action={deleteUser} />
