@@ -16,7 +16,7 @@ export function WelcomeToast() {
         },
         description: (
           <>
-            Welcome to StrathMall, your marketplace for Strathmore University and beyond!{' '}
+            Welcome to StrathMall, your local marketplace for your business{' '}
             <a
               href="https://strathmall.com"
               className="text-blue-600 hover:underline"
