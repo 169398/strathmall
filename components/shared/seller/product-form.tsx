@@ -394,6 +394,7 @@ export default function SellerProductForm({
             size="lg"
             disabled={form.formState.isSubmitting}
             className="button col-span-2 w-full"
+            aria-label="submit form"
           >
             {form.formState.isSubmitting ? "Submitting..." : `${type} Product `}
           </Button>

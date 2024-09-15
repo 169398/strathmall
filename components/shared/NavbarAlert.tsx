@@ -31,6 +31,7 @@ const Alert = () => {
         <AlertDialogHeader>
           <Button
             variant="ghost"
+            aria-label="Close"
             onClick={() => setIsOpen(false)}
             style={{
               position: "absolute",

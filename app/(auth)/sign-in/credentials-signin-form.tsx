@@ -21,7 +21,7 @@ export default function CredentialsSignInForm() {
   const SignInButton = () => {
     const { pending } = useFormStatus()
     return (
-      <Button disabled={pending} className="w-full" variant="default">
+      <Button aria-label='sign in with credentials' disabled={pending} className="w-full" variant="default">
         {pending ? 'Submitting...' : 'Sign In with credentials'}
       </Button>
     )

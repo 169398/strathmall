@@ -133,6 +133,7 @@ export default function CartForm({ cart }: { cart?: cart }) {
                         variant="outline"
                         type="button"
                         onClick={() => handleAddItem(item)}
+                        aria-label="Add item"
                       >
                         {isPending ? (
                           <Loader className="w-4 h-4  animate-spin" />

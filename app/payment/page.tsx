@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import PaymentForm from "./paymentForm";
 
 export const metadata = {
-  title: `Order Details - ${APP_NAME}`,
+  title: `Payment Details - ${APP_NAME}`,
 };
 
 const OrderDetailsPage = async ({

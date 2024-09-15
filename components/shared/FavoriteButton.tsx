@@ -53,6 +53,7 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({ productId }) => {
       size="icon"
       className={cn("text-red-500", { "animate-bounce": isFavorited })}
       onClick={handleFavoriteClick}
+      aria-label="Favorite"
     >
       <Heart
         fill={isFavorited ? "currentColor" : "none"}

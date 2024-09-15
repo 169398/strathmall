@@ -38,7 +38,7 @@ const ViewMore: React.FC<ViewMoreProps> = ({
       </div>
       {visibleCount < data.length && (
         <div className="text-center mt-4">
-          <Button onClick={handleViewMore} variant="default" className="w-full sm:w-auto">
+          <Button onClick={handleViewMore} variant="default" className="w-full sm:w-auto"aria-label='view more'>
             View More
           </Button>
         </div>

@@ -123,7 +123,7 @@ export default async function SearchPage({
             category !== "all" ||
             rating !== "all" ||
             price !== "all" ? (
-              <Button variant={"link"} asChild>
+              <Button variant={"link"} asChild aria-label="clear">
                 <Link href="/search">Clear</Link>
               </Button>
             ) : null}

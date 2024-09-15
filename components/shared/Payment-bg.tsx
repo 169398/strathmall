@@ -40,8 +40,8 @@ export function PaymentBg() {
           Welcome to {APP_NAME} Seller Community
         </h2>
         <p className="text-white text-sm md:text-2xl max-auto mt-6 text-auto">
-          To kickstart your success, we kindly request a one-time onboarding fee
-          of 500 KES. This fee enables us to provide you with exceptional
+          To kickstart your success, we kindly request an<strong> annual</strong> service fee
+          of 1000 KES. This fee enables us to provide you with exceptional
           services and support throughout your selling journey.For support call 0714594345
         </p>
         <div className="flex flex-col sm:flex-row items-center gap-4 mt-6">
@@ -49,6 +49,7 @@ export function PaymentBg() {
             onClick={handleProceedToPayment}
             className="px-4 py-2 bg-blue-600 hover:bg-blue-700 transition duration-200 rounded-lg text-white shadow-[0px_2px_0px_0px_#FFFFFF40_inset] disabled:opacity-50"
             disabled={isLoading}
+            aria-label="Proceed to Payment"
           >
             {isLoading ? "Processing..." : "Proceed to Payment"}
           </button>

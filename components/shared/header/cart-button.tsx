@@ -8,7 +8,7 @@ import { getMyCart } from "@/lib/actions/sellercart.actions";
 export default async function CartButton() {
   const cart = await getMyCart();
   return (
-    <Button asChild variant="ghost">
+    <Button asChild variant="ghost" aria-label="cart">
       <Link href="/cart">
         <ShoppingCart
           aria-hidden="true"

@@ -62,6 +62,7 @@ const Watches = () => {
           <button
             onClick={scrollLeft}
             className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-700 p-3 rounded-full shadow-md hover:shadow-xl z-10"
+            aria-label="Scroll left"
           >
             <ChevronLeftIcon className="h-6 w-6 text-white" />
           </button>
@@ -70,6 +71,7 @@ const Watches = () => {
           <button
             onClick={scrollRight}
             className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-700 p-3 rounded-full shadow-md hover:shadow-xl z-10"
+            aria-label="Scroll right"
           >
             <ChevronRightIcon className="h-6 w-6 text-white" />
           </button>
@@ -96,6 +98,7 @@ const Watches = () => {
                         alt={watch.name}
                         width={300}
                         height={300}
+                        loading="lazy"
                         className="w-full h-64 object-cover rounded-t-lg"
                       />
                       {/* Overlay */}

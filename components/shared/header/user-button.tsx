@@ -17,7 +17,7 @@ export default async function UserButton() {
   if (!session)
     return (
       <Link href="/api/auth/signin">
-        <Button>Log in</Button>
+        <Button aria-label='login'>Log in</Button>
       </Link>
     )
   return (
@@ -86,6 +86,7 @@ export default async function UserButton() {
               <Button
                 className="w-full py-4 px-2 h-4 justify-start"
                 variant="ghost"
+                aria-label='logout'
               >
                 Log out
               </Button>

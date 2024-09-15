@@ -40,7 +40,7 @@ export default async function AdminProductsPage({
     <div className="space-y-2">
       <div className="flex-between">
         <h1 className="h2-bold">Products</h1>
-        <Button asChild variant="default">
+        <Button asChild variant="default" aria-label='create'>
           <Link href="/admin/products/create">Create Product</Link>
         </Button>
       </div>
@@ -69,7 +69,7 @@ export default async function AdminProductsPage({
                 <TableCell>{product.stock}</TableCell>
                 <TableCell>{product.rating}</TableCell>
                 <TableCell className="flex gap-1">
-                  <Button asChild variant="outline" size="sm">
+                  <Button asChild variant="outline" size="sm" aria-label='edit'>
                     <Link href={`/admin/products/${product.id}`}>Edit</Link>
                   </Button>
                   <DeleteDialog id={product.id} action={deleteProduct} />

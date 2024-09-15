@@ -25,7 +25,8 @@ export default function NotFoundPage() {
           variant="default"
           className="mt-4 ml-2 "
           
-          onClick={() => (window.location.href = "/")}
+        onClick={() => (window.location.href = "/")}
+        aria-label='Take me home'
         >
       
           Take me home

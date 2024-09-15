@@ -43,6 +43,7 @@ export default function ShareButton({
         size="sm"
         className="flex items-center gap-1"
         onClick={() => setIsOpen(true)}
+        aria-label="Share"
       >
         <Clipboard className="w-4 h-4" />
         Share

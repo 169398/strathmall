@@ -37,6 +37,7 @@ export const HoverDrawer = ({
                   className="w-full justify-start hover:bg-blue-50 hover:text-blue-600 transition ease-out duration-200"
                   variant="ghost"
                   onClick={() => setIsOpen(false)}
+                  aria-label="Category"
                 >
                   {category.name}
                 </Button>

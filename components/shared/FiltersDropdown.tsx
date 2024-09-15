@@ -84,6 +84,7 @@ const FiltersDropdown = ({
         <button
           className="p-0 m-0 bg-transparent flex items-center"
           onClick={() => setIsOpen(!isOpen)}
+          aria-label="Open Filters"
         >
           <FilterIcon className="w-6 h-6" />
         </button>
@@ -95,6 +96,7 @@ const FiltersDropdown = ({
               <button
                 onClick={() => setIsOpen(false)}
                 className="p-0 m-0 bg-transparent"
+                aria-label="Close Filters"  
               >
                 <X className="w-6 h-6" />
               </button>

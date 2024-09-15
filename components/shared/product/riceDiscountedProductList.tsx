@@ -49,7 +49,7 @@ export default function DiscountedProductList({
           <p className="text-lg text-black mb-4">
             Get the best quality rice at unbeatable prices.
           </p>
-          <Button className="bg-green-500 text-white hover:bg-green-600">
+          <Button className="bg-green-500 text-white hover:bg-green-600" aria-label="shop now">
             Shop Now
           </Button>
         </div>
@@ -88,6 +88,7 @@ export default function DiscountedProductList({
           size="icon"
           className="bg-gray-600 hover:bg-gray-500 text-white"
           onClick={() => scroll("left")}
+          aria-label="Scroll left"
         >
           <ChevronLeft className="h-5 w-5" />
         </Button>
@@ -96,6 +97,7 @@ export default function DiscountedProductList({
           size="icon"
           className="bg-gray-600 hover:bg-gray-500 text-white"
           onClick={() => scroll("right")}
+          aria-label="Scroll right"
         >
           <ChevronRight className="h-5 w-5" />
         </Button>

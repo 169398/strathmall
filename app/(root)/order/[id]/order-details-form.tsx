@@ -92,10 +92,11 @@ export default function OrderDetailsForm({
           const res = await updateOrderToPaidByCOD(order.id);
           toast({
             variant: res.success ? "default" : "destructive",
-            description: res.message,
+            description:"An error occured, please try again",
           });
         })
       }
+      aria-label="mark as paid"
     >
       {isPending ? "Processing..." : "Mark As Paid"}
     </Button>
@@ -110,10 +111,11 @@ export default function OrderDetailsForm({
           const res = await deliverOrder(order.id);
           toast({
             variant: res.success ? "default" : "destructive",
-            description: res.message,
+            description: "An error occured, please try again",
           });
         })
       }
+      aria-label="mark as delivered"
     >
       {isPending ? "Processing..." : "Mark As Delivered"}
     </Button>
