@@ -9,7 +9,7 @@ import { eq,  and } from "drizzle-orm";
 import { isRedirectError, redirect } from "next/dist/client/components/redirect";
 import { formatError } from "../utils";
 import { revalidatePath } from "next/cache";
-import {  feeorderItems, feeorders,  } from "@/db/schema";
+import {  feeorderItems, feeorders, users,  } from "@/db/schema";
 import { feeResult } from "@/types";
 import { sendPurchaseReceipt } from "@/emailonboard";
 import { paypal } from "../onboardpaypal";
@@ -219,16 +219,18 @@ export const updateOrderToPaid = async ({
   orderId: string;
   feeResult?: feeResult;
 }) => {
-  console.log('order id',orderId)
+  console.log("order id", orderId);
+
   const order = await db.query.feeorders.findFirst({
-    columns: { isPaid: true },
+    columns: { isPaid: true, userId: true },
     where: and(eq(feeorders.id, orderId)),
     with: { feeorderItems: true },
   });
+
   if (!order) throw new Error("Order not found");
   if (order.isPaid) throw new Error("Order is already paid");
+
   await db.transaction(async (tx) => {
-    
     await tx
       .update(feeorders)
       .set({
@@ -237,7 +239,14 @@ export const updateOrderToPaid = async ({
         paymentResult: feeResult,
       })
       .where(eq(feeorders.id, orderId));
+
+    // Update the user's role to seller
+    await tx
+      .update(users)
+      .set({ role: "seller" })
+      .where(eq(users.id, order.userId));
   });
+
   const updatedOrder = await db.query.feeorders.findFirst({
     where: eq(feeorders.id, orderId),
     with: {
@@ -245,6 +254,7 @@ export const updateOrderToPaid = async ({
       user: { columns: { name: true, email: true } },
     },
   });
+
   if (!updatedOrder) {
     throw new Error("Order not found");
   }
@@ -252,15 +262,14 @@ export const updateOrderToPaid = async ({
   const queriedSeller = await db.query.sellers.findFirst({
     where: (sellers, { eq }) => eq(sellers.id, updatedOrder.sellerId),
   });
-if (!queriedSeller) {
-  throw new Error("Seller not found");
-}
 
+  if (!queriedSeller) {
+    throw new Error("Seller not found");
+  }
 
   await sendPurchaseReceipt({
     order: updatedOrder,
     seller: queriedSeller,
-    
   });
 };
 export async function updateOrderToPaidByCOD(orderId: string) {
