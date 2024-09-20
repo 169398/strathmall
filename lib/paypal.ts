@@ -87,17 +87,12 @@ async function handleResponse(response: any) {
   });
   throw new Error(errorMessage)
 }
-
-const { TWITTER_CREATOR, TWITTER_SITE  } = process.env;
-const twitterCreator = TWITTER_CREATOR ? ensureStartsWith(TWITTER_CREATOR, '@') : undefined;
-const twitterSite = TWITTER_SITE ? ensureStartsWith(TWITTER_SITE, 'https://') : undefined;
 export function constructMetadata({
   title = "StrathMall - Affordable prices on Top local goods",
-  description = "Discover StrathMall, the ultimate  marketplace for premium goods, connecting Top local  sellers with savvy shoppers",
-  image = "/thumbnail.png",
-  icons = "/favicon.ico",
+  description = "Discover StrathMall, the ultimate marketplace for premium goods, connecting Top local sellers with savvy shoppers",
+  image = "https://strathmall.com/thumbnail.png", // Ensure it's an absolute URL
+  icons = "https://strathmall.com/favicon.ico",
   noIndex = false,
-
 }: {
   title?: string;
   description?: string;
@@ -105,6 +100,14 @@ export function constructMetadata({
   icons?: string;
   noIndex?: boolean;
 } = {}): Metadata {
+  const { TWITTER_CREATOR, TWITTER_SITE } = process.env;
+  const twitterCreator = TWITTER_CREATOR
+    ? ensureStartsWith(TWITTER_CREATOR, "@")
+    : undefined;
+  const twitterSite = TWITTER_SITE
+    ? ensureStartsWith(TWITTER_SITE, "https://")
+    : undefined;
+
   return {
     title,
     description,
@@ -113,17 +116,23 @@ export function constructMetadata({
       description,
       images: [
         {
-          url: image,
+          url: image, // Absolute URL for OpenGraph images
+          width: 1200, // Recommended for link previews
+          height: 630,
+          alt: title, // Alternative text for the image
         },
       ],
     },
     ...(twitterCreator &&
       twitterSite && {
         twitter: {
-          card: 'summary_large_image',
+          card: "summary_large_image",
           creator: twitterCreator,
-          site: twitterSite
-        }
+          site: twitterSite,
+          images: {
+            url: image,
+          },
+        },
       }),
     icons,
     metadataBase: new URL("https://strathmall.com/"),
@@ -135,7 +144,6 @@ export function constructMetadata({
     }),
   };
 }
-
 
  
   
