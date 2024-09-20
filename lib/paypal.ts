@@ -1,6 +1,5 @@
 import { toast } from "@/components/ui/use-toast";
 import { Metadata } from "next"
-import { ensureStartsWith } from "./utils";
 
 
 
@@ -88,10 +87,10 @@ async function handleResponse(response: any) {
   throw new Error(errorMessage)
 }
 export function constructMetadata({
-  title = "StrathMall - Affordable prices on Top local goods",
-  description = "Discover StrathMall, the ultimate marketplace for premium goods, connecting Top local sellers with savvy shoppers",
-  image = "https://strathmall.com/thumbnail.png", // Ensure it's an absolute URL
-  icons = "https://strathmall.com/favicon.ico",
+  title = "StrathMall - The marketplace for all university and local sellers",
+  description = "Strathmall is an open-source marketplace for high-quality  goods.",
+  image = "/thumbnail.png",
+  icons = "/favicon.ico",
   noIndex = false,
 }: {
   title?: string;
@@ -100,14 +99,6 @@ export function constructMetadata({
   icons?: string;
   noIndex?: boolean;
 } = {}): Metadata {
-  const { TWITTER_CREATOR, TWITTER_SITE } = process.env;
-  const twitterCreator = TWITTER_CREATOR
-    ? ensureStartsWith(TWITTER_CREATOR, "@")
-    : undefined;
-  const twitterSite = TWITTER_SITE
-    ? ensureStartsWith(TWITTER_SITE, "https://")
-    : undefined;
-
   return {
     title,
     description,
@@ -116,32 +107,26 @@ export function constructMetadata({
       description,
       images: [
         {
-          url: image, // Absolute URL for OpenGraph images
-          width: 1200, // Recommended for link previews
-          height: 630,
-          alt: title, // Alternative text for the image
+          url: image,
         },
       ],
     },
-    ...(twitterCreator &&
-      twitterSite && {
-        twitter: {
-          card: "summary_large_image",
-          creator: twitterCreator,
-          site: twitterSite,
-          images: {
-            url: image,
-          },
-        },
-      }),
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [image],
+      creator: "idriskulubi",
+    },
     icons,
     metadataBase: new URL("https://strathmall.com/"),
     ...(noIndex && {
       robots: {
-        index: true,
-        follow: true,
+        index: false,
+        follow: false,
       },
     }),
+  
   };
 }
 
