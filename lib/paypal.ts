@@ -87,8 +87,8 @@ async function handleResponse(response: any) {
   throw new Error(errorMessage)
 }
 export function constructMetadata({
-  title = "StrathMall - The marketplace for all university and local sellers",
-  description = "Strathmall is an open-source marketplace for high-quality  goods.",
+  title = "StrathMall - The marketplace for all local sellers",
+  description = "Strathmall is a local  marketplace for high-quality  goods.",
   image = "/thumbnail.png",
   icons = "/favicon.ico",
   noIndex = false,
