@@ -21,10 +21,10 @@ const ShoesCategory = () => {
   }, []);
 
   const getDisplayedShoes = useCallback(() => {
-    if (window.innerWidth < 768) {
+    if (typeof window !== "undefined" && window.innerWidth < 768) {
+      // Ensure the check for window is done on the client-side
       return shoes.slice(0, 4);
     } else {
-      // Large screens
       return shoes.slice(0, 8);
     }
   }, [shoes]);
@@ -36,10 +36,16 @@ const ShoesCategory = () => {
       setDisplayedShoes(getDisplayedShoes());
     };
 
-    window.addEventListener("resize", handleResize);
-    handleResize();
+    if (typeof window !== "undefined") {
+      window.addEventListener("resize", handleResize);
+      handleResize(); // Call on initial render
+    }
 
-    return () => window.removeEventListener("resize", handleResize);
+    return () => {
+      if (typeof window !== "undefined") {
+        window.removeEventListener("resize", handleResize);
+      }
+    };
   }, [shoes, getDisplayedShoes]);
 
   if (loading) {
@@ -57,7 +63,9 @@ const ShoesCategory = () => {
 
   return (
     <section className="p-4 bg-white border-2 border-gray-200 rounded-lg shadow-lg">
-      <h2 className="text-2xl font-bold mb-4 sm-text-sm">Level up your shoe game</h2>
+      <h2 className="text-2xl font-bold mb-4 sm-text-sm">
+        Level up your shoe game
+      </h2>
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
         {displayedShoes.map((product) => (
           <a
@@ -74,8 +82,7 @@ const ShoesCategory = () => {
                 loading="lazy"
                 height={300}
               />
-              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black via-transparent to-transparent text-white text-center">
-              </div>
+              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black via-transparent to-transparent text-white text-center"></div>
             </div>
           </a>
         ))}
