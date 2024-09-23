@@ -19,11 +19,11 @@ export const HoverDrawer = ({
       className="relative inline-block w-64"
     >
       {/* Adjust the container to keep the icon and dropdown together */}
-      <div className="relative flex items-center">
+      <div className=" flex items-center">
         <MenuIcon className="cursor-pointer text-blue-600" />
         {/* Make sure the dropdown opens right next to the icon */}
         {isOpen && (
-          <div className="absolute left-0 top-full mt-0 w-full bg-white border rounded-sm border-gray-200 shadow-lg z-50">
+          <div className="absolute left-0 top-full mt-0 w-64 bg-white border rounded-sm border-gray-200 shadow-lg z-50">
             <div className="flex items-center justify-between p-2 border-b">
               <span className="font-medium">All categories</span>
             </div>

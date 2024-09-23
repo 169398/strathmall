@@ -36,8 +36,10 @@ export default async function Navbar() {
                   <Search />
                 </div>
               </div>
-              <div className="hidden lg:flex lg:items-center lg:space-x-6">
-                <FavoriteProductsSheet />
+              <div className="hidden lg:flex lg:items-center lg:space-x-6 ">
+                <div  className="ml-9">
+                  <FavoriteProductsSheet />
+                </div>
                 <div className="flex items-center space-x-4">
                   {session ? (
                     <div className="h-12 w-12 flex items-center justify-center">
@@ -53,8 +55,8 @@ export default async function Navbar() {
                         })}
                       >
                         Log in
-                        </Link>
-                        
+                      </Link>
+
                       <span
                         className="h-6 w-px bg-gray-200"
                         aria-hidden="true"
