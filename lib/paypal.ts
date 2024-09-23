@@ -1,5 +1,6 @@
 import { toast } from "@/components/ui/use-toast";
 import { Metadata } from "next"
+import { ensureStartsWith } from "./utils";
 
 
 
@@ -71,24 +72,29 @@ async function generateAccessToken() {
 }
 
 async function handleResponse(response: any) {
-
-
-
   if (response.status === 200 || response.status === 201) {
-    return response.json()
+    return response.json();
   }
 
-  const errorMessage = await response.text()
+  const errorMessage = await response.text();
   toast({
     description:
       "Payment was not successful. Please check your details and account balance and try again",
     variant: "destructive",
   });
-  throw new Error(errorMessage)
+  throw new Error(errorMessage);
 }
+
+const { TWITTER_CREATOR, TWITTER_SITE } = process.env;
+const twitterCreator = TWITTER_CREATOR
+  ? ensureStartsWith(TWITTER_CREATOR, "@")
+  : undefined;
+const twitterSite = TWITTER_SITE
+  ? ensureStartsWith(TWITTER_SITE, "https://")
+  : undefined;
 export function constructMetadata({
-  title = "StrathMall - The marketplace for all local sellers",
-  description = "Strathmall is a local  marketplace for high-quality  goods.",
+  title = "StrathMall - Affordable prices on Top local goods",
+  description = "Discover StrathMall, the ultimate  marketplace for premium goods, connecting Top local  sellers with savvy shoppers",
   image = "/thumbnail.png",
   icons = "/favicon.ico",
   noIndex = false,
@@ -111,24 +117,21 @@ export function constructMetadata({
         },
       ],
     },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: [image],
-      creator: "idriskulubi",
-    },
+    ...(twitterCreator &&
+      twitterSite && {
+        twitter: {
+          card: "summary_large_image",
+          creator: twitterCreator,
+          site: twitterSite,
+        },
+      }),
     icons,
     metadataBase: new URL("https://strathmall.com/"),
     ...(noIndex && {
       robots: {
-        index: false,
-        follow: false,
+        index: true,
+        follow: true,
       },
     }),
-  
   };
 }
-
- 
-  
