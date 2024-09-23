@@ -8,10 +8,10 @@ export const SENDER_EMAIL = process.env.SENDER_EMAIL || 'StrathMall <no-reply@st
 export const PAGE_SIZE = Number(process.env.PAGE_SIZE) || 3
 
 export const PAYMENT_METHODS = process.env.PAYMENT_METHODS
-  ? process.env.PAYMENT_METHODS.split(', ')
-  : ['PayPal',  'CashOnDelivery']
+  ? process.env.PAYMENT_METHODS.split(", ")
+  : ["Card/Paypal" /* 'CashOnDelivery' */];
 export const DEFAULT_PAYMENT_METHOD =
-  process.env.DEFAULT_PAYMENT_METHOD || 'PayPal'
+  process.env.DEFAULT_PAYMENT_METHOD || 'Card/Paypal'
 
 export const USER_ROLES = process.env.USER_ROLES
   ? process.env.USER_ROLES.split(', ')
