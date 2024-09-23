@@ -15,7 +15,8 @@ import { revalidatePath } from "next/cache";
 import { PaymentResult } from "@/types/sellerindex";
 import { PAGE_SIZE } from "../constants";
 import { sendPurchaseReceipt } from "@/emails";
-import { carts, orderItems, orders, products, users } from "@/db/schema";
+import { carts, orderItems, orders, products, sellers, users } from "@/db/schema";
+import { sendSellerNotification } from "@/emailseller/page";
 
 
 
@@ -307,13 +308,16 @@ export const updateOrderToPaid = async ({
   orderId: string;
   paymentResult?: PaymentResult;
 }) => {
+
   const order = await db.query.orders.findFirst({
     columns: { isPaid: true },
     where: and(eq(orders.id, orderId)),
     with: { orderItems: true },
   });
+
   if (!order) throw new Error("Order not found");
   if (order.isPaid) throw new Error("Order is already paid");
+
   await db.transaction(async (tx) => {
     for (const item of order.orderItems) {
       await tx
@@ -323,6 +327,7 @@ export const updateOrderToPaid = async ({
         })
         .where(eq(products.id, item.productId));
     }
+
     await tx
       .update(orders)
       .set({
@@ -332,20 +337,44 @@ export const updateOrderToPaid = async ({
       })
       .where(eq(orders.id, orderId));
   });
+
   const updatedOrder = await db.query.orders.findFirst({
     where: eq(orders.id, orderId),
     with: {
       orderItems: true,
-      user: { columns: { name: true, email: true } },
+      user: { columns: { name: true, email: true } }, // Fetch buyer details
     },
   });
+
   if (!updatedOrder) {
     throw new Error("Order not found");
   }
+
+  // Notify each seller based on the seller info in the sellers table
+  for (const item of updatedOrder.orderItems) {
+    const seller = await db.query.sellers.findFirst({
+      where: eq(sellers.userId, item.sellerId), // Fetch seller from sellers table using userId
+      columns: { email: true, shopName: true },
+    });
+
+    if (seller) {
+      
+      await sendSellerNotification({
+        order: updatedOrder,
+        sellerEmail: seller.email,
+      });
+    } else {
+      console.error(`Seller not found for productId: ${item.productId}`);
+    }
+  }
+
+  // Send purchase receipt to the buyer
   await sendPurchaseReceipt({
-    order: updatedOrder
+    order: updatedOrder,
   });
 };
+
+
 
 export async function updateOrderToPaidByCOD(orderId: string) {
   try {
