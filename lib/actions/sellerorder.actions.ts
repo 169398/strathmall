@@ -356,7 +356,6 @@ export const updateOrderToPaid = async ({
       where: eq(sellers.userId, item.sellerId), // Fetch seller from sellers table using userId
       columns: { email: true, shopName: true },
     });
-
     if (seller) {
       
       await sendSellerNotification({
