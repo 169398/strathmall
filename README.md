@@ -104,4 +104,4 @@ Thank you for considering contributing to StrathMall! We welcome contributions f
 
 ```
 Worn out🥵
-//TO DO 😫  :Continue the documentation **APIs**  ❗ 
+//TO DO 😫  :Continue the documentation **APIs**  some other time ❗ 
