@@ -12,18 +12,12 @@ import { insertProductSchema, updateProductSchema } from "../validator";
 import { auth } from "@/auth";
 import redis from "../redis";
 
-
 // CREATE
-export async function createProduct(
-
-  data: z.infer<typeof insertProductSchema>
-) {
+export async function createProduct(data: z.infer<typeof insertProductSchema>) {
   try {
     const session = await auth();
 
-  const sellerId = session?.user.id ||'';
-
-
+    const sellerId = session?.user.id || "";
 
     const product = insertProductSchema.parse(data);
     await db.insert(products).values([{ ...product, sellerId }]);
@@ -39,22 +33,14 @@ export async function createProduct(
 }
 
 // UPDATE seller product
-export async function updateProduct(
-  data: z.infer<typeof updateProductSchema>
-) {
+export async function updateProduct(data: z.infer<typeof updateProductSchema>) {
   try {
     const product = updateProductSchema.parse(data);
     const productExists = await db.query.products.findFirst({
-      where: and(
-        eq(products.id, product.id),
-        eq(products.id, product.id)
-      ),
+      where: and(eq(products.id, product.id), eq(products.id, product.id)),
     });
     if (!productExists) throw new Error("Product not found");
-    await db
-      .update(products)
-      .set(product)
-      .where(eq(products.id, product.id));
+    await db.update(products).set(product).where(eq(products.id, product.id));
     revalidatePath("/seller/products");
     return {
       success: true,
@@ -71,23 +57,25 @@ export async function checkSlugExists(slug: string): Promise<boolean> {
   return !!existingProduct;
 }
 
-
 // Add a product to favorites
 export async function addProductToFavorites(productId: string) {
   try {
     const session = await auth();
     const userId = session?.user.id || "";
 
-     if (!session?.user) {
-       return {
-         success: false,
-         message: "Login  to favorite a product",
-       };
-     }
+    if (!session?.user) {
+      return {
+        success: false,
+        message: "Login  to favorite a product",
+      };
+    }
 
     // Check if the product is already favorited
     const existingFavorite = await db.query.favorites.findFirst({
-      where: and(eq(favorites.userId, userId), eq(favorites.productId, productId)),
+      where: and(
+        eq(favorites.userId, userId),
+        eq(favorites.productId, productId)
+      ),
     });
 
     if (existingFavorite) {
@@ -119,9 +107,11 @@ export async function removeProductFromFavorites(productId: string) {
     const session = await auth();
     const userId = session?.user.id || "";
 
-    await db.delete(favorites).where(
-      and(eq(favorites.userId, userId), eq(favorites.productId, productId))
-    );
+    await db
+      .delete(favorites)
+      .where(
+        and(eq(favorites.userId, userId), eq(favorites.productId, productId))
+      );
     console.log("productId", productId);
 
     revalidatePath("/favorites");
@@ -148,9 +138,10 @@ export async function getUserFavorites() {
         name: products.name,
         originalPrice: products.price,
         discount: products.discount,
-        discountedPrice: sql<number>`(${products.price} - (${products.price} * ${products.discount} / 100))`.as(
-          "discountedPrice"
-        ),
+        discountedPrice:
+          sql<number>`(${products.price} - (${products.price} * ${products.discount} / 100))`.as(
+            "discountedPrice"
+          ),
       })
       .from(products)
       .innerJoin(favorites, eq(products.id, favorites.productId))
@@ -167,34 +158,76 @@ export async function getUserFavorites() {
 }
 //all products
 export async function getAllProducts() {
+  const categoryLimit = 4; // Limit to 4 products per category
+  const totalColumns = 8; // Total number of columns to display on the homepage
+  const categoryList = [
+    "Electronics",
+    "Shoes",
+    "Watches",
+    "Phones",
+    "Computer-accessories",
+    "BluetoothSpeakers",
+    "Phonecovers",
+    "Gaming",
+    "Earphones",
+    "Earpods",
+    "Phone-accessories",
+    "Men's Clothing",
+    "Cleaning-Supplies",
+    "Women's Clothing",
+    "Books",
+    "Luggages-Bags",
+    "Home-Kitchen",
+    "Toys-Entertainment",
+    "Beauty-Personal Care",
+    "Bakery",
+    "Furniture",
+    "Sports and Entertainment",
+    "Hair extensions-Wigs",
+  ];
+
   try {
-    const data = await db
-      .select({
+    const productsByCategory = [];
+    let categoryIndex = 0;
 
-        id: products.id,
-        stock: products.stock,
-        price: products.price,
+    // Loop until we have enough products for the columns
+    while (productsByCategory.length < totalColumns * categoryLimit) {
+      const category = categoryList[categoryIndex % categoryList.length];
 
-        slug: products.slug,
-        images: products.images,
-        name: products.name,
-        originalPrice: products.price,
-        discount: products.discount,
-        discountedPrice:
-          sql<number>`(${products.price} - (${products.price} * ${products.discount} / 100))`.as(
-            "discountedPrice"
-          ),
-      })
-      .from(products);
+      // Fetch products for the current category
+      const data = await db
+        .select({
+          id: products.id,
+          stock: products.stock,
+          price: products.price,
+          slug: products.slug,
+          images: products.images,
+          name: products.name,
+          originalPrice: products.price,
+          discount: products.discount,
+          discountedPrice:
+            sql<number>`(${products.price} - (${products.price} * ${products.discount} / 100))`.as(
+              "discountedPrice"
+            ),
+        })
+        .from(products)
+        .where(eq(products.category, category))
+        .limit(categoryLimit);
+
+      // Add the products to the list
+      productsByCategory.push(...data);
+      categoryIndex++;
+    }
 
     return {
       success: true,
-      data,
+      data: productsByCategory,
     };
   } catch (error) {
     return { success: false, message: formatError(error) };
   }
 }
+
 export async function getAllSearchProducts({
   query,
   category,
@@ -209,9 +242,7 @@ export async function getAllSearchProducts({
   sort?: string;
 }) {
   const queryFilter =
-    query && query !== "all"
-? ilike(products.name, `%${query}%`)
-: undefined;
+    query && query !== "all" ? ilike(products.name, `%${query}%`) : undefined;
   const categoryFilter =
     category && category !== "all"
       ? eq(products.category, category)
@@ -237,13 +268,7 @@ export async function getAllSearchProducts({
 
   const condition = and(queryFilter, categoryFilter, ratingFilter, priceFilter);
 
-  const data = await db
-    .select()
-    .from(products)
-    .where(condition)
-    .orderBy(order)
-
-  
+  const data = await db.select().from(products).where(condition).orderBy(order);
 
   return {
     data,
@@ -313,7 +338,6 @@ export async function getDiscountedProducts() {
       .where(sql`${products.discount} > 0`)
       .orderBy(desc(products.createdAt));
 
-
     return {
       success: true,
       data,
@@ -326,9 +350,7 @@ export async function getDiscountedProducts() {
 
 export async function getProductBySlug(slug: string) {
   return await db.query.products.findFirst({
-    where: and(
-      eq(products.slug, slug),
-    ),
+    where: and(eq(products.slug, slug)),
   });
 }
 
@@ -352,9 +374,7 @@ export async function getAllproducts({
   sort?: string;
 }) {
   const queryFilter =
-    query && query !== "all"
-      ? ilike(products.name, `%${query}%`)
-      : undefined;
+    query && query !== "all" ? ilike(products.name, `%${query}%`) : undefined;
   const categoryFilter =
     category && category !== "all"
       ? eq(products.category, category)
@@ -397,7 +417,6 @@ export async function getAllproducts({
     .select({ count: count() })
     .from(products)
     .where(condition);
-  
 
   return {
     data,
@@ -417,16 +436,16 @@ export async function getAllCategories() {
 
 export async function getFeaturedProducts(userId: string) {
   const data = await db.query.products.findMany({
-    where: and(
-      eq(products.isFeatured, true),
-      eq(products.sellerId, userId)
-    ),
+    where: and(eq(products.isFeatured, true), eq(products.sellerId, userId)),
     orderBy: [desc(products.createdAt)],
     limit: 4,
   });
   return data;
 }
-export async function getRelatedProducts(category: string, excludeProductId: string) {
+export async function getRelatedProducts(
+  category: string,
+  excludeProductId: string
+) {
   try {
     const data = await db.query.products.findMany({
       where: and(
@@ -442,12 +461,10 @@ export async function getRelatedProducts(category: string, excludeProductId: str
   }
 }
 // DELETE
-export async function deleteProduct(id: string, ) {
+export async function deleteProduct(id: string) {
   try {
     const productExists = await db.query.products.findFirst({
-      where: and(
-        eq(products.id, id),
-      ),
+      where: and(eq(products.id, id)),
     });
     if (!productExists) throw new Error("Product not found");
     await db.delete(products).where(eq(products.id, id));
@@ -459,7 +476,8 @@ export async function deleteProduct(id: string, ) {
   } catch (error) {
     return { success: false, message: formatError(error) };
   }
-}const CACHE_EXPIRATION_TIME = 60 * 30; 
+}
+const CACHE_EXPIRATION_TIME = 60 * 30;
 
 export async function getHomePageData() {
   try {
@@ -467,23 +485,19 @@ export async function getHomePageData() {
     const cachedData = await redis.get("homepage:data");
 
     if (cachedData) {
-
-      
-
       try {
         const parsedData = JSON.parse(cachedData as string);
         console.log("Parsed cached data:", parsedData);
-        return parsedData; 
+        return parsedData;
       } catch (parseError) {
         console.error("Error parsing cached homepage data:", parseError);
       }
     }
 
-
     const latestProducts = await getLatestProducts();
     const allProducts = await getAllProducts();
     const discountedProducts = await getDiscountedProducts();
-    const Ads = null; 
+    const Ads = null;
 
     if (!latestProducts || !allProducts || !discountedProducts) {
       throw new Error("Missing homepage product data from the database");
@@ -494,13 +508,13 @@ export async function getHomePageData() {
       latestProducts,
       allProducts,
       discountedProducts,
-      Ads, 
+      Ads,
     };
 
     // Try to cache the data in Redis
     try {
       await redis.set("homepage:data", JSON.stringify(homePageData), {
-        ex: CACHE_EXPIRATION_TIME, 
+        ex: CACHE_EXPIRATION_TIME,
       });
     } catch (redisError) {
       console.error("Error caching homepage data in Redis:", redisError);
@@ -516,4 +530,3 @@ export async function getHomePageData() {
     }
   }
 }
-
