@@ -7,7 +7,8 @@ const HomeLoader = ({
   latestProducts,
   allProducts,
   discountedProducts,
-  Ads,
+  
+  // Ads,
 }: any) => {
   if (!latestProducts || !allProducts || !discountedProducts)
     return <HomeSkeleton />;
@@ -17,7 +18,8 @@ const HomeLoader = ({
       latestProducts={latestProducts}
       allProducts={allProducts}
       discountedProducts={discountedProducts}
-      Ads={Ads}
+      // Ads={Ads}
+
     />
   );
 };

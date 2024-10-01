@@ -16,12 +16,10 @@ export const HoverDrawer = ({
     <div
       onMouseEnter={() => setIsOpen(true)}
       onMouseLeave={() => setIsOpen(false)}
-      className="relative inline-block w-64"
+      className="relative inline-block "
     >
-      {/* Adjust the container to keep the icon and dropdown together */}
       <div className=" flex items-center">
         <MenuIcon className="cursor-pointer text-blue-600" />
-        {/* Make sure the dropdown opens right next to the icon */}
         {isOpen && (
           <div className="absolute left-0 top-full mt-0 w-64 bg-white border rounded-sm border-gray-200 shadow-lg z-50">
             <div className="flex items-center justify-between p-2 border-b">
@@ -31,7 +29,7 @@ export const HoverDrawer = ({
               {categories.map((category: { name: string }) => (
                 <Link
                   key={category.name}
-                  href={`/search?category=${category.name}`}
+                  href={`/search?category=${encodeURIComponent(category.name)}`}
                 >
                   <Button
                     className="w-full justify-start hover:bg-blue-50 hover:text-blue-600 transition ease-out duration-200"
