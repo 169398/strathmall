@@ -1,30 +1,35 @@
 import { useRef, useEffect, useState } from "react";
 import Image from "next/image";
-import Link from "next/link"; // Import Link from Next.js
+import Link from "next/link";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 
 const categories = [
-  { name: "Electronics", imgSrc: "/images/costume.jpg" },
-  { name: "Shoes", imgSrc: "/images/sports.jpg" },
-  { name: "Watches", imgSrc: "/images/mens-clothing.jpg" },
-  { name: "Computer-accessories", imgSrc: "/images/computer.jpg" },
-  { name: "BluetoothSpeakers", imgSrc: "/images/pets.jpg" },
-  { name: "Phonecovers", imgSrc: "/images/home.jpg" },
-  { name: "Gaming", imgSrc: "/images/mens-clothing.jpg" },
-  { name: "Earphones", imgSrc: "/images/mens-clothing.jpg" },
-  { name: "Earpods", imgSrc: "/images/mens-clothing.jpg" },
-  { name: "Phone-accessories", imgSrc: "/images/mens-clothing.jpg" },
-  { name: "Men's Clothing", imgSrc: "/images/mens-clothing.jpg" },
-  { name: "Cleaning-Supplies", imgSrc: "/images/mens-clothing.jpg" },
-  { name: "Women's Clothing", imgSrc: "/images/mens-clothing.jpg" },
-  { name: "Books", imgSrc: "/images/mens-clothing.jpg" },
-  { name: "Home-Kitchen", imgSrc: "/images/mens-clothing.jpg" },
-  { name: "Toys-Entertainment", imgSrc: "/images/mens-clothing.jpg" },
-  { name: "Beauty-Personal Care", imgSrc: "/images/mens-clothing.jpg" },
-  { name: "Bakery", imgSrc: "/images/mens-clothing.jpg" },
-  { name: "Furniture", imgSrc: "/images/mens-clothing.jpg" },
-  { name: "Sports and Entertainment", imgSrc: "/images/mens-clothing.jpg" },
-  { name: "Hair extensions-Wigs", imgSrc: "/images/mens-clothing.jpg" },
+  { name: "Electronics", imgSrc: "/assets/images/electronics.jpg" },
+  { name: "Shoes", imgSrc: "/assets/images/shoesnew.png" },
+  { name: "Watches", imgSrc: "/assets/images/Watches.jpg" },
+  {
+    name: "Computer-accessories",
+    imgSrc: "/assets/images/computer-accessories.jpg",
+  },
+  { name: "BluetoothSpeakers", imgSrc: "/assets/images/Bluetoothspeaker.jpg" },
+  { name: "Phonecovers", imgSrc: "/assets/images/phonecovers.png" },
+  { name: "Gaming", imgSrc: "/assets/images/Gaming.jpg" },
+  { name: "Earphones", imgSrc: "/assets/images/earphones.jpg" },
+  { name: "Earpods", imgSrc: "/assets/images/earpods.png" },
+  { name: "Phone-accessories", imgSrc: "/assets/images/phone-accessories.jpg" },
+  { name: "Men's Clothing", imgSrc: "/assets/images/mensclothing.jpg" },
+  { name: "Cleaning-Supplies", imgSrc: "/assets/images/cleaningsupplies.jpg" },
+  { name: "Women's Clothing", imgSrc: "/assets/images/womensclothing.jpg" },
+  { name: "Books", imgSrc: "/assets/images/books.jpg" },
+  { name: "Home-Kitchen", imgSrc: "/assets/images/homekitchen.jpeg" },
+  { name: "Toys-Entertainment", imgSrc: "/assets/images/toys.png" },
+  { name: "Beauty-Personal Care", imgSrc: "/assets/images/personalcare.jpg" },
+  { name: "Furniture", imgSrc: "/assets/images/furniture.jpg" },
+  { name: "Sports and Entertainment", imgSrc: "/assets/images/sports.jpg" },
+  {
+    name: "Hair extensions-Wigs",
+    imgSrc: "/assets/images/Hair-extensions.jpg",
+  },
 ];
 
 export default function CategoryCarousel() {
@@ -34,17 +39,15 @@ export default function CategoryCarousel() {
   useEffect(() => {
     const container = containerRef.current;
     if (container && !isHovered) {
-      const scrollSpeed = 20; 
+      const scrollSpeed = 20;
       let scrollStep = 1;
-      let resetTimeout: ReturnType<typeof setTimeout>;
 
       const scroll = () => {
         if (
           container.scrollLeft + container.clientWidth >=
-          container.scrollWidth
+          container.scrollWidth - 1
         ) {
-          clearTimeout(resetTimeout);
-          container.scrollLeft = 0;
+          container.scrollLeft = 0; // Continuously scroll without jumping
         } else {
           container.scrollLeft += scrollStep;
         }
@@ -52,23 +55,19 @@ export default function CategoryCarousel() {
 
       const intervalId = setInterval(scroll, scrollSpeed);
 
-      // Cleanup on unmount
-      return () => {
-        clearInterval(intervalId);
-        clearTimeout(resetTimeout);
-      };
+      return () => clearInterval(intervalId);
     }
   }, [isHovered]);
 
   const scrollLeft = () => {
     if (containerRef.current) {
-      containerRef.current.scrollLeft -= 300; 
+      containerRef.current.scrollBy({ left: -300, behavior: "smooth" });
     }
   };
 
   const scrollRight = () => {
     if (containerRef.current) {
-      containerRef.current.scrollLeft += 300; 
+      containerRef.current.scrollBy({ left: 300, behavior: "smooth" });
     }
   };
 
@@ -87,7 +86,7 @@ export default function CategoryCarousel() {
       </h2>
 
       {/* Arrows for larger screens */}
-      <div className="hidden lg:block absolute top-1/2 left-0 transform -translate-y-1/2 z-10">
+      <div className="hidden lg:flex absolute top-1/2 left-0 transform -translate-y-1/2 z-10">
         <button
           className="bg-white p-2 rounded-full shadow-md"
           onClick={scrollLeft}
@@ -95,7 +94,7 @@ export default function CategoryCarousel() {
           <ChevronLeftIcon className="w-6 h-6 text-gray-600" />
         </button>
       </div>
-      <div className="hidden lg:block absolute top-1/2 right-0 transform -translate-y-1/2 z-10">
+      <div className="hidden lg:flex absolute top-1/2 right-0 transform -translate-y-1/2 z-10">
         <button
           className="bg-white p-2 rounded-full shadow-md"
           onClick={scrollRight}
@@ -107,10 +106,10 @@ export default function CategoryCarousel() {
       {/* Categories container - 2 rows */}
       <div
         ref={containerRef}
-        className="flex flex-col space-y-6 px-16 rounded-sm overflow-x-auto lg:overflow-hidden scroll-smooth scrollbar-hide"
+        className="flex flex-col space-y-6 px-4 lg:px-16 rounded-sm overflow-x-auto lg:overflow-hidden scroll-smooth scrollbar-hide"
         style={{ whiteSpace: "nowrap", touchAction: "pan-x" }}
       >
-        <div className="flex space-x-6">
+        <div className="flex space-x-4 lg:space-x-6">
           {firstRowCategories.map((category, index) => (
             <Link
               key={index}
@@ -118,24 +117,25 @@ export default function CategoryCarousel() {
               passHref
             >
               <div className="flex-shrink-0 text-center cursor-pointer">
-                <div className="flex flex-col items-center space-y-2">
+                <div className="w-24 h-24 lg:w-32 lg:h-32 rounded-full overflow-hidden flex items-center justify-center bg-gray-100">
                   <Image
                     src={category.imgSrc}
                     alt={category.name}
-                    className="w-32 h-32 rounded-full object-cover"
+                    className="object-cover object-center w-full h-full"
                     width={128}
                     height={128}
+                    quality={100}
                   />
-                  <p className="text-center text-sm font-medium text-gray-800">
-                    {category.name}
-                  </p>
                 </div>
+                <p className="text-center text-sm font-medium text-gray-800 mt-2">
+                  {category.name}
+                </p>
               </div>
             </Link>
           ))}
         </div>
 
-        <div className="flex space-x-6">
+        <div className="flex space-x-4 lg:space-x-6">
           {secondRowCategories.map((category, index) => (
             <Link
               key={index}
@@ -143,18 +143,19 @@ export default function CategoryCarousel() {
               passHref
             >
               <div className="flex-shrink-0 text-center cursor-pointer">
-                <div className="flex flex-col items-center space-y-2">
+                <div className="w-24 h-24 lg:w-32 lg:h-32 rounded-full overflow-hidden flex items-center justify-center bg-gray-100">
                   <Image
                     src={category.imgSrc}
                     alt={category.name}
-                    className="w-32 h-32 rounded-sm object-cover"
+                    className="object-cover object-center w-full h-full"
                     width={128}
                     height={128}
+                    quality={100}
                   />
-                  <p className="text-center text-sm font-medium text-gray-800">
-                    {category.name}
-                  </p>
                 </div>
+                <p className="text-center text-sm font-medium text-gray-800 mt-2">
+                  {category.name}
+                </p>
               </div>
             </Link>
           ))}
