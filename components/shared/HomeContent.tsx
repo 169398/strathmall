@@ -11,10 +11,10 @@ import confetti from "canvas-confetti";
 import Link from "next/link";
 import { buttonVariants } from "../ui/button";
 import { Infinitetestimonials } from "./Testimonials";
-import Ads from "./Ads";
 import ShoesCategory from "./product/shoesCategory";
 import Electronics from "./product/techCategory";
 import Watches from "./product/watchesCategory";
+import  CategoryCarousel  from "./product/categoryCarousel";
 
 
    const handleClick = () => {
@@ -47,7 +47,7 @@ interface HomeContentProps {
   latestProducts: any;
   allProducts: any;
   discountedProducts: any; 
-  Ads: any;
+  // Ads: any;
 }
 
 const HomeContent: React.FC<HomeContentProps> = ({
@@ -92,7 +92,8 @@ const HomeContent: React.FC<HomeContentProps> = ({
           title="Discounted Products 💸"
           data={discountedProducts.data || []}
         />{" "}
-        <Ads />
+        {/* <Ads /> */}
+        <CategoryCarousel />
         <AllProductList title="More to love 💖" data={allProducts.data || []} />
         <EcommerceFeatures />
         <Infinitetestimonials />
