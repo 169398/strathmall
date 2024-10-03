@@ -14,47 +14,46 @@ import { Infinitetestimonials } from "./Testimonials";
 import ShoesCategory from "./product/shoesCategory";
 import Electronics from "./product/techCategory";
 import Watches from "./product/watchesCategory";
-import  CategoryCarousel  from "./product/categoryCarousel";
+import CategoryCarousel from "./product/categoryCarousel";
+import Image from "next/image";
 
+const handleClick = () => {
+  const duration = 5 * 1000;
+  const animationEnd = Date.now() + duration;
+  const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
 
-   const handleClick = () => {
-     const duration = 5 * 1000;
-     const animationEnd = Date.now() + duration;
-     const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+  const randomInRange = (min: number, max: number) =>
+    Math.random() * (max - min) + min;
 
-     const randomInRange = (min: number, max: number) =>
-       Math.random() * (max - min) + min;
+  const interval = window.setInterval(() => {
+    const timeLeft = animationEnd - Date.now();
 
-     const interval = window.setInterval(() => {
-       const timeLeft = animationEnd - Date.now();
+    if (timeLeft <= 0) return clearInterval(interval);
 
-       if (timeLeft <= 0) return clearInterval(interval);
+    const particleCount = 50 * (timeLeft / duration);
+    confetti({
+      ...defaults,
+      particleCount,
+      origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+    });
+    confetti({
+      ...defaults,
+      particleCount,
+      origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+    });
+  }, 250);
+};
 
-       const particleCount = 50 * (timeLeft / duration);
-       confetti({
-         ...defaults,
-         particleCount,
-         origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
-       });
-       confetti({
-         ...defaults,
-         particleCount,
-         origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
-       });
-     }, 250);
-   };
 interface HomeContentProps {
   latestProducts: any;
   allProducts: any;
-  discountedProducts: any; 
-  // Ads: any;
+  discountedProducts: any;
 }
 
 const HomeContent: React.FC<HomeContentProps> = ({
   latestProducts,
   allProducts,
   discountedProducts,
-  
 }) => {
   return (
     <div>
@@ -80,8 +79,20 @@ const HomeContent: React.FC<HomeContentProps> = ({
               />
             </Link>
           </div>
+
+          <div className="mt-8 flex items-center justify-center">
+            <p className="text-sm text-gray-600 mr-2">Backed by</p>
+            <Image
+              src="/ibiz-logo.webp" 
+              alt="iBiz Africa logo"
+              width={120}
+              height={60}
+              className="h-auto w-auto"
+            />
+          </div>
         </div>
       </MaxWidthWrapper>
+
       <div className="space-y-8">
         <ProductList title="Newest Arrivals ✨" data={latestProducts} />
         <ProductPromotion />
@@ -91,8 +102,7 @@ const HomeContent: React.FC<HomeContentProps> = ({
         <DiscountProductList
           title="Discounted Products 💸"
           data={discountedProducts.data || []}
-        />{" "}
-        {/* <Ads /> */}
+        />
         <CategoryCarousel />
         <AllProductList title="More to love 💖" data={allProducts.data || []} />
         <EcommerceFeatures />
