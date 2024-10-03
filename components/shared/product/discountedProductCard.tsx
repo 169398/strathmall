@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import ImageSlider from "../ImageSlider";
 import FavoriteButton from "../FavoriteButton";
+import { useMediaQuery } from "react-responsive";
 
 const DiscountedProductCard = ({ product }: { product: any }) => {
   const discountPercentage = (
@@ -11,9 +12,22 @@ const DiscountedProductCard = ({ product }: { product: any }) => {
     100
   ).toFixed(0);
 
+   const [showFavorite, setShowFavorite] = useState(false);
+   const isMobile = useMediaQuery({ maxWidth: 768 });
   return (
-    <Card className="w-full max-w-sm sm:max-w-xs border-red-500 border-2 shadow-lg">
-      <div className="absolute top-2 right-2 z-20">
+    <Card
+      className="w-full max-w-sm sm:max-w-xs border-red-500 border-2 shadow-lg"
+      // Handle hover for desktop
+      onMouseEnter={() => !isMobile && setShowFavorite(true)}
+      onMouseLeave={() => !isMobile && setShowFavorite(false)}
+      // Handle tap/click for mobile
+      onClick={() => isMobile && setShowFavorite(!showFavorite)}
+    >
+      <div
+        className={`absolute top-2 right-2 z-20 transition-opacity duration-300 ${
+          showFavorite ? "opacity-100" : "opacity-0"
+        }`}
+      >
         <FavoriteButton productId={product.id} />
       </div>
       <CardHeader className="p-1">
