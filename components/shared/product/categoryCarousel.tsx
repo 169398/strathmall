@@ -9,7 +9,7 @@ const categories = [
   { name: "Watches", imgSrc: "/assets/images/Watches.jpg" },
   {
     name: "Computer-accessories",
-    imgSrc: "/assets/images/computer-accessories.jpg",
+    imgSrc: "/assets/images/Computer-accessories.jpg",
   },
   { name: "BluetoothSpeakers", imgSrc: "/assets/images/Bluetoothspeaker.jpg" },
   { name: "Phonecovers", imgSrc: "/assets/images/phonecovers.png" },
