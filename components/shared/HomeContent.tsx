@@ -83,7 +83,7 @@ const HomeContent: React.FC<HomeContentProps> = ({
           <div className="mt-8 flex items-center justify-center">
             <p className="text-sm text-gray-600 mr-2">Backed by</p>
             <Image
-              src="/ibiz-logo.webp" 
+              src="/ibiz.png" 
               alt="iBiz Africa logo"
               width={120}
               height={60}
