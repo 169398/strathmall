@@ -1,6 +1,6 @@
 {
-  "id": "d340d5f1-e04e-4d91-926a-d82b0a8ea71d",
-  "prevId": "ff4d1abd-a184-43b6-9dd4-03fe57a677b9",
+  "id": "8f0b78ae-f7c3-4f0d-9d04-15c57c3d141b",
+  "prevId": "82f3e79d-a792-45d9-b122-90ef3773a1aa",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -166,6 +166,69 @@
           "tableTo": "user",
           "columnsFrom": [
             "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.favorites": {
+      "name": "favorites",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "userId": {
+          "name": "userId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "productId": {
+          "name": "productId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "favorites_userId_user_id_fk": {
+          "name": "favorites_userId_user_id_fk",
+          "tableFrom": "favorites",
+          "tableTo": "user",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "favorites_productId_product_id_fk": {
+          "name": "favorites_productId_product_id_fk",
+          "tableFrom": "favorites",
+          "tableTo": "product",
+          "columnsFrom": [
+            "productId"
           ],
           "columnsTo": [
             "id"
@@ -836,6 +899,12 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true
+        },
+        "university": {
+          "name": "university",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         },
         "createdAt": {
           "name": "createdAt",

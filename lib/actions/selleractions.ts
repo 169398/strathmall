@@ -22,6 +22,7 @@ export async function createSeller(prevState: unknown, formData: FormData) {
       shopName: formData.get("shopName"),
       email: formData.get("email"),
       phoneNumber: formData.get("phoneNumber"),
+      university: formData.get("university"),
     };
 
     const seller = createSellerSchema.parse(data);

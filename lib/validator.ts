@@ -156,8 +156,8 @@ export const createSellerSchema = z.object({
     .string()
     .email("Invalid email address")
     .regex(
-      /^[\w.%+-]+@strathmore\.edu$/,
-      "Email must be a @strathmore.edu address"
+      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+      "Enter a valid email address"
     ),
   phoneNumber: z
     .string()
@@ -165,6 +165,9 @@ export const createSellerSchema = z.object({
       /^(01|07|\+254)\d{8}$/,
       "Phone number must start with 01, 07, or +254 and be followed by 8 digits"
     ),
+  university: z
+    .string()
+    .min(1, "University required"),
 });
 
 export const updateSellerSchema = createSellerSchema.extend({
@@ -174,7 +177,7 @@ export const updateSellerSchema = createSellerSchema.extend({
 export const insertFeeOrderSchema = z.object({
   userId: z.string().uuid(),
   sellerId: z.string().uuid(),
-  paymentMethod: z.enum(["PayPal", "CreditCard", "DebitCard"]), 
+  paymentMethod: z.enum(["PayPal", "CreditCard", "DebitCard"]),
   totalAmount: z.string(),
   feeResult: z
     .object({

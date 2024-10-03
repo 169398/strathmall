@@ -28,26 +28,32 @@ import { UserCard } from "@/components/shared/card";
 import { UserCard2 } from "@/components/shared/WhyStrathCard";
 import { createSeller } from "@/lib/actions/selleractions";
 import { CardSpot } from "@/components/shared/how-to-start";
+import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
+import { universities } from "@/lib/universities";
 
 
 
 const OnboardingForm = () => {
   // eslint-disable-next-line no-unused-vars
+ 
 
   const form = useForm<z.infer<typeof createSellerSchema>>({
     resolver: zodResolver(createSellerSchema),
   });
   const { toast } = useToast();
- const router = useRouter();
+  const router = useRouter();
 
   async function onSubmit(values: z.infer<typeof createSellerSchema>) {
+    console.log("Form values:", values);
     const formData = new FormData();
 
     formData.append("shopName", values.shopName);
     formData.append("email", values.email);
     formData.append("phoneNumber", values.phoneNumber);
+    formData.append("university", values.university);
     try {
       const res = await createSeller({}, formData);
+      console.log("Response:", res);
       if (!res.success) {
         toast({
           variant: "destructive",
@@ -67,108 +73,106 @@ const OnboardingForm = () => {
       });
     }
   }
-    return (
-      <div className="relative min-h-screen ">
-        {/* <div className="absolute inset-0">
-        <Image
-          src="/background.jpg" // Your background image
-          alt="Background"
-          width={1000}
-            height={1000}
+  return (
+    <div className="relative min-h-screen ">
+      <div className="relative container mx-auto rounded-sm p-10 bg-slate-50 bg-opacity-90">
+        <Form {...form}>
+          <form
+            method="post"
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-8"
+          >
+            <h1 className="text-3xl font-bold">Start your journey today</h1>
 
-          className="w-full h-full  "
-          
-        />
-      </div> */}
-        <div className="relative container mx-auto  rounded-sm p-10 bg-slate-50 bg-opacity-90">
-          <Form {...form}>
-            <form
-              method="post"
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="space-y-8"
+            <FormField
+              control={form.control}
+              name="shopName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Shop Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter your shop name" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter your email" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="phoneNumber"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Phone Number</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter your phone number" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* University Dropdown */}
+            <FormField
+              control={form.control}
+              name="university"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>University</FormLabel>
+                  <FormControl>
+                    <Select
+                      onValueChange={(value) => field.onChange(value)}
+                      value={field.value}
+                      defaultValue={field.value || ""}
+                    >
+                      <SelectTrigger>
+                        <span>{field.value || "Select your university"}</span>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {universities.map((university, index) => (
+                          <SelectItem key={index} value={university}>
+                            {university}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/*  agreement, and submit button */}
+            <Button
+              type="submit"
+              size="default"
+              disabled={form.formState.isSubmitting}
+              className="w-full"
+              variant={"default"}
+              aria-label="submit"
             >
-              <h1 className="text-3xl font-bold">Start your journey today</h1>
-              <FormField
-                control={form.control}
-                name="shopName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Shop Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter your shop name" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter your email" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="phoneNumber"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Phone Number</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter your phone number" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                //TO DO: Add a checkbox to get user consent and save to db
-                render={() => (
-                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-                    <FormLabel>
-                      
-                      <span className="text-xs">
-                        By submitting  this form you agree to be  an authorized
-                        representative of your shop on Strathmall, consent to
-                        receive communications from Strathmall via WhatsApp,
-                        email, and phone calls regarding your shop&quot;s
-                        activities, including order updates, promotions, and
-                        customer inquiries. You also acknowledge that Strathmall
-                        will handle your contact information in accordance with
-                        its Privacy Policy and that you may withdraw your
-                        consent at any time.
-                      </span>
-                    </FormLabel>
-                    <FormMessage />
-                  </FormItem>
-                )}
-                name={""}
-              />
-              <Button
-                type="submit"
-                size="default"
-                disabled={form.formState.isSubmitting}
-                className="w-full"
-                variant={"default"}
-                aria-label="submit"
-              >
-                {form.formState.isSubmitting ? "Submitting..." : "Submit"}
-              </Button>
-            </form>
-          </Form>
-        </div>
+              {form.formState.isSubmitting ? "Submitting..." : "Submit"}
+            </Button>
+          </form>
+        </Form>
       </div>
-    );
-  }
+    </div>
+  );
+}
 
   const FAQ = () => {
     return (

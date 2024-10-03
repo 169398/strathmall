@@ -1,6 +1,6 @@
 {
-  "id": "1630fd38-6858-4316-9543-e4cbbdeaa5b1",
-  "prevId": "d340d5f1-e04e-4d91-926a-d82b0a8ea71d",
+  "id": "df5258fa-854f-40f6-b95f-2cabd49cf46a",
+  "prevId": "8f0b78ae-f7c3-4f0d-9d04-15c57c3d141b",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -896,6 +896,12 @@
         },
         "phoneNumber": {
           "name": "phoneNumber",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "university": {
+          "name": "university",
           "type": "text",
           "primaryKey": false,
           "notNull": true
