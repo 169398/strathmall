@@ -24,6 +24,13 @@ CREATE TABLE IF NOT EXISTS "cart" (
 	"createdAt" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "favorites" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"userId" uuid NOT NULL,
+	"productId" uuid NOT NULL,
+	"createdAt" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "feeorderItems" (
 	"orderId" uuid NOT NULL,
 	"description" text NOT NULL,
@@ -82,6 +89,7 @@ CREATE TABLE IF NOT EXISTS "product" (
 	"brand" text NOT NULL,
 	"description" text NOT NULL,
 	"stock" integer NOT NULL,
+	"discount" numeric(5, 2) DEFAULT '0',
 	"price" numeric(12, 2) DEFAULT '0' NOT NULL,
 	"rating" numeric(3, 2) DEFAULT '0' NOT NULL,
 	"numReviews" integer DEFAULT 0 NOT NULL,
@@ -108,6 +116,7 @@ CREATE TABLE IF NOT EXISTS "sellerShop" (
 	"shopName" text NOT NULL,
 	"email" text NOT NULL,
 	"phoneNumber" text NOT NULL,
+	"university" text,
 	"createdAt" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
@@ -127,7 +136,9 @@ CREATE TABLE IF NOT EXISTS "user" (
 	"image" text,
 	"address" json,
 	"paymentMethod" text,
-	"createdAt" timestamp DEFAULT now()
+	"createdAt" timestamp DEFAULT now(),
+	"resetToken" text,
+	"resetTokenExpires" timestamp
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "verificationToken" (
@@ -145,6 +156,18 @@ END $$;
 --> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "cart" ADD CONSTRAINT "cart_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "favorites" ADD CONSTRAINT "favorites_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "favorites" ADD CONSTRAINT "favorites_productId_product_id_fk" FOREIGN KEY ("productId") REFERENCES "public"."product"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

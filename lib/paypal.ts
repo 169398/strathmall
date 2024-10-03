@@ -13,7 +13,7 @@ export const paypal = {
 
 
   createOrder: async function createOrder(price: number) {
-     const conversionRate = 0.0074103;
+     const conversionRate = 0.0074419; 
     const convertedPrice = (price * conversionRate).toFixed(2);
 
     const accessToken = await generateAccessToken();

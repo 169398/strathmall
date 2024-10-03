@@ -92,7 +92,7 @@ export default function PaymentForm({
   };
 
   return (
-    <div className="payment-page">
+    <div className="payment-page mt-12 lg:mt-1">
       {/* Hero Section */}
       <div className="hero-section container rounded-sm  bg-[radial-gradient(circle_at_bottom_left,_var(--tw-gradient-stops))] from-[#ff00ff] to-[#00ffff] text-white text-center py-8 ">
         <h1 className="text-4xl font-bold mb-2">Complete Your Payment</h1>
