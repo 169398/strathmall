@@ -15,21 +15,25 @@ export default async function MobileNav() {
 
   return (
     <div className="lg:hidden fixed inset-x-0 top-0 z-50 bg-white shadow-md">
-      <div className="flex flex-col items-center border-b border-gray-200 p-4">
+      <div className="flex flex-col items-center border-b border-gray-200 p-2">
+        {" "}
+        {/* Reduced padding */}
         <div className="flex items-center justify-between w-full">
           <Link href="/">
             <Image
               src="/logo.png"
               alt="strathmall logo"
-              width={150} // Larger logo
-              height={150}
-              className="h-20 w-20" // Adjusted size for a bigger appearance
+              width={80} // Reduced logo size
+              height={80}
+              className="h-12 w-12" // Smaller logo dimensions
             />
           </Link>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1">
+            {" "}
+            {/* Reduced space between icons */}
             <FavoriteProductsSheet />
             {session ? (
-              <div className="h-8 w-8 flex items-center justify-center">
+              <div className="h-6 w-6 flex items-center justify-center">
                 {" "}
                 {/* Smaller buttons */}
                 <UserButton />
@@ -45,24 +49,29 @@ export default async function MobileNav() {
                 >
                   Log in
                 </Link>
-                <span className="h-4 w-px bg-gray-200" aria-hidden="true" />
+                <span className="h-3 w-px bg-gray-200" aria-hidden="true" />{" "}
+                {/* Thinner separator */}
                 <Link
                   href="/sign-up"
                   className={buttonVariants({
                     variant: "default",
-                    className: "text-xs",
+                    className: "text-xs", // Smaller text for links
                   })}
                 >
                   Sign up
                 </Link>
               </>
             )}
-            <div className="h-8 w-8 flex items-center justify-center">
+            <div className="h-6 w-6 flex items-center justify-center">
+              {" "}
+              {/* Smaller cart button */}
               <CartButton />
             </div>
           </div>
         </div>
-        <div className="flex items-center w-full mt-1 space-x-2">
+        <div className="flex items-center w-full mt-1 space-x-1">
+          {" "}
+          {/* Reduced space */}
           <HoverDrawer categories={categories} />
           <Search />
         </div>

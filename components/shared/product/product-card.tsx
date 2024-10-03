@@ -4,10 +4,11 @@ import ProductPrice from "./product-price";
 import Rating from "./rating";
 import { Button } from "@/components/ui/button";
 import { product } from "@/types/sellerindex";
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import ImageSlider from "../ImageSlider";
 import { Skeleton } from "@/components/ui/skeleton";
 import FavoriteButton from "../FavoriteButton";
+import { useMediaQuery } from "react-responsive";
 
 const skeleton =
   "w-full h-6 animate-pulse rounded bg-gray-300 dark:bg-neutral-700";
@@ -30,9 +31,18 @@ const ProductCard = ({ product }: { product: product }) => {
     product.price,
     product.discount
   );
+  const [showFavorite, setShowFavorite] = useState(false);
+  const isMobile = useMediaQuery({ maxWidth: 768 });
 
   return (
-    <Card className="w-full max-w-sm sm:max-w-xs relative">
+    <Card
+      className="w-full max-w-sm sm:max-w-xs relative"
+      // Handle hover for desktop
+      onMouseEnter={() => !isMobile && setShowFavorite(true)}
+      onMouseLeave={() => !isMobile && setShowFavorite(false)}
+      // Handle tap/click for mobile
+      onClick={() => isMobile && setShowFavorite(!showFavorite)}
+    >
       <Suspense
         fallback={
           <div className="flex justify-center items-center h-[200px] sm:h-[300px] w-full bg-neutral-600 dark:bg-neutral-700 animate-pulse rounded">
@@ -40,13 +50,19 @@ const ProductCard = ({ product }: { product: product }) => {
           </div>
         }
       >
-        <div className="absolute top-2 right-2 z-20">
+        {/* Favorite Button */}
+        <div
+          className={`absolute top-2 right-2 z-20 transition-opacity duration-300 ${
+            showFavorite ? "opacity-100" : "opacity-0"
+          }`}
+        >
           <FavoriteButton productId={product.id} />
         </div>
+
         <CardHeader className="p-1 relative z-10">
           <Link href={`/product/${product.slug}`}>
             <div className="relative w-full aspect-square overflow-hidden rounded-sm">
-              <ImageSlider slug={product.images!}  />
+              <ImageSlider slug={product.images!} />
             </div>
           </Link>
         </CardHeader>
