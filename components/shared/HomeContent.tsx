@@ -59,7 +59,7 @@ const HomeContent: React.FC<HomeContentProps> = ({
     <div>
       <MaxWidthWrapper>
         <div className="mx-auto flex max-w-3xl flex-col items-center py-20 text-center">
-          <h1 className="tracking-tight text-4xl font-bold text-gray-950 sm:text-6xl">
+          <h1 className="tracking-tight text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-300 to-blue-800 sm:text-6xl">
             Your marketplace where quality finds{" "}
             <span className="text-blue-700">you</span>.
           </h1>
@@ -83,7 +83,7 @@ const HomeContent: React.FC<HomeContentProps> = ({
           <div className="mt-8 flex items-center justify-center">
             <p className="text-sm text-gray-600 mr-2">Backed by</p>
             <Image
-              src="/ibizlg.png" 
+              src="/ibizlg.png"
               alt="iBiz Africa logo"
               width={120}
               height={60}
