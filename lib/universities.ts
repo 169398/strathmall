@@ -38,7 +38,6 @@ export const universities = [
   "Kibabii University",
   "Rongo University",
   "Maasai Mara University",
-  "Pwani University",
   "Kisii University",
   "Karatina University",
 ];
