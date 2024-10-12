@@ -30,7 +30,7 @@ const Footer = () => {
               <div className="pb-2 pt-2">
                 <div className="flex justify-center">
                   <Image
-                    src="/logo.png"
+                    src="https://res.cloudinary.com/db0i0umxn/image/upload/v1728757714/logo_bxjyga.png"
                     alt="strathmall logo"
                     width={200}
                     height={200}

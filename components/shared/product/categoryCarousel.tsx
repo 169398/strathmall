@@ -4,31 +4,105 @@ import Link from "next/link";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 
 const categories = [
-  { name: "Electronics", imgSrc: "/assets/images/electronics.jpg" },
-  { name: "Shoes", imgSrc: "/assets/images/shoesnew.png" },
-  { name: "Watches", imgSrc: "/assets/images/Watches.jpg" },
+  {
+    name: "Electronics",
+    imgSrc:
+      "https://res.cloudinary.com/db0i0umxn/image/upload/v1728755856/electronics_jjhm0n.jpg",
+  },
+  {
+    name: "Shoes",
+    imgSrc:
+      "https://res.cloudinary.com/db0i0umxn/image/upload/v1728757249/shoesnew_k2gchd.webp",
+  },
+  {
+    name: "Watches",
+    imgSrc:
+      "https://res.cloudinary.com/db0i0umxn/image/upload/v1728755862/Watches_jj0ff7.webp",
+  },
   {
     name: "Computer-accessories",
-    imgSrc: "/assets/images/Computer-accessories.jpg",
+    imgSrc:
+      "https://res.cloudinary.com/db0i0umxn/image/upload/v1728757426/Computer-accessories_m3im8b.jpg",
   },
-  { name: "BluetoothSpeakers", imgSrc: "/assets/images/Bluetoothspeaker.jpg" },
-  { name: "Phonecovers", imgSrc: "/assets/images/phonecovers.png" },
-  { name: "Gaming", imgSrc: "/assets/images/Gaming.jpg" },
-  { name: "Earphones", imgSrc: "/assets/images/earphones.jpg" },
-  { name: "Earpods", imgSrc: "/assets/images/earpods.png" },
-  { name: "Phone-accessories", imgSrc: "/assets/images/phone-accessories.jpg" },
-  { name: "Men's Clothing", imgSrc: "/assets/images/mensclothing.jpg" },
-  { name: "Cleaning-Supplies", imgSrc: "/assets/images/cleaningsupplies.jpg" },
-  { name: "Women's Clothing", imgSrc: "/assets/images/womensclothing.jpg" },
-  { name: "Books", imgSrc: "/assets/images/books.jpg" },
-  { name: "Home-Kitchen", imgSrc: "/assets/images/homekitchen.jpeg" },
-  { name: "Toys-Entertainment", imgSrc: "/assets/images/toys.png" },
-  { name: "Beauty-Personal Care", imgSrc: "/assets/images/personalcare.jpg" },
-  { name: "Furniture", imgSrc: "/assets/images/furniture.jpg" },
-  { name: "Sports and Entertainment", imgSrc: "/assets/images/sports.jpg" },
+  {
+    name: "BluetoothSpeakers",
+    imgSrc:
+      "https://res.cloudinary.com/db0i0umxn/image/upload/v1728755854/Bluetoothspeaker_kbrxxx.jpg",
+  },
+  {
+    name: "Phonecovers",
+    imgSrc:
+      "https://res.cloudinary.com/db0i0umxn/image/upload/v1728755858/phonecovers_dwzqus.webp",
+  },
+  {
+    name: "Gaming",
+    imgSrc:
+      "https://res.cloudinary.com/db0i0umxn/image/upload/v1728755857/Gaming_p3b8gf.webp",
+  },
+  {
+    name: "Earphones",
+    imgSrc:
+      "https://res.cloudinary.com/db0i0umxn/image/upload/v1728757249/earphones_jqg1az.webp",
+  },
+  {
+    name: "Earpods",
+    imgSrc:
+      "https://res.cloudinary.com/db0i0umxn/image/upload/v1728755856/earpods_ibnegt.webp",
+  },
+  {
+    name: "Phone-accessories",
+    imgSrc:
+      "https://res.cloudinary.com/db0i0umxn/image/upload/v1728755858/phone-accessories_luno3w.jpg",
+  },
+  {
+    name: "Men's Clothing",
+    imgSrc:
+      "https://res.cloudinary.com/db0i0umxn/image/upload/v1728755857/mensclothing_hjrgqv.jpg",
+  },
+  {
+    name: "Cleaning-Supplies",
+    imgSrc:
+      "https://res.cloudinary.com/db0i0umxn/image/upload/v1728755855/cleaningsupplies_dierpq.webp",
+  },
+  {
+    name: "Women's Clothing",
+    imgSrc:
+      "https://res.cloudinary.com/db0i0umxn/image/upload/v1728755862/womensclothing_aaixxj.jpg",
+  },
+  {
+    name: "Books",
+    imgSrc:
+      "https://res.cloudinary.com/db0i0umxn/image/upload/v1728755855/books_zjs0ye.jpg",
+  },
+  {
+    name: "Home-Kitchen",
+    imgSrc:
+      "https://res.cloudinary.com/db0i0umxn/image/upload/v1728755857/homekitchen_uq3lzv.jpg",
+  },
+  {
+    name: "Toys-Entertainment",
+    imgSrc:
+      "https://res.cloudinary.com/db0i0umxn/image/upload/v1728755861/toys_uxcbgc.webp",
+  },
+  {
+    name: "Beauty-Personal Care",
+    imgSrc:
+      "https://res.cloudinary.com/db0i0umxn/image/upload/v1728755858/personalcare_l2wrkx.webp",
+  },
+  {
+    name: "Furniture",
+    imgSrc:
+      "https://res.cloudinary.com/db0i0umxn/image/upload/v1728755856/furniture_vuuvgz.jpg",
+  },
+  {
+    name: "Sports and Entertainment",
+    imgSrc:
+      "https://res.cloudinary.com/db0i0umxn/image/upload/v1728755860/sports_qmpjon.jpg",
+  },
   {
     name: "Hair extensions-Wigs",
-    imgSrc: "/assets/images/Hair-extensions.jpg",
+    imgSrc:
+      "https://res.cloudinary.com/db0i0umxn/image/upload/v1728755857/Hair-extensions_hzbviz.jpg",
   },
 ];
 

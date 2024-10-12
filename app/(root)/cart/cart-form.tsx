@@ -70,7 +70,11 @@ export default function CartForm({ cart }: { cart?: cart }) {
             aria-hidden="true"
             className="relative mb-4 h-60 w-60 text-muted-foreground"
           >
-            <Image src="/emptycart.png" fill alt="empty shopping cart hippo" />
+            <Image
+              src="https://res.cloudinary.com/db0i0umxn/image/upload/v1728757715/emptycart_tjokx8.png"
+              fill
+              alt="empty shopping cart hippo"
+            />
           </div>
           <div className="text-xl font-semibold">Your cart is empty</div>
           <SheetTrigger asChild>

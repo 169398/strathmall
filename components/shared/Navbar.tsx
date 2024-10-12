@@ -22,7 +22,7 @@ export default async function Navbar() {
               <div className="flex items-center lg:ml-4">
                 <Link href="/">
                   <Image
-                    src="/logo.png"
+                    src="https://res.cloudinary.com/db0i0umxn/image/upload/v1728757714/logo_bxjyga.png"
                     alt="strathmall logo"
                     width={100}
                     height={100}
@@ -37,7 +37,7 @@ export default async function Navbar() {
                 </div>
               </div>
               <div className="hidden lg:flex lg:items-center lg:space-x-6 ">
-                <div  className="ml-9">
+                <div className="ml-9">
                   <FavoriteProductsSheet />
                 </div>
                 <div className="flex items-center space-x-4">

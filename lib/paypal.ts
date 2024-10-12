@@ -95,7 +95,7 @@ const twitterSite = TWITTER_SITE
 export function constructMetadata({
   title = "StrathMall - Affordable prices on Top local goods",
   description = "Discover StrathMall, the ultimate  marketplace for premium goods, connecting Top local  sellers with savvy shoppers",
-  image = "/thumbnail.png",
+  image = "https://res.cloudinary.com/db0i0umxn/image/upload/v1728757718/thumbnail_fnswvj.png",
   icons = "/favicon.ico",
   noIndex = false,
 }: {
