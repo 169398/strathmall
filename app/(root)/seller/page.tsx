@@ -269,7 +269,7 @@ const OnboardingForm = () => {
         </div>
         <div className="md:w-1/2">
           <Image
-            src="/background.jpg" // Testimonial image
+            src="https://res.cloudinary.com/db0i0umxn/image/upload/v1728757714/background_xffuvi.jpg" // Testimonial image
             alt="Testimonial"
             width={500}
             height={300}
@@ -285,7 +285,7 @@ const OnboardingForm = () => {
       <div className="container mx-auto flex flex-col md:flex-row items-center">
         <div className="md:w-1/2">
           <Image
-            src="/get-started.jpg" // Get started image
+            src="https://res.cloudinary.com/db0i0umxn/image/upload/v1728757715/get-started_smdhep.png" // Get started image
             alt="Get Started"
             width={500}
             height={300}

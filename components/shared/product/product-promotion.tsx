@@ -53,8 +53,8 @@ const ProductPromotion = () => {
         <p>
           Score amazing discounts on your campus essentials, plus enjoy
           exclusive perks with every purchase. It&apos;s time to celebrate smart
-          shopping and unbeatable savings, only at Strathmall! Don&apos;t miss out on
-          this month&apos;s incredible offers. 🎁🛒
+          shopping and unbeatable savings, only at Strathmall! Don&apos;t miss
+          out on this month&apos;s incredible offers. 🎁🛒
         </p>
 
         <ul className="grid grid-cols-4">
@@ -64,7 +64,7 @@ const ProductPromotion = () => {
           <StatBox label="Seconds" value={time.seconds} />
         </ul>
         <div className="text-center">
-          <Button asChild aria-label='view products'>
+          <Button asChild aria-label="view products">
             <Link href="/search">View products</Link>
           </Button>
         </div>
@@ -75,7 +75,7 @@ const ProductPromotion = () => {
           alt="promotion"
           width={500}
           height={200}
-          src="/assets/images/monthdeal.png"
+          src="https://res.cloudinary.com/db0i0umxn/image/upload/v1728755858/monthdeal_fhbidw.png"
         />
       </div>
     </section>

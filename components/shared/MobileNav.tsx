@@ -21,7 +21,7 @@ export default async function MobileNav() {
         <div className="flex items-center justify-between w-full">
           <Link href="/">
             <Image
-              src="/logo.png"
+              src="https://res.cloudinary.com/db0i0umxn/image/upload/v1728757714/logo_bxjyga.png"
               alt="strathmall logo"
               width={80} // Reduced logo size
               height={80}
