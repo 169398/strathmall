@@ -16,6 +16,7 @@ import Electronics from "./product/techCategory";
 import Watches from "./product/watchesCategory";
 import CategoryCarousel from "./product/categoryCarousel";
 import Image from "next/image";
+import HowItWorks from "./HowItWorks";
 
 const handleClick = () => {
   const duration = 5 * 1000;
@@ -59,14 +60,17 @@ const HomeContent: React.FC<HomeContentProps> = ({
     <div>
       <MaxWidthWrapper>
         <div className="mx-auto flex max-w-3xl flex-col items-center py-20 text-center">
-          <h1 className="tracking-tight text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-300 to-blue-800 sm:text-6xl">
+          <h1 className="tracking-tight text-4xl font-bold bg-clip-text text-blue-800 sm:text-6xl">
             Your marketplace where quality finds{" "}
             <span className="text-blue-700">you</span>.
           </h1>
-          <p className="mt-6 max-w-prose text-lg text-muted-foreground">
+          <p className="mt-6 max-w-prose text-lg text-gray-800">
             Welcome to StrathMall. Every product on this platform is verified by
             our team to ensure our highest quality standards.
           </p>
+          <span className="text-blue-400 text-sm">
+            MADE BY STUDENTS FOR STUDENTS
+          </span>
           <div className="mt-6 flex flex-col gap-4 sm:flex-row">
             <Link
               href="/seller"
@@ -92,6 +96,7 @@ const HomeContent: React.FC<HomeContentProps> = ({
           </div>
         </div>
       </MaxWidthWrapper>
+      <HowItWorks />
 
       <div className="space-y-8">
         <ProductList title="Newest Arrivals ✨" data={latestProducts} />
