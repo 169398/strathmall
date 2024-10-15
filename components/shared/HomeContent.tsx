@@ -65,11 +65,11 @@ const HomeContent: React.FC<HomeContentProps> = ({
               Your marketplace where quality finds{" "}
               <span className="text-blue-700">you</span>.
             </h1>
-            <p className="mt-6 max-w-prose text-lg text-gray-800">
+            <p className="mt-6 max-w-prose text-lg text-blue-800">
               Welcome to StrathMall. Every product on this platform is verified
               by our team to ensure our highest quality standards.
             </p>
-           
+
             <div className="mt-6 flex flex-col gap-4 sm:flex-row">
               <Link
                 href="/seller"
@@ -84,7 +84,7 @@ const HomeContent: React.FC<HomeContentProps> = ({
             </div>
 
             <div className="mt-8 flex items-center justify-center">
-              <p className="text-sm text-gray-600 mr-2">Backed by</p>
+              <p className="text-sm text-blue-800 mr-2">Backed by</p>
               <Image
                 src="https://res.cloudinary.com/db0i0umxn/image/upload/v1728757715/ibizlg_uqwnej.png"
                 alt="iBiz Africa logo"

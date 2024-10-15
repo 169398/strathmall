@@ -7,7 +7,7 @@ import ProductSkeleton from './product-skeleton';
 import { Button } from '@/components/ui/button';
 
 interface AllProductListProps {
-  title: string;
+  title: React.ReactNode;
   data: product[];
 }
 
