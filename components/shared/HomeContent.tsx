@@ -58,47 +58,49 @@ const HomeContent: React.FC<HomeContentProps> = ({
 }) => {
   return (
     <div>
-      <MaxWidthWrapper>
-        <div className="mx-auto flex max-w-3xl flex-col items-center py-20 text-center">
-          <h1 className="tracking-tight text-4xl font-bold bg-clip-text text-blue-800 sm:text-6xl">
-            Your marketplace where quality finds{" "}
-            <span className="text-blue-700">you</span>.
-          </h1>
-          <p className="mt-6 max-w-prose text-lg text-gray-800">
-            Welcome to StrathMall. Every product on this platform is verified by
-            our team to ensure our highest quality standards.
-          </p>
-          <span className="text-blue-400 text-sm">
-            MADE BY STUDENTS FOR STUDENTS
-          </span>
-          <div className="mt-6 flex flex-col gap-4 sm:flex-row">
-            <Link
-              href="/seller"
-              className={buttonVariants({ variant: "secondary" })}
-            >
-              <SparklesText
-                onClick={handleClick}
-                text="🎉Start selling"
-                className="text-base text-blue-500"
-              />
-            </Link>
-          </div>
+      <div className="bg-gradient-to-b from-blue-50 to-white">
+        <MaxWidthWrapper>
+          <div className="mx-auto flex max-w-3xl flex-col  items-center     py-20 text-center">
+            <h1 className="tracking-tight text-4xl font-bold bg-clip-text text-blue-800 sm:text-6xl">
+              Your marketplace where quality finds{" "}
+              <span className="text-blue-700">you</span>.
+            </h1>
+            <p className="mt-6 max-w-prose text-lg text-gray-800">
+              Welcome to StrathMall. Every product on this platform is verified
+              by our team to ensure our highest quality standards.
+            </p>
+            <span className="text-blue-400 text-sm">
+              MADE BY STUDENTS FOR STUDENTS
+            </span>
+            <div className="mt-6 flex flex-col gap-4 sm:flex-row">
+              <Link
+                href="/seller"
+                className={buttonVariants({ variant: "secondary" })}
+              >
+                <SparklesText
+                  onClick={handleClick}
+                  text="🎉Start selling"
+                  className="text-base text-blue-500"
+                />
+              </Link>
+            </div>
 
-          <div className="mt-8 flex items-center justify-center">
-            <p className="text-sm text-gray-600 mr-2">Backed by</p>
-            <Image
-              src="https://res.cloudinary.com/db0i0umxn/image/upload/v1728757715/ibizlg_uqwnej.png"
-              alt="iBiz Africa logo"
-              width={120}
-              height={60}
-              className="h-auto w-auto"
-            />
+            <div className="mt-8 flex items-center justify-center">
+              <p className="text-sm text-gray-600 mr-2">Backed by</p>
+              <Image
+                src="https://res.cloudinary.com/db0i0umxn/image/upload/v1728757715/ibizlg_uqwnej.png"
+                alt="iBiz Africa logo"
+                width={120}
+                height={60}
+                className="h-auto w-auto"
+              />
+            </div>
           </div>
-        </div>
-      </MaxWidthWrapper>
+        </MaxWidthWrapper>
+      </div>
       <HowItWorks />
 
-      <div className="space-y-8">
+      <div className="space-y-8 bg-gradient-to-b from-blue-50 to-white ">
         <ProductList title="Newest Arrivals ✨" data={latestProducts} />
         <ProductPromotion />
         <ShoesCategory />
