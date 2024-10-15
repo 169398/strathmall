@@ -102,7 +102,10 @@ const config = withUt({
       },
     },
   },
-  plugins: [require("tailwindcss-animate"), addVariablesForColors],
+  plugins: [
+    require("tailwindcss-animate"),
+    addVariablesForColors,
+  ],
 }) satisfies Config;
 
 function addVariablesForColors({ addBase, theme }: any) {
