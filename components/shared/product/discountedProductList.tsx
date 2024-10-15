@@ -14,7 +14,7 @@ interface Product {
 }
 
 interface DiscountedProductListProps {
-  title: string;
+  title: React.ReactNode;
   data: Product[];
 }
 

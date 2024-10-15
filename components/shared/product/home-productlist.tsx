@@ -4,7 +4,7 @@ import ProductCard from './product-card';
 import ProductSkeleton from './product-skeleton'; 
 
 interface ProductListProps {
-  title: string;
+  title: React.ReactNode;
   data: product[];
 }
 

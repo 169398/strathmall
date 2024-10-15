@@ -12,10 +12,10 @@ import {
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import confetti from "canvas-confetti";
+import { CardBody, CardContainer, CardItem } from "../ui/3d-card";
+import { TypewriterEffectSmooth } from "../ui/typewriter-effect";
 
 export default function Component() {
-
-
   const handleClick = () => {
     const duration = 5 * 1000;
     const animationEnd = Date.now() + duration;
@@ -42,6 +42,18 @@ export default function Component() {
       });
     }, 250);
   };
+  const words = [
+    {
+      text: "How",
+    },
+    {
+      text: "StrathMall",
+    },
+    {
+      text: "Works",
+    },
+  ]
+
   const steps = [
     {
       icon: UserPlus,
@@ -72,53 +84,57 @@ export default function Component() {
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="text-center mb-12"
+          className="text-center mb-3"
         >
-          <h2 className="text-4xl font-bold text-blue-600 mb-4">
-            How It Works
-          </h2>
+          <div className="flex justify-center items-center mb-0">
+            <TypewriterEffectSmooth words={words} />
+          </div>
           <p className="text-xl text-blue-800 max-w-2xl mx-auto">
-            StrathMall connects buyers and student sellers in a secure, user-friendly
-            platform. Follow these simple steps to get started:
+            StrathMall connects buyers and student sellers in a secure,
+            user-friendly platform. Follow these simple steps to get started:
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <CardContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 ">
           {steps.map((step, index) => (
-            <motion.div
+            <CardBody
               key={index}
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.2, duration: 0.8 }}
-              className="bg-white rounded-lg shadow-lg p-6 transform hover:scale-105 transition-transform duration-300"
+              className="bg-white relative group/card dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-auto h-auto rounded-xl p-6 border transform hover:scale-105 transition-transform duration-300"
             >
-              <div className="flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4 mx-auto">
+              <CardItem
+                translateZ="60"
+                className="flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4 mx-auto"
+              >
                 <step.icon className="w-8 h-8 text-blue-600" />
-              </div>
-              <h3 className="text-xl font-semibold text-blue-800 mb-2">
+              </CardItem>
+              <CardItem
+                translateZ="45"
+                className="text-xl font-semibold text-blue-800 mb-2"
+              >
                 {step.title}
-              </h3>
-              <p className="text-blue-600">{step.description}</p>
-            </motion.div>
+              </CardItem>
+              <CardItem translateZ="30" as="p" className="text-blue-600">
+                {step.description}
+              </CardItem>
+            </CardBody>
           ))}
-        </div>
+        </CardContainer>
 
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8, duration: 0.8 }}
-          className="text-center mt-12"
-              >
-<Link
-              href="/seller"
-              
-          >          <Button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full text-lg transition-colors duration-300 flex items-center"
-          onClick={handleClick}
+          className="text-center mt-3"
+        >
+          <Link href="/seller">
+            <Button
+              className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full text-lg transition-colors duration-300 flex items-center"
+              onClick={handleClick}
             >
-            Get Started
-            <ArrowRight className="ml-2 w-5 h-5" />
+              Get Started
+              <ArrowRight className="ml-2 w-5 h-5" />
             </Button>
-            </Link>
+          </Link>
         </motion.div>
       </div>
     </section>
