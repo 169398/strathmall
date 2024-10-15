@@ -7,6 +7,7 @@ import { Suspense } from "react";
 import MaxWidthWrapper from "./MaxWidthWrapper";
 import { FaFacebook, FaInstagram, FaTiktok, FaTwitter } from "react-icons/fa";
 import { Skeleton } from "../ui/skeleton";
+import confetti from "canvas-confetti";
 
 const skeleton =
   "w-full h-6 animate-pulse rounded bg-neutral-200 dark:bg-neutral-700";
@@ -15,6 +16,32 @@ const Footer = () => {
   const pathname = usePathname();
   const pathsToMinimize = ["/verify-email", "/sign-up", "/sign-in"];
 
+  const handleClick = () => {
+    const duration = 5 * 1000;
+    const animationEnd = Date.now() + duration;
+    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+    const randomInRange = (min: number, max: number) =>
+      Math.random() * (max - min) + min;
+
+    const interval = window.setInterval(() => {
+      const timeLeft = animationEnd - Date.now();
+
+      if (timeLeft <= 0) return clearInterval(interval);
+
+      const particleCount = 50 * (timeLeft / duration);
+      confetti({
+        ...defaults,
+        particleCount,
+        origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+      });
+      confetti({
+        ...defaults,
+        particleCount,
+        origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+      });
+    }, 250);
+  };
   return (
     <footer className="bg-gray-50 flex-grow-0 container">
       <MaxWidthWrapper>
@@ -68,6 +95,7 @@ const Footer = () => {
                       do so in minutes.{" "}
                       <Link
                         href="/seller"
+                        onClick={handleClick}
                         className="whitespace-nowrap font-medium text-black hover:text-zinc-900"
                       >
                         Get started &rarr;
