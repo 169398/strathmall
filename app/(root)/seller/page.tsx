@@ -30,6 +30,7 @@ import { createSeller } from "@/lib/actions/selleractions";
 import { CardSpot } from "@/components/shared/how-to-start";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
 import { universities } from "@/lib/universities";
+import { shopCategories } from "@/lib/shopCategories";
 
 
 
@@ -48,12 +49,12 @@ const OnboardingForm = () => {
     const formData = new FormData();
 
     formData.append("shopName", values.shopName);
+    formData.append("shopCategory", values.shopCategory);
     formData.append("email", values.email);
     formData.append("phoneNumber", values.phoneNumber);
     formData.append("university", values.university);
     try {
       const res = await createSeller({}, formData);
-      console.log("Response:", res);
       if (!res.success) {
         toast({
           variant: "destructive",
@@ -66,7 +67,6 @@ const OnboardingForm = () => {
         router.push("/onboard");
       }
     } catch (error) {
-      console.error("Error creating seller:", error);
       toast({
         variant: "destructive",
         description: "An error occurred while creating the seller.",
@@ -92,6 +92,34 @@ const OnboardingForm = () => {
                   <FormLabel>Shop Name</FormLabel>
                   <FormControl>
                     <Input placeholder="Enter your shop name" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="shopCategory"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Shop Category</FormLabel>
+                  <FormControl>
+                    <Select
+                      onValueChange={(value) => field.onChange(value)}
+                      value={field.value}
+                      defaultValue={field.value || ""}
+                    >
+                      <SelectTrigger>
+                        <span>{field.value || "Select your Shop Category"}</span>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {shopCategories.map((shopCategories, index) => (
+                          <SelectItem key={index} value={shopCategories}>
+                            {shopCategories}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

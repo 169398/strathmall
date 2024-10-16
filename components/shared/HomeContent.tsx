@@ -17,6 +17,7 @@ import Watches from "./product/watchesCategory";
 import CategoryCarousel from "./product/categoryCarousel";
 import Image from "next/image";
 import HowItWorks from "./HowItWorks";
+import Cakes from "./CakeSection";
 
 const handleClick = () => {
   const duration = 5 * 1000;
@@ -101,6 +102,7 @@ const HomeContent: React.FC<HomeContentProps> = ({
       <div className="space-y-8 bg-gradient-to-b from-blue-50 to-white ">
         <ProductList title="Newest Arrivals ✨" data={latestProducts} />
         <ProductPromotion />
+        <Cakes/>
         <ShoesCategory />
         <Electronics />
         <Watches />

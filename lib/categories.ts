@@ -1,7 +1,8 @@
 export const categories = [
     "Electronics",
     "Shoes",
-    "Phones",
+  "Phones",
+    "Food/Bakery",
     "Computer-accessories",
     "BluetoothSpeakers",
     "Phonecovers",
@@ -21,11 +22,7 @@ export const categories = [
     "Watches",
     "Furniture",
     "Sports and Entertainment",
-    "Hair extensions-Wigs",
-
-
-   
-
-    
+  "Hair extensions-Wigs", 
+    "Health-Wellness",
   ];
   

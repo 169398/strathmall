@@ -50,6 +50,7 @@ export const sellers = pgTable("sellerShop", {
   phoneNumber: text("phoneNumber").notNull(),
   university: text("university").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
+  shopCategory: text("shopCategory").notNull(),
 });
 
 

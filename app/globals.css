@@ -86,6 +86,9 @@
     @apply max-w-7xl lg:mx-auto p-5 md:px-10 w-full;
   }
 
+        .cursor-sword {
+          cursor: url('/newstrathmall2/public/assets/icons/sword.png'), auto;
+        }
   .flex-start {
     @apply flex justify-start items-center;
   }
