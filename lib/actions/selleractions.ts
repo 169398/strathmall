@@ -23,11 +23,12 @@ export async function createSeller(prevState: unknown, formData: FormData) {
       email: formData.get("email"),
       phoneNumber: formData.get("phoneNumber"),
       university: formData.get("university"),
+      shopCategory: formData.getAll("shopCategory"),
     };
 
     const seller = createSellerSchema.parse(data);
     const session = await auth();
-    if (!session) throw new Error("Sign in to add your shop");
+    if (!session) throw new Error("Sign in to create  your shop");
     const existingSeller = await db.query.sellers.findFirst({
       where: (sellers, { eq }) => eq(sellers.email, seller.email),
     });

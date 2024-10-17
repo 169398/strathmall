@@ -24,9 +24,13 @@ const config = withUt({
         "2xl": "1400px",
       },
     },
+
     extend: {
       fontFamily: {
         sans: ["var(--font-sans)", ...fontFamily.sans],
+      },
+      cursor: {
+        sword: "url(/newstrathmall2/public/assets/icons/sword.png), auto",
       },
       colors: {
         border: "hsl(var(--border))",
@@ -102,10 +106,7 @@ const config = withUt({
       },
     },
   },
-  plugins: [
-    require("tailwindcss-animate"),
-    addVariablesForColors,
-  ],
+  plugins: [require("tailwindcss-animate"), addVariablesForColors],
 }) satisfies Config;
 
 function addVariablesForColors({ addBase, theme }: any) {

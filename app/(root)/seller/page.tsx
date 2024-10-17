@@ -30,6 +30,13 @@ import { createSeller } from "@/lib/actions/selleractions";
 import { CardSpot } from "@/components/shared/how-to-start";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
 import { universities } from "@/lib/universities";
+import { shopCategories } from "@/lib/shopCategories";
+import Footer from "@/components/shared/Footer2";
+import Banner from "@/components/shared/Banner";
+import { useState } from "react";
+import { cn } from "@/lib/utils";
+import { ChevronDown, ChevronUp, Check } from "lucide-react";
+
 
 
 
@@ -42,18 +49,18 @@ const OnboardingForm = () => {
   });
   const { toast } = useToast();
   const router = useRouter();
+  const[isOpen, setIsOpen]= useState(false);
 
   async function onSubmit(values: z.infer<typeof createSellerSchema>) {
-    console.log("Form values:", values);
     const formData = new FormData();
 
     formData.append("shopName", values.shopName);
+    formData.append("shopCategory", JSON.stringify(values.shopCategory));
     formData.append("email", values.email);
     formData.append("phoneNumber", values.phoneNumber);
     formData.append("university", values.university);
     try {
       const res = await createSeller({}, formData);
-      console.log("Response:", res);
       if (!res.success) {
         toast({
           variant: "destructive",
@@ -66,7 +73,6 @@ const OnboardingForm = () => {
         router.push("/onboard");
       }
     } catch (error) {
-      console.error("Error creating seller:", error);
       toast({
         variant: "destructive",
         description: "An error occurred while creating the seller.",
@@ -74,7 +80,8 @@ const OnboardingForm = () => {
     }
   }
   return (
-    <div className="relative min-h-screen ">
+    <div className="relative min-h-screen py-9 lg:py-0 md:py-9">
+      <Banner />
       <div className="relative container mx-auto rounded-sm p-10 bg-slate-50 bg-opacity-90">
         <Form {...form}>
           <form
@@ -83,6 +90,7 @@ const OnboardingForm = () => {
             className="space-y-8"
           >
             <h1 className="text-3xl font-bold">Start your journey today</h1>
+           
 
             <FormField
               control={form.control}
@@ -92,6 +100,75 @@ const OnboardingForm = () => {
                   <FormLabel>Shop Name</FormLabel>
                   <FormControl>
                     <Input placeholder="Enter your shop name" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="shopCategory"
+              render={({ field }) => (
+                <FormItem className="relative">
+                  <FormLabel className="text-sm font-medium text-gray-700">
+                    Shop Categories
+                  </FormLabel>
+                  <FormControl>
+                    <div
+                      className="mt-1 relative"
+                      onClick={() => setIsOpen(!isOpen)}
+                    >
+                      <div className="bg-white border border-gray-300 rounded-md shadow-sm px-3 py-2 cursor-pointer flex justify-between items-center">
+                        <span className="block truncate">
+                          {field.value && field.value.length > 0
+                            ? `${field.value.length} selected`
+                            : "Select categories"}
+                        </span>
+                        {isOpen ? (
+                          <ChevronUp className="h-5 w-5 text-gray-400" />
+                        ) : (
+                          <ChevronDown className="h-5 w-5 text-gray-400" />
+                        )}
+                      </div>
+                      {isOpen && (
+                        <div className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
+                          {shopCategories.map((category, index) => (
+                            <div
+                              key={index}
+                              className={cn(
+                                "cursor-pointer select-none relative py-2 pl-3 pr-9 hover:bg-blue-100",
+                                field.value?.includes(category)
+                                  ? "bg-blue-50"
+                                  : ""
+                              )}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                const newValue = Array.isArray(field.value) && field.value.includes(category)
+                                  ? field.value.filter((v) => v !== category)
+                                  : [...(Array.isArray(field.value) ? field.value : []), category];
+                                field.onChange(newValue);
+                              }}
+                            >
+                              <span
+                                className={cn(
+                                  "block truncate",
+                                  field.value?.includes(category)
+                                    ? "font-semibold"
+                                    : "font-normal"
+                                )}
+                              >
+                                {category}
+                              </span>
+                              {field.value?.includes(category) && (
+                                <span className="absolute inset-y-0 right-0 flex items-center pr-4">
+                                  <Check className="h-5 w-5 text-blue-600" />
+                                </span>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -310,6 +387,7 @@ const OnboardingForm = () => {
         <Testimonial />
 
         <FAQ />
+        <Footer />
       </div>
     );
   };

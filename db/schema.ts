@@ -11,6 +11,7 @@ import {
   timestamp,
   uniqueIndex,
   uuid,
+  varchar,
 } from "drizzle-orm/pg-core";
 import { primaryKey } from "drizzle-orm/pg-core/primary-keys";
 import { AdapterAccountType } from "next-auth/adapters";
@@ -50,9 +51,16 @@ export const sellers = pgTable("sellerShop", {
   phoneNumber: text("phoneNumber").notNull(),
   university: text("university").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
+  shopCategory: text("shopCategory").array().notNull(),
 });
 
-
+export const feedbacks = pgTable("feedbacks", {
+  id: uuid("id").defaultRandom().primaryKey().notNull(),
+userId: uuid("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  feedbackText: text("feedbackText").notNull(),
+  emoji: varchar("emoji", { length: 50 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
 export const feeorders = pgTable("feeorder", {
   id: uuid("id").defaultRandom().primaryKey().notNull(),
   userId: uuid("userId")

@@ -16,6 +16,7 @@ export default function SignUpForm() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/";
 
+
   const [data, action] = useFormState(signUp, {
     success: false,
     message: "",
