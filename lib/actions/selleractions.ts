@@ -23,7 +23,7 @@ export async function createSeller(prevState: unknown, formData: FormData) {
       email: formData.get("email"),
       phoneNumber: formData.get("phoneNumber"),
       university: formData.get("university"),
-      shopCategory: formData.get("shopCategory"),
+      shopCategory: formData.getAll("shopCategory"),
     };
 
     const seller = createSellerSchema.parse(data);

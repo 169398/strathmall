@@ -1,6 +1,7 @@
 export const shopCategories = [
   "Electronics & Accessories",
-  "Fashion & Apparel",
+    "Fashion & Apparel",
+  "Shoes & Footwear",
   "Beauty & Personal Care",
   "Home & Kitchen",
   "Food & Bakery",

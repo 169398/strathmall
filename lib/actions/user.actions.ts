@@ -12,7 +12,7 @@ import {
 } from '../validator'
 import { formatError } from '../utils'
 import { hashSync } from 'bcrypt-ts-edge'
-import { sellers, users } from '@/db/schema'
+import { feedbacks, sellers, users } from '@/db/schema'
 import { ShippingAddress } from '@/types'
 import { count, desc, eq } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
@@ -350,5 +350,37 @@ try {
   
 }
 }
+
+export async function createFeedback(feedback: {
+  feedbackText: string;
+  emoji: string | null;
+}) {
+  try {
+    const session = await auth();
+    if (!session || !session.user.id) {
+      throw new Error('User not authenticated');
+    }
+
+    // Insert the feedback into the feedbacks table
+    await db.insert(feedbacks).values({
+      userId: session.user.id,
+      feedbackText: feedback.feedbackText,
+      emoji: feedback.emoji,
+    });
+
+    return {
+      success: true,
+      message: 'Feedback submitted successfully',
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
+}
+
+   
+
 
 

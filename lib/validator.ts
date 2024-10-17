@@ -152,7 +152,7 @@ export const insertOrderItemSchema = createInsertSchema(orderItems, {
 
 export const createSellerSchema = z.object({
   shopName: z.string().min(3, "Shop name must be at least 3 characters"),
-  shopCategory: z.string().min(1, "Shop category required"),
+  shopCategory: z.array(z.string()).min(1, "Shop category required"),
   email: z
     .string()
     .email("Invalid email address")
