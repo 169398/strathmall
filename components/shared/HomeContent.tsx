@@ -59,7 +59,7 @@ const HomeContent: React.FC<HomeContentProps> = ({
 }) => {
   return (
     <div>
-      <div className="bg-gradient-to-b from-blue-50 to-white">
+      <div className="bg-gradient-to-b   from-white to-blue-50">
         <MaxWidthWrapper>
           <div className="mx-auto flex max-w-3xl flex-col  items-center     py-20 text-center">
             <h1 className="tracking-tight text-4xl font-bold bg-clip-text text-blue-800 sm:text-6xl">
@@ -74,7 +74,9 @@ const HomeContent: React.FC<HomeContentProps> = ({
             <div className="mt-6 flex flex-col gap-4 sm:flex-row">
               <Link
                 href="/seller"
-                className={buttonVariants({ variant: "secondary" })}
+                className={`${buttonVariants({
+                  variant: "secondary",
+                })} text-base text-blue-500 bg-yellow-400 hover:bg-yellow-300`}
               >
                 <SparklesText
                   onClick={handleClick}
@@ -99,11 +101,12 @@ const HomeContent: React.FC<HomeContentProps> = ({
       </div>
       <HowItWorks />
 
-      <div className="space-y-8 bg-gradient-to-b from-blue-50 to-white ">
+      <div className="space-y-8 bg-gradient-to-b from-white to-blue-50 ">
         <ProductList title="Newest Arrivals ✨" data={latestProducts} />
         <ProductPromotion />
-        <Cakes/>
         <ShoesCategory />
+        <Cakes />
+
         <Electronics />
         <Watches />
         <DiscountProductList

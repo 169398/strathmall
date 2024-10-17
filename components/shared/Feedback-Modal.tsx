@@ -42,7 +42,7 @@ export default function FeedbackModal() {
       });
       if (response.success) {
         setSuccessMessage(
-          "Feedback sent successfully, thank you for your support!"
+          "Feedback sent successfully, thank you for your support🤗"
         );
         setTimeout(() => {
           setIsOpen(false);
