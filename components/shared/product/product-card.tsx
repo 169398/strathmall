@@ -101,7 +101,7 @@ const ProductCard = ({ product }: { product: product }) => {
                   className="text-2xl sm:text-sm font-black"
                 />
               )
-            ) : (
+             ) : (
               <p className="text-xs sm:text-sm text-destructive">
                 Out of Stock
               </p>
