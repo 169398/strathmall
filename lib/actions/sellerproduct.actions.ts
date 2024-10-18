@@ -313,6 +313,7 @@ export async function getProductById(productId: string) {
 
 export async function getLatestProducts() {
   const data = await db.query.products.findMany({
+    where: sql`${products.category} != 'Food-Bakery'`, 
     orderBy: [desc(products.createdAt)],
     limit: 10,
   });

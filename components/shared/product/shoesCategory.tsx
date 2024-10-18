@@ -8,7 +8,9 @@ import { getProductsByCategory } from "@/lib/actions/sellerproduct.actions";
 const ShoesCategory = () => {
   const [shoes, setShoes] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [displayedShoes, setDisplayedShoes] = useState<any[]>([]);
 
+  // Fetch shoes from category
   useEffect(() => {
     const fetchShoes = async () => {
       const response = await getProductsByCategory("Shoes");
@@ -20,25 +22,22 @@ const ShoesCategory = () => {
     fetchShoes();
   }, []);
 
-  const getDisplayedShoes = useCallback(() => {
-    if (typeof window !== "undefined" && window.innerWidth < 768) {
-      // Ensure the check for window is done on the client-side
-      return shoes.slice(0, 4);
-    } else {
-      return shoes.slice(0, 8);
-    }
-  }, [shoes]);
-
-  const [displayedShoes, setDisplayedShoes] = useState(getDisplayedShoes);
+  // Determine how many shoes to display based on screen width
+  const getDisplayedShoes = useCallback(
+    (width: number) => {
+      return width < 768 ? shoes.slice(0, 4) : shoes.slice(0, 8);
+    },
+    [shoes]
+  );
 
   useEffect(() => {
     const handleResize = () => {
-      setDisplayedShoes(getDisplayedShoes());
+      setDisplayedShoes(getDisplayedShoes(window.innerWidth));
     };
 
     if (typeof window !== "undefined") {
       window.addEventListener("resize", handleResize);
-      handleResize(); // Call on initial render
+      handleResize(); // Initial call
     }
 
     return () => {
@@ -54,7 +53,10 @@ const ShoesCategory = () => {
         <h2 className="text-2xl font-bold mb-4">Classy Shoes</h2>
         <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
           {Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="w-full h-60 rounded-lg" />
+            <Skeleton
+              key={i}
+              className="w-full h-60 rounded-lg"
+            />
           ))}
         </div>
       </div>
