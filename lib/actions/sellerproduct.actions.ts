@@ -283,6 +283,7 @@ export async function getProductsByCategory(category: string, limit = 10) {
         slug: products.slug,
         images: products.images,
         name: products.name,
+        stock: products.stock,
         originalPrice: products.price,
         discount: products.discount,
         discountedPrice:
