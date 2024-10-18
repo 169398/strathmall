@@ -1,13 +1,10 @@
-"use client";
-
 import * as React from "react";
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Cake, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-
 import CakeCard from "./cakes-card";
 
 interface Cakes {
@@ -15,22 +12,19 @@ interface Cakes {
   name: string;
   price: string;
   image: string;
-    description: string;
-    slug: string;
-    rating: string;
-    stock: number;
-    discount: string;
-    category: string;
-    images: string[];
-
+  description: string;
+  slug: string;
+  rating: string;
+  stock: number;
+  discount: string;
+  category: string;
+  images: string[];
 }
 
 interface CakeShowcaseProps {
   title: string;
   cakes: Cakes[];
 }
-
-
 
 const CakeShowcase: React.FC<CakeShowcaseProps> = ({ title, cakes }) => {
   const [visibleCount, setVisibleCount] = useState(8);
@@ -49,31 +43,18 @@ const CakeShowcase: React.FC<CakeShowcaseProps> = ({ title, cakes }) => {
         {cakes.length > 0 ? (
           <>
             <motion.div
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+              className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <AnimatePresence>
-                {cakes.slice(0, visibleCount).map((cake, index) => (
-                  <motion.div
-                    key={cake.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    transition={{ duration: 0.3, delay: index * 0.1 }}
-                  >
-                    <React.Suspense fallback={<CakeSkeleton />}>
-                      <div className="  sm:grid-cols-2 gap-4 flex-none p-0.5 sm:p-1">
-                        {cakes.map((cake) => (
-                          <CakeCard key={cake.id} cake={cake} />
-                        ))}
-                      </div>{" "}
-                    </React.Suspense>
-                  </motion.div>
+              <React.Suspense fallback={<CakeSkeleton />}>
+                {cakes.slice(0, visibleCount).map((cake) => (
+                  <CakeCard key={cake.id} cake={cake} />
                 ))}
-              </AnimatePresence>
+              </React.Suspense>
             </motion.div>
+
             {visibleCount < cakes.length && (
               <div className="text-center mt-8">
                 <Button

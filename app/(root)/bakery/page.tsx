@@ -48,8 +48,8 @@ export default function BakeryPage() {
   );
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-amber-50 to-white dark:from-amber-900 dark:to-background">
-      <div className="container mx-auto px-4 py-12">
+    <main className="min-h-screen pt-6 lg:pt-0 bg-gradient-to-b from-amber-50 to-white dark:from-amber-900 dark:to-background">
+      <div className="container mx-auto px-0 py-4 lg:px-4 lg:py-6">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -94,7 +94,7 @@ export default function BakeryPage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6"
             >
               {[...Array(8)].map((_, index) => (
                 <div
