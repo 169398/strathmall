@@ -1,1 +1,0 @@
-ALTER TABLE "sellerShop" ALTER COLUMN "university" SET NOT NULL;
