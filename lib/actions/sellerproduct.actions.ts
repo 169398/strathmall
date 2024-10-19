@@ -2,8 +2,8 @@
 
 import { desc } from "drizzle-orm";
 import db from "@/db/drizzle";
-import { favorites, products } from "@/db/schema";
-import { and, count, eq, ilike, sql } from "drizzle-orm/sql";
+import { favorites, lastViewedProducts, products } from "@/db/schema";
+import { and, asc, count, eq, ilike, sql } from "drizzle-orm/sql";
 import { PAGE_SIZE } from "../constants";
 import { revalidatePath } from "next/cache";
 import { formatError } from "../utils";
@@ -530,5 +530,90 @@ export async function getHomePageData() {
     } else {
       throw new Error("Failed to fetch homepage data: Unknown error");
     }
+  }
+}
+
+export async function logProductView(userId: string, productId: string) {
+  try {
+    // Check if the product is already in the last viewed
+    const existingView = await db.query.lastViewedProducts.findFirst({
+      where: and(
+        eq(lastViewedProducts.userId, userId),
+        eq(lastViewedProducts.productId, productId)
+      ),
+    });
+
+    // Update the timestamp if already viewed, otherwise insert new
+    if (existingView) {
+      await db
+        .update(lastViewedProducts)
+        .set({ viewedAt: new Date() })
+        .where(eq(lastViewedProducts.id, existingView.id));
+    } else {
+      await db.insert(lastViewedProducts).values({
+        userId,
+        productId,
+      });
+    }
+
+    //  limit the number of last viewed items per user (e.g., last 10 products)
+    const viewsCountResult = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(lastViewedProducts)
+      .where(eq(lastViewedProducts.userId, userId));
+    const viewsCount = viewsCountResult[0].count;
+
+    if (viewsCount > 10) {
+      // Delete the oldest viewed product if there are more than 10
+      const oldestView = await db
+        .select({ id: lastViewedProducts.id })
+        .from(lastViewedProducts)
+        .where(eq(lastViewedProducts.userId, userId))
+        .orderBy(asc(lastViewedProducts.viewedAt))
+        .limit(1);
+
+      if (oldestView.length > 0) {
+        await db
+          .delete(lastViewedProducts)
+          .where(eq(lastViewedProducts.id, oldestView[0].id));
+      }
+    }
+  } catch (error) {
+    console.error("Error logging product view:", error);
+  }
+}
+
+export async function getLastViewedProducts(userId: string, limit = 10) {
+  try {
+    const data = await db
+      .select({
+        id: products.id,
+        slug: products.slug,
+        images: products.images,
+        name: products.name,
+        stock: products.stock,
+        price: products.price,
+        discount: products.discount,
+        discountedPrice:
+          sql<number>`(${products.price} - (${products.price} * ${products.discount} / 100))`.as(
+            "discountedPrice"
+          ),
+      })
+      .from(products)
+      .innerJoin(
+        lastViewedProducts,
+        eq(products.id, lastViewedProducts.productId)
+      )
+      .where(eq(lastViewedProducts.userId, userId))
+      .orderBy(desc(lastViewedProducts.viewedAt)) // Most recent first
+      .limit(limit);
+
+    return {
+      success: true,
+      data,
+    };
+  } catch (error) {
+    console.error("Error fetching last viewed products:", error);
+    return { success: false, message: "Failed to fetch last viewed products" };
   }
 }
