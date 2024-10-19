@@ -190,6 +190,17 @@ export const products = pgTable(
   }
 );
 
+//Last Viewed Products
+export const lastViewedProducts = pgTable("last_viewed_products", {
+  id: uuid("id").defaultRandom().primaryKey().notNull(),
+  userId: uuid("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  productId: uuid("productId")
+    .notNull()
+    .references(() => products.id, { onDelete: "cascade" }),
+  viewedAt: timestamp("viewedAt").defaultNow().notNull(),
+});
 //Favourite Products
 
 export const favorites = pgTable("favorites", {

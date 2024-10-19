@@ -9,6 +9,8 @@ import ImageSlider from "../ImageSlider";
 import { Skeleton } from "@/components/ui/skeleton";
 import FavoriteButton from "../FavoriteButton";
 import { useMediaQuery } from "react-responsive";
+import { useSession } from "next-auth/react"; 
+import { logProductView } from "@/lib/actions/sellerproduct.actions";
 
 const skeleton =
   "w-full h-6 animate-pulse rounded bg-gray-300 dark:bg-neutral-700";
@@ -33,6 +35,17 @@ const ProductCard = ({ product }: { product: product }) => {
   );
   const [showFavorite, setShowFavorite] = useState(false);
   const isMobile = useMediaQuery({ maxWidth: 768 });
+
+  // Use session to get the user's ID
+  const { data: session } = useSession();
+  const userId = session?.user?.id;
+
+  // Function to log product view on interaction
+  const handleProductView = async () => {
+    if (userId) {
+      await logProductView(userId, product.id);
+    }
+  };
 
   return (
     <Card
@@ -60,7 +73,8 @@ const ProductCard = ({ product }: { product: product }) => {
         </div>
 
         <CardHeader className="p-1 relative z-10">
-          <Link href={`/product/${product.slug}`}>
+          {/* Log product view when the user clicks the product link */}
+          <Link href={`/product/${product.slug}`} onClick={handleProductView}>
             <div className="relative w-full aspect-square overflow-hidden rounded-sm">
               <ImageSlider slug={product.images!} />
             </div>
@@ -80,7 +94,8 @@ const ProductCard = ({ product }: { product: product }) => {
       >
         <CardContent className="p-2 sm:p-4 grid gap-1 sm:gap-2">
           <div>
-            <Link href={`/product/${product.slug}`}>
+            {/* Log product view when the user clicks the product link */}
+            <Link href={`/product/${product.slug}`} onClick={handleProductView}>
               <h2 className="text-xs sm:text-sm font-medium overflow-hidden">
                 {product.name}
               </h2>
@@ -108,9 +123,11 @@ const ProductCard = ({ product }: { product: product }) => {
             )}
           </div>
           <div>
+            {/* Log product view when the user clicks the "Quick View" button */}
             <Link
               href={`/quickview/product/${product.slug}`}
               className="w-full"
+              onClick={handleProductView}
             >
               <Button
                 variant="outline"
