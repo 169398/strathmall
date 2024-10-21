@@ -11,7 +11,7 @@ export default function Cakes() {
             Every Celebration
          <br/> Deserves a Cake 
           </h2>
-          <Link href="">
+          <Link href="/bakery">
           <Button
           
             className="bg-yellow-400 hover:bg-yellow-300 text-blue-900 font-bold py-2 px-6 rounded-full transition-colors duration-300">

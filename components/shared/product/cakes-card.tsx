@@ -41,7 +41,7 @@ export default function CakeCard({ cake }: { cake: Cakes }) {
         onMouseLeave={() => setIsHovered(false)}
       >
         <CardHeader className="p-0 relative">
-          <Link href={`/product/${cake.slug}`}>
+          <Link href={`/cake/${cake.slug}`}>
             <div className="relative w-full aspect-square overflow-hidden">
               <Suspense fallback={<Skeleton className="w-full h-full" />}>
                 <div className="w-full h-full object-cover">
@@ -134,13 +134,13 @@ export default function CakeCard({ cake }: { cake: Cakes }) {
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.4 }}
           >
-            <Link href={`/quickview/product/${cake.slug}`} className="w-full">
+            <Link href={`/cake/${cake.slug}`} className="w-full">
               <Button
                 variant="default"
                 size="sm"
                 className="w-full text-xs sm:text-sm bg-gradient-to-r from-pink-500 to-yellow-500 hover:from-pink-600 hover:to-yellow-600 text-white"
               >
-               Quick View 
+               View Cake
               </Button>
             </Link>
           </motion.div>
