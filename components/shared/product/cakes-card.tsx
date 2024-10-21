@@ -7,6 +7,8 @@ import { motion } from "framer-motion";
 import { Cake, Heart } from "lucide-react";
 import ProductPrice from "./product-price";
 import ImageSlider from "../ImageSlider";
+import { logProductView } from "@/lib/actions/sellerproduct.actions";
+import { useSession } from "next-auth/react";
 
 interface Cakes {
   id: string;
@@ -19,6 +21,7 @@ interface Cakes {
   images: string[];
 }
 
+
 export default function CakeCard({ cake }: { cake: Cakes }) {
   const [isHovered, setIsHovered] = useState(false);
   const isDiscounted = cake.discount && parseInt(cake.discount) > 0;
@@ -28,7 +31,15 @@ export default function CakeCard({ cake }: { cake: Cakes }) {
         (parseFloat(cake.price) * parseFloat(cake.discount ?? "0")) / 100
       ).toFixed(2)
     : cake.price;
-
+  // Use session to get the user's ID
+  const { data: session } = useSession();
+  const userId = session?.user?.id;
+// Function to log product view on interaction
+  const handleProductView = async () => {
+    if (userId) {
+      await logProductView(userId, cake.id);
+    }
+  };
   return (
     <motion.div
       whileHover={{ scale: 1.02 }}
@@ -41,7 +52,7 @@ export default function CakeCard({ cake }: { cake: Cakes }) {
         onMouseLeave={() => setIsHovered(false)}
       >
         <CardHeader className="p-0 relative">
-          <Link href={`/cake/${cake.slug}`}>
+          <Link href={`/cake/${cake.slug}`} onClick={handleProductView}>
             <div className="relative w-full aspect-square overflow-hidden">
               <Suspense fallback={<Skeleton className="w-full h-full" />}>
                 <div className="w-full h-full object-cover">
@@ -134,13 +145,13 @@ export default function CakeCard({ cake }: { cake: Cakes }) {
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.4 }}
           >
-            <Link href={`/cake/${cake.slug}`} className="w-full">
+            <Link href={`/cake/${cake.slug}`} className="w-full" onClick={handleProductView}>
               <Button
                 variant="default"
                 size="sm"
                 className="w-full text-xs sm:text-sm bg-gradient-to-r from-pink-500 to-yellow-500 hover:from-pink-600 hover:to-yellow-600 text-white"
               >
-               View Cake
+                View Cake
               </Button>
             </Link>
           </motion.div>

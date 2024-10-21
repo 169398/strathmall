@@ -119,7 +119,6 @@ const CakeDetails = async ({
                   )}
                 </div>
                 {product.stock !== 0 && (
-                  // Use the client-side component for order form
                   <OrderForm />
                 )}
               </CardContent>

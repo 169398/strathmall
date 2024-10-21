@@ -1,4 +1,4 @@
-"use client"; // Client-side component
+"use client"; 
 
 import { cakeSizes } from "@/lib/cake-size";
 import React, { useState } from "react";
@@ -10,7 +10,7 @@ const OrderForm = () => {
     quantity: 1,
     notes: "",
     cakeSize: cakeSizes[0].value, 
-    cakeType: "egg", // Default type
+    cakeType: "egg", 
   });
 
   const handleInputChange = (
@@ -70,7 +70,6 @@ const OrderForm = () => {
           className="border p-2 w-full"
         >
           <option value="egg">Egg</option>
-          <option value="eggless">Eggless</option>
           {/* Add more cake types as needed */}
         </select>
       </label>
