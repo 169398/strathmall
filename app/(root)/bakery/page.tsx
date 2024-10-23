@@ -2,10 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Cake, Search } from "lucide-react";
+import {  Search } from "lucide-react";
 import { getProductsByCategory } from "@/lib/actions/sellerproduct.actions";
 import CakeShowcase from "@/components/shared/product/cakes-bakery";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 interface Cakes {
@@ -80,12 +79,7 @@ export default function BakeryPage() {
             />
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
           </div>
-          <Button
-            size="lg"
-            className="bg-amber-500 hover:bg-amber-600 text-white"
-          >
-            Request Custom Cake
-          </Button>
+          
         </motion.div>
 
         <AnimatePresence>
@@ -120,24 +114,7 @@ export default function BakeryPage() {
           )}
         </AnimatePresence>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6, duration: 0.5 }}
-          className="mt-16 text-center bg-amber-100 dark:bg-amber-900 rounded-lg p-8"
-        >
-          <Cake className="mx-auto mb-4 h-12 w-12 text-amber-500" />
-          <h2 className="text-2xl font-semibold mb-4">
-            Can&apos;t find what you&apos;re looking for🤔
-          </h2>
-          <p className="mb-6">We offer custom cake designs for any occasion</p>
-          <Button
-            size="lg"
-            className="bg-amber-500 hover:bg-amber-600 text-white"
-          >
-            Request Custom Cake
-          </Button>
-        </motion.div>
+        
       </div>
     </main>
   );

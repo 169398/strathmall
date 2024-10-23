@@ -47,7 +47,6 @@ export const createOrder = async () => {
 
       return insertedOrder[0].id;
     });
-console.log('insertedorder',insertedOrderId)
     if (!insertedOrderId) throw new Error("Order not created");
 
     return { success: true, orderId: insertedOrderId };

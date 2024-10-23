@@ -71,6 +71,13 @@
       "when": 1729295250732,
       "tag": "0009_complete_reaper",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1729549816522,
+      "tag": "0010_white_alice",
+      "breakpoints": true
     }
   ]
 }

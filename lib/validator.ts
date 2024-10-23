@@ -193,6 +193,20 @@ export const insertFeeOrderSchema = z.object({
 export const insertfeeorderItemSchema = createInsertSchema(feeorderItems, {
   totalAmount: z.number(),
 });
+export const insertCakeOrderSchema = z.object({
+  userId: z.string().uuid(),
+  sellerId: z.string().uuid(),
+  location: z.string().min(1, "Location is required"),
+  phoneNumber: z
+    .string()
+    .min(10, "Phone number must be at least 10 characters"),
+  cakeSize: z.string().min(1, "Cake size is required"),
+  cakeType: z.enum(["egg"]), 
+  quantity: z.number().min(1, "Quantity must be at least 1"),
+  notes: z.string().optional(),
+  totalPrice: z.string(),
+});
+
 
 export const feeResultSchema = z.object({
   id: z.string(),
