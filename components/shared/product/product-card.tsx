@@ -11,6 +11,7 @@ import FavoriteButton from "../FavoriteButton";
 import { useMediaQuery } from "react-responsive";
 import { useSession } from "next-auth/react"; 
 import { logProductView } from "@/lib/actions/sellerproduct.actions";
+import { Badge } from "@/components/ui/badge";
 
 const skeleton =
   "w-full h-6 animate-pulse rounded bg-gray-300 dark:bg-neutral-700";
@@ -108,7 +109,9 @@ const ProductCard = ({ product }: { product: product }) => {
                 <div className="flex flex-col">
                   <span className="text-red-500 line-through">{`Ksh ${product.price}`}</span>
                   <span className="text-2xl sm:text-sm font-black">{`Ksh ${discountedPrice}`}</span>
-                  <span className="text-red-500">{`-${product.discount}%`}</span>
+                  <Badge className="absolute top-2 left-2 z-10 bg-red-600 text-white">
+                    {(parseFloat(product.discount ?? "0")).toFixed(0)} % OFF
+                  </Badge>
                 </div>
               ) : (
                 <ProductPrice

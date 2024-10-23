@@ -39,41 +39,65 @@ export default function DiscountedProductList({
   };
 
   return (
-    <Card className="relative w-full h-65 bg-white rounded-lg overflow-hidden">
-      <CardContent className="p-4 sm:p-6">
-        <div className="flex items-center justify-between mb-1 sm:mb-4">
-          <h2 className="text-2xl sm:text-3xl font-bold ">{title}</h2>
+    <Card className="relative w-full h-auto bg-gradient-to-r from-red-50 to-orange-50 rounded-xl overflow-hidden shadow-lg">
+      <CardContent className="p-6 sm:p-8">
+        <div className="flex items-center justify-between mb-2">
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 tracking-tight">
+            {title}
+          </h2>
+          <div className="hidden sm:flex items-center space-x-2">
+            <Button
+              variant="outline"
+              size="icon"
+              className="bg-white hover:bg-gray-100 text-gray-800 border-gray-200"
+              onClick={() => scroll("left")}
+              aria-label="Scroll left"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              className="bg-white hover:bg-gray-100 text-gray-800 border-gray-200"
+              onClick={() => scroll("right")}
+              aria-label="Scroll right"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </Button>
+          </div>
         </div>
         {data.length > 0 ? (
-          <ScrollArea>
+          <ScrollArea className="w-full" style={{ overflow: "visible" }}>
             <div
               ref={scrollContainerRef}
-              className="flex space-x-4 sm:space-x-6 pb-4 transition-transform duration-500 ease-in-out"
+              className="flex space-x-6 pb-2 transition-transform duration-500 ease-in-out"
             >
               {data.map((product, i) => (
                 <React.Suspense
                   fallback={
-                    <div className="w-[180px] sm:w-[250px] h-[250px] sm:h-[350px] bg-muted animate-pulse rounded-lg" />
+                    <div className="w-[220px] h-[320px] bg-gray-200 animate-pulse rounded-lg" />
                   }
                   key={`${product.slug}${i}`}
                 >
-                  <div className="w-[180px] sm:w-[250px] flex-none transition-transform transform hover:-translate-y-2 hover:scale-105 duration-300 ease-in-out">
+                  <div className="w-[220px] flex-none transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-xl">
                     <DiscountedProductCard product={product} />
                   </div>
                 </React.Suspense>
               ))}
             </div>
-            <ScrollBar orientation="horizontal" />
+            <ScrollBar orientation="horizontal" className="bg-gray-200" />
           </ScrollArea>
         ) : (
-          <p className="text-center text-white">No discounted products found</p>
+          <p className="text-center text-gray-600 py-12">
+            No products found. Please check back later.
+          </p>
         )}
       </CardContent>
-      <div className="hidden lg:flex justify-between items-center w-full absolute top-1/2 transform -translate-y-1/2 px-4">
+      <div className="sm:hidden flex justify-between items-center w-full absolute bottom-4 left-0 px-4">
         <Button
           variant="outline"
           size="icon"
-          className="bg-gray-600 hover:bg-gray-500 text-white"
+          className="bg-white hover:bg-gray-100 text-gray-800 border-gray-200"
           onClick={() => scroll("left")}
           aria-label="Scroll left"
         >
@@ -82,11 +106,11 @@ export default function DiscountedProductList({
         <Button
           variant="outline"
           size="icon"
-          className="bg-gray-600 hover:bg-gray-500 text-white"
+          className="bg-white hover:bg-gray-100 text-gray-800 border-gray-200"
           onClick={() => scroll("right")}
           aria-label="Scroll right"
         >
-          <ChevronRight className="h-5 w-5" />
+          <ChevronRight className="h-5 w-5 " />
         </Button>
       </div>
       <ConfettiCannon />

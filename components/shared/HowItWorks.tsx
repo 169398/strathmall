@@ -86,9 +86,14 @@ export default function Component() {
           transition={{ duration: 0.8 }}
           className="text-center mb-3"
         >
-          <div className="flex justify-center items-center mb-0">
+            <div className="flex justify-center items-center mb-0 sm:hidden">
+            <h2 className="text-4xl font-bold text-blue-600 mb-4">
+              How StrathMall Works
+            </h2>
+            </div>
+            <div className="hidden sm:flex justify-center items-center mb-0">
             <TypewriterEffectSmooth words={words} />
-          </div>
+            </div>
           <p className="text-xl text-blue-800 max-w-2xl mx-auto">
             StrathMall connects buyers and student sellers in a secure,
             user-friendly platform. Follow these simple steps to get started:
