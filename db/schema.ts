@@ -309,7 +309,6 @@ export const cakeOrders = pgTable("cake_orders", {
   cakeType: text("cakeType").notNull(), 
   quantity: integer("quantity").notNull().default(1), 
   customizations: text("customizations"),
-  totalPrice: numeric("totalPrice", { precision: 12, scale: 2 }).notNull(),
  
   createdAt: timestamp("createdAt").notNull().defaultNow(),
 });

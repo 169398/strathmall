@@ -1,0 +1,1 @@
+ALTER TABLE "cake_orders" DROP COLUMN IF EXISTS "totalPrice";

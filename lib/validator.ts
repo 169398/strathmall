@@ -201,10 +201,10 @@ export const insertCakeOrderSchema = z.object({
     .string()
     .min(10, "Phone number must be at least 10 characters"),
   cakeSize: z.string().min(1, "Cake size is required"),
-  cakeType: z.enum(["egg"]), 
+  cakeType: z.enum(["egg",]),
   quantity: z.number().min(1, "Quantity must be at least 1"),
-  notes: z.string().optional(),
-  totalPrice: z.string(),
+  customizations: z.string().optional(),
+ 
 });
 
 

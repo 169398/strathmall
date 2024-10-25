@@ -4,18 +4,19 @@
 import { auth } from "@/auth";
 import {
   createSellerSchema,
+  insertCakeOrderSchema,
   updateSellerSchema,
   
 } from "../validator";
 import { formatError } from "../utils";
 import db from "@/db/drizzle";
-import { sellers } from "@/db/schema";
+import { cakeOrders, sellers } from "@/db/schema";
 import { z } from "zod";
 import { eq } from "drizzle-orm/sql";
 import { revalidatePath } from "next/cache";
 import { sendCongratulatoryEmail } from "@/emailcongrats";
 
-// SELLER
+// CREATE  SELLER
 export async function createSeller(prevState: unknown, formData: FormData) {
   try {
     const data = {
@@ -28,7 +29,7 @@ export async function createSeller(prevState: unknown, formData: FormData) {
 
     const seller = createSellerSchema.parse(data);
     const session = await auth();
-    if (!session) throw new Error("Sign in to create  your shop");
+    if (!session) throw new Error("Please sign in to place an order");
     const existingSeller = await db.query.sellers.findFirst({
       where: (sellers, { eq }) => eq(sellers.email, seller.email),
     });
@@ -67,7 +68,7 @@ await sendCongratulatoryEmail({
   }
 }
 
-// UPDATE
+// UPDATE THE SELLER DETAILS
 export async function updateSeller(seller: z.infer<typeof updateSellerSchema>) {
   try {
     await db
@@ -96,7 +97,7 @@ export async function getSellerById(sellerId: string) {
   return seller;
 }
 
-// DELETE
+// DELETE THE SELLER
 
 export async function deleteSeller(id: string) {
   try {
@@ -111,4 +112,34 @@ export async function deleteSeller(id: string) {
   }
 }
 
+export async function createCakeOrder(prevState: unknown, formData: FormData) {
+   const session = await auth();
+   if (!session) throw new Error("Sign in to create  your shop");
+  try {
+    const data = {
+      userId: session.user.id,
+      sellerId: session.user.id,
+      location: formData.get("location") as string,
+      phoneNumber: formData.get("phoneNumber") as string,
+      cakeSize: formData.get("cakeSize") as string,
+      cakeType: formData.get("cakeType") as string,
+      quantity: parseInt(formData.get("quantity") as string, 10),
+      customizations: formData.get("customizations") as string,
+    };
 
+    const validatedOrder = insertCakeOrderSchema.parse(data);
+    const values = {
+      ...validatedOrder,
+      userId: session.user.id || "",
+    };
+
+    await db.insert(cakeOrders).values(values);
+
+    return { success: true, message: "Order placed successfully" };
+  } catch (error) {
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : "Order creation failed",
+    };
+  }
+}
