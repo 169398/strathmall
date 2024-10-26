@@ -6,19 +6,26 @@ import { useToast } from "@/components/ui/use-toast";
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { FiLoader } from "react-icons/fi";
-import { deliveryTimes } from "@/lib/delivery-time"; // Import delivery times
+import { deliveryTimes } from "@/lib/delivery-time";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@radix-ui/react-popover";
 
 interface OrderFormProps {
   productId: string;
   sellerId: string;
-  cakeName: string; 
+  cakeName: string;
   cakeImage: string;
 }
 
 const OrderForm: React.FC<OrderFormProps> = ({
   productId,
   sellerId,
-  cakeName, // Destructure cakeName from props
+  cakeName,
   cakeImage,
 }) => {
   const { toast } = useToast();
@@ -29,10 +36,10 @@ const OrderForm: React.FC<OrderFormProps> = ({
     cakeSize: cakeSizes[0].value,
     cakeType: "egg",
     customizations: "",
-    deliveryDate: "", // Add deliveryDate
-    deliveryTime: deliveryTimes[0], // Add deliveryTime with default value
+    deliveryDate: new Date(), // Use Date object
+    deliveryTime: deliveryTimes[0],
   });
-  const [isSubmitting, setIsSubmitting] = useState(false); // State to manage submission
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleInputChange = (
     e: React.ChangeEvent<
@@ -43,15 +50,22 @@ const OrderForm: React.FC<OrderFormProps> = ({
     setOrderDetails((prevDetails) => ({ ...prevDetails, [name]: value }));
   };
 
+  const handleDateChange = (date: Date) => {
+    setOrderDetails((prevDetails) => ({ ...prevDetails, deliveryDate: date }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true); // Start submission
+    setIsSubmitting(true);
     const formData = new FormData();
-    formData.append("sellerId", sellerId); // Include sellerId in formData
-    formData.append("cakeName", cakeName); // Append cakeName from props
-    formData.append("cakeImage", cakeImage); // Append cakeImage from props
+    formData.append("sellerId", sellerId);
+    formData.append("cakeName", cakeName);
+    formData.append("cakeImage", cakeImage);
     Object.entries(orderDetails).forEach(([key, value]) => {
-      formData.append(key, value as string);
+      formData.append(
+        key,
+        value instanceof Date ? value.toISOString() : (value as string)
+      );
     });
     formData.append("productId", productId);
 
@@ -70,9 +84,9 @@ const OrderForm: React.FC<OrderFormProps> = ({
           cakeSize: cakeSizes[0].value,
           cakeType: "egg",
           customizations: "",
-          deliveryDate: "",
+          deliveryDate: new Date(),
           deliveryTime: deliveryTimes[0],
-        }); // Clear form on success
+        });
       } else {
         toast({
           title: "Order Failed",
@@ -88,7 +102,7 @@ const OrderForm: React.FC<OrderFormProps> = ({
         variant: "destructive",
       });
     } finally {
-      setIsSubmitting(false); // End submission
+      setIsSubmitting(false);
     }
   };
 
@@ -102,6 +116,7 @@ const OrderForm: React.FC<OrderFormProps> = ({
           value={orderDetails.location}
           onChange={handleInputChange}
           className="border p-2 w-full"
+          placeholder="i.e. Langata Road, Estate name ,Appartment name"
           required
         />
       </label>
@@ -113,6 +128,7 @@ const OrderForm: React.FC<OrderFormProps> = ({
           value={orderDetails.phoneNumber}
           onChange={handleInputChange}
           className="border p-2 w-full"
+          placeholder="i.e. 0712345678"
           required
         />
       </label>
@@ -140,7 +156,6 @@ const OrderForm: React.FC<OrderFormProps> = ({
           className="border p-2 w-full"
         >
           <option value="egg">Egg</option>
-          {/* Add more cake types if needed */}
         </select>
       </label>
       <label>
@@ -162,20 +177,30 @@ const OrderForm: React.FC<OrderFormProps> = ({
           value={orderDetails.customizations}
           onChange={handleInputChange}
           className="border p-2 w-full"
+          placeholder="i.e. Add a message to the cake or any special instructions"
         />
       </label>
 
       {/* New Delivery Date Field */}
       <label>
         Delivery Date:
-        <input
-          type="date"
-          name="deliveryDate"
-          value={orderDetails.deliveryDate}
-          onChange={handleInputChange}
-          className="border p-2 w-full"
-          required
-        />
+        <Popover>
+          <PopoverTrigger asChild>
+            <button className="bg-white border p-2 rounded w-full text-left">
+              {orderDetails.deliveryDate
+                ? orderDetails.deliveryDate.toLocaleDateString()
+                : "Select Date"}
+            </button>
+          </PopoverTrigger>
+          <PopoverContent className="p-2 bg-white shadow rounded-md">
+            <DatePicker
+              selected={orderDetails.deliveryDate}
+              onChange={(date: Date | null) => handleDateChange(date as Date)}
+              minDate={new Date()}
+              inline
+            />
+          </PopoverContent>
+        </Popover>
       </label>
 
       {/* New Delivery Time Field */}
