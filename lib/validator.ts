@@ -10,6 +10,7 @@ import {
   reviews,
 } from "@/db/schema";
 import { towns } from "./address";
+import { deliveryTimes } from "./delivery-time";
 
 // USER
 export const signInFormSchema = z.object({
@@ -204,9 +205,11 @@ export const insertCakeOrderSchema = z.object({
   cakeType: z.enum(["egg",]),
   quantity: z.number().min(1, "Quantity must be at least 1"),
   customizations: z.string().optional(),
- 
+  cakeName: z.string().min(1, "Cake name is required"),
+  cakeImage: z.string().min(1, "Cake image is required"),
+  deliveryTime: z.enum(deliveryTimes as [string, ...string[]]),
+  deliveryDate: z.string().min(1, "Delivery date is required"),
 });
-
 
 export const feeResultSchema = z.object({
   id: z.string(),

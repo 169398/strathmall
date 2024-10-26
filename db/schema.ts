@@ -305,12 +305,16 @@ export const cakeOrders = pgTable("cake_orders", {
     .references(() => users.id, { onDelete: "cascade" }),
   location: text("location").notNull(),
   phoneNumber: text("phoneNumber").notNull(),
+  cakeName: text("cakeName").notNull(),
   cakeSize: text("cakeSize").notNull(),
   cakeType: text("cakeType").notNull(),
   quantity: integer("quantity").notNull().default(1),
   customizations: text("customizations"),
 
   createdAt: timestamp("createdAt").notNull().defaultNow(),
+  cakeImage: text("cakeImage").notNull(),
+  deliveryTime: text("deliveryTime").notNull(),
+  deliveryDate: text("deliveryDate").notNull(),
 });
 export const ordersRelations = relations(
   orders,

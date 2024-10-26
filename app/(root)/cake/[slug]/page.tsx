@@ -119,7 +119,12 @@ const CakeDetails = async ({
                   )}
                 </div>
                 {product.stock !== 0 && (
-                  <OrderForm />
+                  <OrderForm
+                    productId={product.id}
+                    sellerId={product.sellerId}
+                    cakeName={product.name}
+                    cakeImage={product.images[0]}
+                  />
                 )}
               </CardContent>
             </Card>
