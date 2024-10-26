@@ -87,6 +87,8 @@ const OrderForm: React.FC<OrderFormProps> = ({
           deliveryDate: new Date(),
           deliveryTime: deliveryTimes[0],
         });
+        // Revalidate the user to /bakery on success
+        window.location.href = "/bakery";
       } else {
         toast({
           title: "Order Failed",

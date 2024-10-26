@@ -204,7 +204,7 @@ export async function createCakeOrder(prevState: unknown, formData: FormData) {
           columns: { name: true, email: true },
         }),
         tx.query.sellers.findFirst({
-          where: (sellers, { eq }) => eq(sellers.userId, sellerId), // Changed from sellers.id to sellers.userId
+          where: (sellers, { eq }) => eq(sellers.userId, sellerId),
           columns: { email: true, shopName: true },
         }),
       ]);
@@ -234,7 +234,7 @@ export async function createCakeOrder(prevState: unknown, formData: FormData) {
       });
 
       // Revalidate the order page (if using Next.js ISR)
-      revalidatePath(`/order/${order.id}`);
+      revalidatePath(`/bakery`);
 
       return { success: true, message: "Order placed successfully" };
     });
