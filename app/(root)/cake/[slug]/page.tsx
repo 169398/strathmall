@@ -49,54 +49,21 @@ const CakeDetails = async ({
 
   return (
     <>
-      <section>
-        <div className="grid grid-cols-1 md:grid-cols-5">
-          <div className="col-span-2">
+      <section className="container mx-auto px-4 py-8">
+        {/* Top Section: Image & Order Form */}
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Left Column: Cake Image */}
+          <div className="lg:w-1/3  rounded-sm" >
             <ProductImages images={product.images!} />
           </div>
 
-          <div className="col-span-2 flex flex-col w-full gap-8 p-5">
-            <div className="flex flex-col gap-6">
-              
-              <h1 className="h3-bold">{product.name}</h1>
-              <Rating
-                value={Number(product.rating)}
-                caption={`${product.numReviews} reviews`}
-              />
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-                <div className="flex gap-3">
-                  {discountedPrice ? (
-                    <>
-                      <ProductPrice
-                        value={discountedPrice}
-                        className="p-bold-20 rounded-full bg-green-500/10 px-5 py-2 text-green-700"
-                      />
-                      <ProductPrice
-                        value={Number(product.price)}
-                        className="p-medium-16 line-through text-red-500"
-                      />
-                    </>
-                  ) : (
-                    <ProductPrice
-                      value={Number(product.price)}
-                      className="p-bold-20 rounded-full bg-green-500/10 px-5 py-2 text-green-700"
-                    />
-                  )}
-                </div>
-              </div>
-            </div>
-            <div>
-              <p>Description:</p>
-              <p>{product.description}</p>
-            </div>
-          </div>
-
-          <div>
+          {/* Right Column: Order Form */}
+          <div className="lg:w-2/3">
             <Card>
-              <CardContent className="p-4">
-                <div className="mb-2 flex justify-between">
-                  <div>Price</div>
-                  <div>
+              <CardContent className="p-6">
+                <div className="mb-4">
+                  <div className="text-lg font-semibold">Price</div>
+                  <div className="mt-1">
                     {discountedPrice ? (
                       <>
                         <ProductPrice value={discountedPrice} />
@@ -110,8 +77,8 @@ const CakeDetails = async ({
                     )}
                   </div>
                 </div>
-                <div className="mb-2 flex justify-between">
-                  <div>Status</div>
+                <div className="mb-4">
+                  <div className="text-lg font-semibold">Status</div>
                   {product.stock > 0 ? (
                     <p className="text-green-600">Available</p>
                   ) : (
@@ -119,18 +86,58 @@ const CakeDetails = async ({
                   )}
                 </div>
                 {product.stock !== 0 && (
-                  <OrderForm />
+                  <OrderForm
+                    productId={product.id}
+                    sellerId={product.sellerId}
+                    cakeName={product.name}
+                    cakeImage={product.images[0]}
+                  />
                 )}
               </CardContent>
             </Card>
           </div>
         </div>
+
+        {/* Bottom Section: Cake Details */}
+        <div className="mt-8">
+          <h1 className="text-3xl font-bold">{product.name}</h1>
+          <Rating
+            value={Number(product.rating)}
+            caption={`${product.numReviews} reviews`}
+          />
+          <div className="mt-4">
+            <div className="flex items-center gap-3">
+              {discountedPrice ? (
+                <>
+                  <ProductPrice
+                    value={discountedPrice}
+                    className="text-green-700 font-bold text-2xl"
+                  />
+                  <ProductPrice
+                    value={Number(product.price)}
+                    className="text-red-500 line-through"
+                  />
+                </>
+              ) : (
+                <ProductPrice
+                  value={Number(product.price)}
+                  className="text-green-700 font-bold text-2xl"
+                />
+              )}
+            </div>
+          </div>
+          <div className="mt-6">
+            <h2 className="text-xl font-semibold mb-2">Description:</h2>
+            <p className="text-gray-700">{product.description}</p>
+          </div>
+        </div>
       </section>
 
+      {/* Related Products Section */}
       {Array.isArray(relatedProducts) && relatedProducts.length > 0 && (
-        <section className="py-8">
-          <h2 className="mb-4 text-2xl font-bold">Related Products</h2>
-          <ul className="flex w-full gap-4 overflow-x-auto pt-1">
+        <section className="container mx-auto px-4 py-8">
+          <h2 className="mb-6 text-2xl font-bold">Related Products</h2>
+          <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
             {relatedProducts.map((relatedProduct) => {
               const relatedDiscountedPrice =
                 relatedProduct.discount && Number(relatedProduct.discount) > 0
@@ -140,41 +147,36 @@ const CakeDetails = async ({
                     )
                   : null;
               return (
-                <li
-                  key={relatedProduct.id}
-                  className="aspect-square w-full flex-none min-[475px]:w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5"
-                >
+                <li key={relatedProduct.id} className="flex flex-col">
                   <Link
-                    className="relative h-full w-full"
+                    className="relative h-48 w-full"
                     href={`/product/${relatedProduct.slug}`}
                   >
-                    <div className="relative h-full w-full">
-                      <Image
-                        src={relatedProduct.images[0]}
-                        alt={relatedProduct.name}
-                        className="h-full w-full object-cover rounded-lg"
-                        fill
-                        sizes="(min-width: 1024px) 20vw, (min-width: 768px) 25vw, (min-width: 640px) 33vw, (min-width: 475px) 50vw, 100vw"
-                      />
-                      <div className="absolute bottom-0 left-0 p-2 bg-black bg-opacity-50 text-white">
-                        <p className="text-sm font-semibold">
-                          {relatedProduct.name}
-                        </p>
-                        {relatedDiscountedPrice ? (
-                          <>
-                            <p className="text-sm">
-                              Ksh {relatedDiscountedPrice}
-                            </p>
-                            <p className="text-sm line-through text-red-500">
-                              Ksh {round2(relatedProduct.price)}
-                            </p>
-                          </>
-                        ) : (
+                    <Image
+                      src={relatedProduct.images[0]}
+                      alt={relatedProduct.name}
+                      className="h-full w-full object-cover rounded-sm"
+                      fill
+                      sizes="(min-width: 1024px) 20vw, (min-width: 768px) 25vw, (min-width: 640px) 33vw, (min-width: 475px) 50vw, 100vw"
+                    />
+                    <div className="absolute bottom-0 left-0 p-2 bg-black bg-opacity-50 text-white w-full">
+                      <p className="text-sm font-semibold truncate">
+                        {relatedProduct.name}
+                      </p>
+                      {relatedDiscountedPrice ? (
+                        <>
                           <p className="text-sm">
+                            Ksh {relatedDiscountedPrice}
+                          </p>
+                          <p className="text-sm line-through text-red-500">
                             Ksh {round2(relatedProduct.price)}
                           </p>
-                        )}
-                      </div>
+                        </>
+                      ) : (
+                        <p className="text-sm">
+                          Ksh {round2(relatedProduct.price)}
+                        </p>
+                      )}
                     </div>
                   </Link>
                 </li>
