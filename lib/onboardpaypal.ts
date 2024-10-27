@@ -4,7 +4,7 @@ export const paypal = {
   createOrder: async function createOrder() {
     // Conversion rate from KES to USD, ensure it's up-to-date
     const totalAmount = 1000;
-    const conversionRate = 0.0074477; 
+    const conversionRate = 0.0074132; 
     const convertedPrice = (totalAmount * conversionRate).toFixed(2);
 console.log(`Converted Price: ${convertedPrice}`);
 
