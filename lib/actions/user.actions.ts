@@ -135,7 +135,6 @@ export const requestPasswordReset = async (formData: FormData) => {
     // Generate a reset token
     const resetToken = crypto.randomUUID();
     const expiresAt = addMinutes(new Date(), 60); 
-console.log(resetToken)
     await db
       .update(users)
       .set({ resetToken, resetTokenExpires: expiresAt }) 

@@ -197,7 +197,6 @@ export const updateOrderToPaid = async ({
   orderId: string;
   feeResult?: feeResult;
 }) => {
-  console.log("Processing payment for order:", orderId);
 
   // First, validate the order
   const order = await db.query.feeorders.findFirst({
