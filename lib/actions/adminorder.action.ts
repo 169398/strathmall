@@ -35,11 +35,9 @@ export async function getOrderById(orderId: string) {
     });
 
     if (!order) {
-      console.log(`Order ${orderId} not found.`);
       return null;
     }
 
-    console.log(order);
     return order;
   } catch (error) {
     console.error(`Error fetching order:`, error);

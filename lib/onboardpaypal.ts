@@ -6,7 +6,6 @@ export const paypal = {
     const totalAmount = 1000;
     const conversionRate = 0.0074132; 
     const convertedPrice = (totalAmount * conversionRate).toFixed(2);
-console.log(`Converted Price: ${convertedPrice}`);
 
     try {
       const accessToken = await generateAccessToken();
