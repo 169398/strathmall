@@ -112,7 +112,6 @@ export async function removeProductFromFavorites(productId: string) {
       .where(
         and(eq(favorites.userId, userId), eq(favorites.productId, productId))
       );
-    console.log("productId", productId);
 
     revalidatePath("/favorites");
     return {
@@ -489,7 +488,6 @@ export async function getHomePageData() {
     if (cachedData) {
       try {
         const parsedData = JSON.parse(cachedData as string);
-        console.log("Parsed cached data:", parsedData);
         return parsedData;
       } catch (parseError) {
         console.error("Error parsing cached homepage data:", parseError);

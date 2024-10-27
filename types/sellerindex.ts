@@ -1,4 +1,4 @@
-import { carts,   reviews, orderItems, orders, products, sellers, users } from "@/db/schema";
+import { carts,   reviews, orderItems, orders, products, sellers, users, cakeOrders } from "@/db/schema";
 import {
   cartItemSchema,
   paymentResultSchema,
@@ -27,6 +27,10 @@ export type order = InferSelectModel<typeof orders> & {
   orderItems: orderItem[];
   user: { name: string | null; email: string };
 };
+
+export type BakeryOrder = InferSelectModel<typeof cakeOrders> & {
+  user: { name: string | null; email: string };
+}
 export type orderItem = InferSelectModel<typeof orderItems>;
 
 // SELLER

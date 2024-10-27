@@ -6,14 +6,14 @@ import { insertFeeOrderSchema } from "../validator";
 import db from "@/db/drizzle";
 
 import { eq,  and } from "drizzle-orm";
-import { isRedirectError, redirect } from "next/dist/client/components/redirect";
+import { isRedirectError,} from "next/dist/client/components/redirect";
 import { formatError } from "../utils";
 import { revalidatePath } from "next/cache";
-import {  feeorderItems, feeorders, users,  } from "@/db/schema";
+import {  feeorderItems, feeorders,  users,  } from "@/db/schema";
 import { feeResult } from "@/types";
 import { sendPurchaseReceipt } from "@/emailonboard";
 import { paypal } from "../onboardpaypal";
-import { toast } from "@/components/ui/use-toast";
+
 
 
 
@@ -137,8 +137,6 @@ export async function approvePayPalOrder(
   orderId: string,
   data: { orderID: string }
 ) {
-  console.log('Approved PayPal order id:', orderId);
-
   try {
     const order = await db.query.feeorders.findFirst({
       where: eq(feeorders.id, orderId),
@@ -153,19 +151,11 @@ export async function approvePayPalOrder(
     ) {
       // Payment unsuccessful, delete the order
       await deleteFeeOrder(orderId, order.sellerId);
-
-      // Show a user-friendly error toast
-      toast({
-        title: "Error",
-        description: "Payment unsuccessful",
-      });
-
-      // Redirect to /onboard after a short delay
-      setTimeout(() => {
-        redirect("/onboard");
-      }, 1000);
-
-      return { success: false, message: "Payment unsuccessful, order deleted." }; // Stop further execution
+      return { 
+        success: false, 
+        message: "Payment unsuccessful, order deleted.",
+        redirect: "/onboard"
+      };
     }
 
     await updateOrderToPaid({
@@ -181,30 +171,19 @@ export async function approvePayPalOrder(
 
     revalidatePath("/");
 
-    toast({
-      title: "Payment successful",
-      description: "Your order has been successfully paid by PayPal",
-    });
-    setTimeout(() => {
-      redirect("/");
-    }, 1000);
-
     return {
       success: true,
       message: "Your order has been successfully paid by PayPal",
+      redirect: "/"
     };
   } catch (err) {
-    console.error("Payment approval error:", err);
-
-    toast({
-      title: "Error",
-      description: "An unexpected error occurred. Please try again.",
-    });
-
-    return { success: false, message: "An unexpected error occurred." };
+    return { 
+      success: false, 
+      message: "An unexpected error occurred.",
+      error: formatError(err)
+    };
   }
 }
-
 export const handleDeleteOrder = async (id: string) => {
   const session = await auth();
   const sellerId = session?.user.id || "";
@@ -218,18 +197,19 @@ export const updateOrderToPaid = async ({
   orderId: string;
   feeResult?: feeResult;
 }) => {
-  console.log("order id", orderId);
 
+  // First, validate the order
   const order = await db.query.feeorders.findFirst({
     columns: { isPaid: true, userId: true },
     where: and(eq(feeorders.id, orderId)),
-    with: { feeorderItems: true },
   });
 
   if (!order) throw new Error("Order not found");
   if (order.isPaid) throw new Error("Order is already paid");
 
+  // Use a transaction to ensure all updates succeed or fail together
   await db.transaction(async (tx) => {
+    // 1. Mark the order as paid
     await tx
       .update(feeorders)
       .set({
@@ -239,38 +219,37 @@ export const updateOrderToPaid = async ({
       })
       .where(eq(feeorders.id, orderId));
 
-    // Update the user's role to seller
+    // 2. Upgrade user to seller role
     await tx
       .update(users)
       .set({ role: "seller" })
       .where(eq(users.id, order.userId));
   });
 
-  const updatedOrder = await db.query.feeorders.findFirst({
-    where: eq(feeorders.id, orderId),
-    with: {
-      feeorderItems: true,
-      user: { columns: { name: true, email: true } },
-    },
-  });
+  // After successful transaction, send confirmation email
+  const [updatedOrder, seller] = await Promise.all([
+    db.query.feeorders.findFirst({
+      where: eq(feeorders.id, orderId),
+      with: {
+        feeorderItems: true,
+        user: { columns: { name: true, email: true } },
+      },
+    }),
+    db.query.sellers.findFirst({
+      where: (sellers, { eq }) => eq(sellers.userId, order.userId),
+    }),
+  ]);
 
-  if (!updatedOrder) {
-    throw new Error("Order not found");
-  }
-
-  const queriedSeller = await db.query.sellers.findFirst({
-    where: (sellers, { eq }) => eq(sellers.id, updatedOrder.sellerId),
-  });
-
-  if (!queriedSeller) {
-    throw new Error("Seller not found");
+  if (!updatedOrder || !seller) {
+    throw new Error("Failed to retrieve updated order or seller details");
   }
 
   await sendPurchaseReceipt({
     order: updatedOrder,
-    seller: queriedSeller,
+    seller,
   });
 };
+
 export async function updateOrderToPaidByCOD(orderId: string) {
   try {
     await updateOrderToPaid({ orderId });
@@ -280,5 +259,6 @@ export async function updateOrderToPaidByCOD(orderId: string) {
     return { success: false, message: formatError(err) };
   }
 }
+
 
 

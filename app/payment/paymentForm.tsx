@@ -68,17 +68,22 @@ export default function PaymentForm({
 
       if (res?.success) {
         toast({
-          description: "Payment approved successfully!",
+          description: res.message || "Payment approved successfully!",
           variant: "default",
         });
+        // Wait for toast to show before redirecting
+        setTimeout(() => {
+          window.location.href = res.redirect || "/";
+        }, 2000);
       } else {
         toast({
-          description: res?.message || "Failed to approve PayPal order. Please try again.",
+          description: res.message || "Failed to approve PayPal order.",
           variant: "destructive",
         });
+        // Wait for toast to show before redirecting
         setTimeout(() => {
-          window.location.href = "/onboard"; // Redirect to onboard page
-        }, 1000);
+          window.location.href = res.redirect || "/onboard";
+        }, 2000);
       }
     } catch (error) {
       toast({
@@ -86,8 +91,8 @@ export default function PaymentForm({
         variant: "destructive",
       });
       setTimeout(() => {
-        window.location.href = "/onboard"; // Redirect to onboard page
-      }, 1000);
+        window.location.href = "/onboard";
+      }, 2000);
     }
   };
 
