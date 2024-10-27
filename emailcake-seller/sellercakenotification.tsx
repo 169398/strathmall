@@ -207,12 +207,7 @@ export default function Component(
                     >
                       Terms of Service
                     </Link>
-                    <Link
-                      href="tel:0714594345"
-                      className="text-blue-200 hover:text-white transition-colors"
-                    >
-                      Support: 0714594345
-                    </Link>
+                   
                   </div>
                 </div>
               </Container>
