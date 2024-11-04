@@ -71,7 +71,7 @@ export default function ReviewList({
       const res = await getReviews({ productId, page: 1 })
       setReviews([...res.data])
       setTotalPages(res.totalPages)
-    } catch (err) {
+    } catch {
       toast({
         variant: 'destructive',
         description: 'Error in fetching reviews',

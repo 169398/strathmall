@@ -1,34 +1,29 @@
-import { Metadata } from 'next'
-import Image from 'next/image'
-import Link from 'next/link'
-import { redirect } from 'next/navigation'
-
-import { auth } from '@/auth'
+import { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { auth } from "@/auth";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
-import { APP_NAME } from '@/lib/constants'
-
-import CredentialsSignInForm from './credentials-signin-form'
+} from "@/components/ui/card";
+import { APP_NAME } from "@/lib/constants";
+import CredentialsSignInForm from "./credentials-signin-form";
+import { SignInPageProps } from "./types";
 
 export const metadata: Metadata = {
   title: `Sign In - ${APP_NAME}`,
-}
+};
 
-export default async function SignIn({
-  searchParams: { callbackUrl },
-}: {
-  searchParams: {
-    callbackUrl: string
-  }
-}) {
-  const session = await auth()
+export default async function SignIn({ searchParams }: SignInPageProps) {
+  const session = await auth();
+  const callbackUrl = searchParams.callbackUrl;
+
   if (session) {
-    return redirect(callbackUrl || '/')
+    return redirect(callbackUrl || "/");
   }
 
   return (
@@ -45,15 +40,13 @@ export default async function SignIn({
           </Link>
           <CardTitle className="text-center">Welcome Back</CardTitle>
           <CardDescription className="text-center">
-             Sign in to your account
+            Sign in to your account
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          {/* <GoogleSignInForm /> */}
-          {/* <EmailSigninForm /> */}
           <CredentialsSignInForm />
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

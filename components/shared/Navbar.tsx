@@ -7,12 +7,10 @@ import UserButton from "./header/user-button";
 import MobileNav from "./MobileNav";
 import Search from "./header/search";
 import Header from "./header";
-import { auth } from "@/auth";
 import FavoriteProductsSheet from "./product/favoriteProducts";
-
+import { auth } from "@/auth";
 export default async function Navbar() {
   const session = await auth();
-
   return (
     <div className="sticky top-0 inset-x-0 z-50 bg-white shadow-md">
       <header className="relative bg-white">
@@ -72,9 +70,7 @@ export default async function Navbar() {
                       </Link>
                     </>
                   )}
-                  <div className="h-12 w-12 flex items-center justify-center">
-                    <CartButton />
-                  </div>
+                  <CartButton />
                 </div>
               </div>
             </div>

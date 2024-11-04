@@ -72,7 +72,7 @@ const OnboardingForm = () => {
         });
         router.push("/onboard");
       }
-    } catch (error) {
+    } catch {
       toast({
         variant: "destructive",
         description: "An error occurred while creating the seller.",
