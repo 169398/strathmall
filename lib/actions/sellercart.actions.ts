@@ -27,7 +27,7 @@ const calcPrice = (items: cartItem[], townName: string) => {
 
 export const addItemToCart = async (data: cartItem, townName: string) => {
   try {
-    const sessionCartId = cookies().get("sessionCartId")?.value;
+    const sessionCartId = (await cookies()).get("sessionCartId")?.value;
     if (!sessionCartId) throw new Error("Cart Session not found");
 
     const session = await auth();
@@ -90,7 +90,7 @@ export const addItemToCart = async (data: cartItem, townName: string) => {
 };
 
 export async function getMyCart() {
-  const sessionCartId = cookies().get("sessionCartId")?.value;
+  const sessionCartId =  (await cookies()).get("sessionCartId")?.value;
   if (!sessionCartId) return undefined;
 
   const session = await auth();
@@ -110,7 +110,7 @@ export const removeItemFromCart = async (
   townName: string
 ) => {
   try {
-    const sessionCartId = cookies().get("sessionCartId")?.value;
+    const sessionCartId = (await cookies()).get("sessionCartId")?.value;
     if (!sessionCartId) throw new Error("Cart Session not found");
 
     const product = await db.query.products.findFirst({

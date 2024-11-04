@@ -53,7 +53,7 @@ export default function FeedbackModal() {
       } else {
         setError("Sign in to submit your feedback.");
       }
-    } catch (error) {
+    } catch {
       setError("An error occurred while submitting feedback.");
     } finally {
       setIsSubmitting(false);
