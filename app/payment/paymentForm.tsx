@@ -1,4 +1,3 @@
-"use client";
 
 import {
   PayPalButtons,
@@ -53,9 +52,9 @@ export default function PaymentForm({
       }
 
       return paypalOrderId; // Return PayPal's order ID
-    } catch (error: any) {
+    } catch {
       toast({
-        description: error.message || "Failed to create PayPal order.",
+        description: "Failed to create PayPal order.",
         variant: "destructive",
       });
       return null;
@@ -85,7 +84,7 @@ export default function PaymentForm({
           window.location.href = res.redirect || "/onboard";
         }, 2000);
       }
-    } catch (error) {
+    } catch {
       toast({
         description: "An unexpected error occurred. Please try again.",
         variant: "destructive",
