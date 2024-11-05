@@ -66,6 +66,10 @@ const WelcomeSellerPage = () => {
                 Khoja stage, 1st floor, room M22. Make sure to bring the
                 products there within 24 hours for timely delivery
               </p>
+              <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded relative" role="alert">
+                <strong className="font-bold">Notice! </strong>
+                <span className="block sm:inline">For bakery products, the seller will have the buyer&apos;s details and will make the delivery himself to the buyer.</span>
+              </div>
             </div>
             <div className="bg-white p-6 rounded shadow-md">
               <h3 className="text-2xl font-semibold mb-2">
