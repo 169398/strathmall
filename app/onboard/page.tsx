@@ -51,8 +51,7 @@ const WelcomeSellerPage = () => {
                 Access Your Dashboard 🛠️
               </h3>
               <p>
-                Once your payment is completed, you can access your seller
-                dashboard by clicking on your user profile and selecting{" "}
+                To access your seller dashboard, please make sure to<strong> LOGOUT first, then LOGIN again.</strong> After logging back in, click on your user profile and select{" "}
                 <strong>&quot;My Shop.&quot;</strong> This is where you can
                 manage your products and track orders
               </p>
@@ -66,6 +65,10 @@ const WelcomeSellerPage = () => {
                 Khoja stage, 1st floor, room M22. Make sure to bring the
                 products there within 24 hours for timely delivery
               </p>
+              <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded relative" role="alert">
+                <strong className="font-bold">Notice! </strong>
+                <span className="block sm:inline">For bakery products, the seller will have the buyer&apos;s details and will make the delivery himself to the buyer.</span>
+              </div>
             </div>
             <div className="bg-white p-6 rounded shadow-md">
               <h3 className="text-2xl font-semibold mb-2">

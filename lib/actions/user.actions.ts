@@ -48,18 +48,18 @@ try {
 
  
     await sendVerificationEmail({
-      name: "",
+      name: user.name ?? "",
       resetToken: "",
       resetTokenExpires: null,
       email: user.email ?? "",
-      password: null,
+      password: user.password ?? "",
       id: "",
       role: "",
       emailVerified: null,
       image: null,
       address: null,
-      paymentMethod: null,
-      createdAt: null,
+      paymentMethod:null,
+      createdAt: new Date(),
     });
 
     return { success: true, message: 'User created successfully. Please check your email for verification.' };
@@ -85,7 +85,10 @@ export async function signInWithCredentials(
       email: formData.get('email'),
       password: formData.get('password'),
     })
+        console.log("Attempting sign-in for:", user.email);
+
     await signIn('credentials', user)
+    console.log("Sign-in successful for:", user.email);
     return { success: true, message: 'Sign in successfully' }
   } catch (error) {
     if (isRedirectError(error)) {

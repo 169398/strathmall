@@ -2,6 +2,7 @@
 
 
 import { auth } from "@/auth";
+
 import {
   createSellerSchema,
   insertCakeOrderSchema,
@@ -10,7 +11,7 @@ import {
 } from "../validator";
 import { formatError } from "../utils";
 import db from "@/db/drizzle";
-import { cakeOrders, sellers,  } from "@/db/schema";
+import { cakeOrders, sellers, users,  } from "@/db/schema";
 import { z } from "zod";
 import { eq } from "drizzle-orm/sql";
 import { revalidatePath } from "next/cache";
@@ -31,7 +32,7 @@ export async function createSeller(prevState: unknown, formData: FormData) {
 
     const seller = createSellerSchema.parse(data);
     const session = await auth();
-    if (!session) throw new Error("Please sign in to place an order");
+    if (!session) throw new Error("Please sign in to create a shop");
     const existingSeller = await db.query.sellers.findFirst({
       where: (sellers, { eq }) => eq(sellers.email, seller.email),
     });
@@ -48,7 +49,15 @@ export async function createSeller(prevState: unknown, formData: FormData) {
       userId: session.user.id || "",
       ...seller,
     };
-    await db.insert(sellers).values(values);
+    // eslint-disable-next-line no-unused-vars
+    await db.transaction(async (tx) => {
+      await db.insert(sellers).values(values);
+ await db
+   .update(users)
+   .set({ role: "seller" })
+   .where(eq(users.id, values.userId));
+ console.log("User role updated successfully");
+    });
 
 //send email to seller
 const queriedSeller = await db.query.sellers.findFirst({
@@ -60,6 +69,9 @@ if (!queriedSeller){
 await sendCongratulatoryEmail({
   seller: queriedSeller,
 });
+
+
+   
 
     return { success: true, message: "Shop created successfully" };
   } catch (error) {
