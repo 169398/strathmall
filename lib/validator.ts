@@ -3,7 +3,7 @@ import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { formatNumberWithDecimal } from "./utils";
 import { PAYMENT_METHODS } from "./constants";
 import {
-  feeorderItems,
+ 
   orderItems,
   orders,
   products,
@@ -176,24 +176,7 @@ export const updateSellerSchema = createSellerSchema.extend({
   id: z.string().min(1, "Id is required"),
 });
 
-export const insertFeeOrderSchema = z.object({
-  userId: z.string().uuid(),
-  sellerId: z.string().uuid(),
-  paymentMethod: z.enum(["PayPal", "CreditCard", "DebitCard"]),
-  totalAmount: z.string(),
-  feeResult: z
-    .object({
-      id: z.string(),
-      status: z.string(),
-      email_address: z.string(),
-      totalAmount: z.string(),
-    })
-    .optional(),
-});
 
-export const insertfeeorderItemSchema = createInsertSchema(feeorderItems, {
-  totalAmount: z.number(),
-});
 export const insertCakeOrderSchema = z.object({
   userId: z.string().uuid(),
   sellerId: z.string().uuid(),

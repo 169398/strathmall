@@ -51,8 +51,7 @@ const WelcomeSellerPage = () => {
                 Access Your Dashboard 🛠️
               </h3>
               <p>
-                Once your payment is completed, you can access your seller
-                dashboard by clicking on your user profile and selecting{" "}
+                To access your seller dashboard, please make sure to<strong> LOGOUT first, then LOGIN again.</strong> After logging back in, click on your user profile and select{" "}
                 <strong>&quot;My Shop.&quot;</strong> This is where you can
                 manage your products and track orders
               </p>

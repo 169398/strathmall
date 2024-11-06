@@ -69,43 +69,61 @@ export const config = {
     jwt: async ({ token, user, trigger, session }: any) => {
       if (user) {
         if (user.name === 'NO_NAME') {
-          token.name = user.email!.split('@')[0]
+          token.name = user.email!.split('@')[0];
           await db
             .update(users)
-            .set({
-              name: token.name,
-            })
-            .where(eq(users.id, user.id))
+            .set({ name: token.name })
+            .where(eq(users.id, user.id));
         }
 
-        token.role = user.role
+        token.role = user.role;
+
         if (trigger === 'signIn' || trigger === 'signUp') {
-          const sessionCartId = (await cookies()).get('sessionCartId')?.value
-          if (!sessionCartId) throw new Error('Session Cart Not Found')
-          const sessionCartExists = await db.query.carts.findFirst({
-            where: eq(carts.sessionCartId, sessionCartId),
-          })
-          if (sessionCartExists && !sessionCartExists.userId) {
-            const userCartExists = await db.query.carts.findFirst({
-              where: eq(carts.userId, user.id),
-            })
-            if (userCartExists) {
-              (await cookies()).set('beforeSigninSessionCartId', sessionCartId)
-              ;(await cookies()).set('sessionCartId', userCartExists.sessionCartId)
-            } else {
-              db.update(carts)
-                .set({ userId: user.id })
-                .where(eq(carts.id, sessionCartExists.id))
+          const sessionCartCookies = await cookies();
+          let sessionCartId = sessionCartCookies.get('sessionCartId')?.value;
+
+          if (sessionCartId) {
+            const sessionCartExists = await db.query.carts.findFirst({
+              where: eq(carts.sessionCartId, sessionCartId),
+            });
+
+            if (sessionCartExists && !sessionCartExists.userId) {
+              const userCartExists = await db.query.carts.findFirst({
+                where: eq(carts.userId, user.id),
+              });
+
+              if (userCartExists) {
+                sessionCartCookies.set('beforeSigninSessionCartId', sessionCartId);
+                sessionCartCookies.set('sessionCartId', userCartExists.sessionCartId);
+              } else {
+                await db.update(carts)
+                  .set({ userId: user.id })
+                  .where(eq(carts.id, sessionCartExists.id));
+              }
             }
+          } else {
+            // **New Behavior:** Create a new cart if sessionCartId doesn't exist
+            const newSessionCartId = crypto.randomUUID();
+            await db.insert(carts).values({
+              id: crypto.randomUUID(),
+              userId: user.id,
+              sessionCartId: newSessionCartId,
+              itemsPrice: "0",
+              shippingPrice: "0",
+              totalPrice: "0",  
+            });
+
+            // Set the new sessionCartId in cookies
+            sessionCartCookies.set('sessionCartId', newSessionCartId);
           }
         }
       }
 
       if (session?.user.name && trigger === 'update') {
-        token.name = session.user.name
+        token.name = session.user.name;
       }
 
-      return token
+      return token;
     },
     session: async ({ session, user, trigger, token }: any) => {
       session.user.id = token.sub
@@ -146,4 +164,3 @@ export const config = {
   },
 } satisfies NextAuthConfig
 export const { handlers, auth, signIn, signOut } = NextAuth(config)
-
