@@ -24,13 +24,25 @@ import { ArrowRight, Loader, Minus, Plus } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useTransition } from "react";
+import { useEffect, useTransition } from "react";
+import { useAccessibility } from "@/lib/context/AccessibilityContext";
 
 export default function CartForm({ cart }: { cart?: cart }) {
   const router = useRouter();
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
   const townName = towns[0].name;
+  const { isAccessibilityMode, speak } = useAccessibility();
+
+  useEffect(() => {
+    if (isAccessibilityMode) {
+      if (!cart || cart.items.length === 0) {
+        speak("Your cart is empty. Start shopping to add items.");
+      } else {
+        speak(`Your cart has ${cart.items.length} items. Total price is ${cart.totalPrice} shillings.`);
+      }
+    }
+  }, [isAccessibilityMode, cart]);
 
   const handleRemoveItem = async (productId: string) => {
     startTransition(async () => {

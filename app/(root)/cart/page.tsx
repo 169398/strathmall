@@ -6,6 +6,8 @@ export const metadata = {
   title: `Shopping Cart - ${APP_NAME}`,
 };
 
+export const dynamic = 'force-dynamic';
+
 export default async function CartPage() {
   const sellerCart = await getMyCart();
 
