@@ -19,6 +19,7 @@ import Image from "next/image";
 import HowItWorks from "./HowItWorks";
 import Cakes from "./CakeSection";
 import LastViewedCarousel from "./product/last-viewed-product";
+import { fireToolsConfetti } from "../ui/ToolsConfetti";
 
 const handleClick = () => {
   const duration = 5 * 1000;
@@ -51,6 +52,7 @@ interface HomeContentProps {
   latestProducts: any;
   allProducts: any;
   discountedProducts: any;
+  servicesData: any;
 }
 
 const HomeContent: React.FC<HomeContentProps> = ({
@@ -75,15 +77,32 @@ const HomeContent: React.FC<HomeContentProps> = ({
             <div className="mt-6 flex flex-col gap-4 sm:flex-row">
               <Link
                 href="/seller"
-                className={`${buttonVariants({
+                className={buttonVariants({
                   variant: "secondary",
-                })} text-base text-blue-500 bg-yellow-400 hover:bg-yellow-300`}
+                }) + " text-base text-blue-500 bg-yellow-400 hover:bg-yellow-300"}
               >
                 <SparklesText
                   onClick={handleClick}
                   text="🎉Start selling"
                   className="text-base text-blue-500"
                 />
+              </Link>
+              <Link
+                href="/services"
+                onClick={(e) => {
+                  e.preventDefault();
+                  fireToolsConfetti();
+                  setTimeout(() => {
+                    window.location.href = '/services';
+                  }, 500);
+                }}
+                className={buttonVariants({
+                  variant: "outline",
+                }) + " text-base text-blue-600 hover:bg-blue-50"}
+              >
+                <span className="flex items-center">
+                  🔧 Browse Services
+                </span>
               </Link>
             </div>
 
@@ -111,6 +130,7 @@ const HomeContent: React.FC<HomeContentProps> = ({
 
         <Electronics />
         <Watches />
+
         <DiscountProductList
           title="Discounted Products 💸"
           data={discountedProducts.data || []}

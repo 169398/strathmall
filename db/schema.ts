@@ -52,6 +52,14 @@ export const sellers = pgTable("sellerShop", {
   university: text("university").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   shopCategory: text("shopCategory").array().notNull(),
+  offersServices: boolean("offersServices").default(false).notNull(),
+  services: json("services").$type<{
+    name: string;
+    description: string;
+    price: number | null;
+    hasCustomPrice: boolean;
+    images: string[];
+  }[]>().default([]),
 });
 
 export const feedbacks = pgTable("feedbacks", {
