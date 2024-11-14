@@ -2,7 +2,7 @@
 
 import { desc } from "drizzle-orm";
 import db from "@/db/drizzle";
-import { favorites, lastViewedProducts, products } from "@/db/schema";
+import { favorites, lastViewedProducts, products, sellers, users } from "@/db/schema";
 import { and, asc, count, eq, ilike, sql } from "drizzle-orm/sql";
 import { PAGE_SIZE } from "../constants";
 import { revalidatePath } from "next/cache";
@@ -613,5 +613,29 @@ export async function getLastViewedProducts(userId: string, limit = 10) {
   } catch (error) {
     console.error("Error fetching last viewed products:", error);
     return { success: false, message: "Failed to fetch last viewed products" };
+  }
+}
+
+export async function getAllServices() {
+  try {
+    const sellersWithServices = await db
+      .select({
+        id: sellers.id,
+        shopName: sellers.shopName,
+        sellerName: users.name,
+        phoneNumber: sellers.phoneNumber,
+        services: sellers.services,
+      })
+      .from(sellers)
+      .innerJoin(users, eq(sellers.userId, users.id))
+      .where(eq(sellers.offersServices, true));
+
+    return {
+      success: true,
+      data: sellersWithServices,
+    };
+  } catch (error) {
+    console.error("Error fetching services:", error);
+    return { success: false, message: formatError(error) };
   }
 }

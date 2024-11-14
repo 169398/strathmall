@@ -28,6 +28,10 @@ export async function createSeller(prevState: unknown, formData: FormData) {
       phoneNumber: formData.get("phoneNumber"),
       university: formData.get("university"),
       shopCategory: formData.getAll("shopCategory"),
+      offersServices: formData.get("offersServices") === "true",
+      services: formData.get("services") 
+        ? JSON.parse(formData.get("services") as string)
+        : [],
     };
 
     const seller = createSellerSchema.parse(data);
@@ -261,5 +265,34 @@ export async function createCakeOrder(prevState: unknown, formData: FormData) {
       success: false,
       message: error instanceof Error ? error.message : "Order creation failed",
     };
+  }
+}
+
+// Add new function to update services
+export async function updateSellerServices(
+  sellerId: string,
+  services: {
+    name: string;
+    description: string;
+    price: number | null;
+    hasCustomPrice: boolean;
+    images: string[];
+  }[]
+) {
+  try {
+    await db
+      .update(sellers)
+      .set({
+        services: services,
+      })
+      .where(eq(sellers.id, sellerId));
+    
+    revalidatePath("/seller/services");
+    return {
+      success: true,
+      message: "Services updated successfully",
+    };
+  } catch (error) {
+    return { success: false, message: formatError(error) };
   }
 }

@@ -36,20 +36,40 @@ import Banner from "@/components/shared/Banner";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { ChevronDown, ChevronUp, Check } from "lucide-react";
+import { UploadButton } from "@/lib/uploadthing";
+import { Card } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 
 
 
 
 const OnboardingForm = () => {
-  // eslint-disable-next-line no-unused-vars
- 
+  const [offersServices, setOffersServices] = useState(false);
 
   const form = useForm<z.infer<typeof createSellerSchema>>({
     resolver: zodResolver(createSellerSchema),
+    defaultValues: {
+      offersServices: false,
+      services: [],
+    }
   });
   const { toast } = useToast();
   const router = useRouter();
   const[isOpen, setIsOpen]= useState(false);
+
+  const services = form.watch('services') || [];
+
+  const handleAddService = () => {
+    const currentServices = form.getValues('services') || [];
+    form.setValue('services', [...currentServices, {
+      name: "",
+      description: "",
+      price: null,
+      hasCustomPrice: false,
+      images: []
+    }]);
+  };
 
   async function onSubmit(values: z.infer<typeof createSellerSchema>) {
     const formData = new FormData();
@@ -59,6 +79,9 @@ const OnboardingForm = () => {
     formData.append("email", values.email);
     formData.append("phoneNumber", values.phoneNumber);
     formData.append("university", values.university);
+    formData.append("offersServices", String(values.offersServices));
+    formData.append("services", JSON.stringify(values.services));
+
     try {
       const res = await createSeller({}, formData);
       if (!res.success) {
@@ -72,7 +95,7 @@ const OnboardingForm = () => {
         });
         router.push("/onboard");
       }
-    } catch {
+    } catch (error) {
       toast({
         variant: "destructive",
         description: "An error occurred while creating the seller.",
@@ -233,6 +256,138 @@ const OnboardingForm = () => {
               )}
             />
 
+            <FormField
+              control={form.control}
+              name="offersServices"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Do you offer services?</FormLabel>
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={(checked) => {
+                        setOffersServices(checked as boolean);
+                        field.onChange(checked);
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {offersServices && (
+              <div className="space-y-4">
+                {services.map((service, index) => (
+                  <Card key={index} className="p-4">
+                    <FormField
+                      control={form.control}
+                      name={`services.${index}.name`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Service Name</FormLabel>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name={`services.${index}.description`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Description</FormLabel>
+                          <FormControl>
+                            <Textarea {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name={`services.${index}.hasCustomPrice`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Custom Price?</FormLabel>
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    {!service.hasCustomPrice && (
+                      <FormField
+                        control={form.control}
+                        name={`services.${index}.price`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Price</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="number" 
+                                {...field} 
+                                onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)}
+                                value={field.value || ''}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    )}
+
+                    <div className="mt-4">
+                      <FormLabel>Service Images</FormLabel>
+                      <div className="flex gap-2 flex-wrap">
+                        {service.images?.map((image, imgIndex) => (
+                          <Image
+                            key={imgIndex}
+                            src={image}
+                            alt="service image"
+                            width={100}
+                            height={100}
+                            className="object-cover rounded"
+                          />
+                        ))}
+                        <UploadButton
+                          endpoint="imageUploader"
+                          onClientUploadComplete={(res: any) => {
+                            const currentServices = form.getValues('services');
+                            const newServices = [...currentServices];
+                            newServices[index].images = [...(newServices[index].images || []), res[0].url];
+                            form.setValue('services', newServices);
+                          }}
+                          onUploadError={(error: Error) => {
+                            toast({
+                              variant: "destructive",
+                              description: `ERROR! ${error.message}`,
+                            });
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+
+                <Button
+                  type="button"
+                  onClick={handleAddService}
+                >
+                  Add Service
+                </Button>
+              </div>
+            )}
+
             {/*  agreement, and submit button */}
             <Button
               type="submit"
@@ -375,7 +530,6 @@ const OnboardingForm = () => {
       </div>
     </div>
   );
-
 
   const OnboardingPage = () => {
     return (
