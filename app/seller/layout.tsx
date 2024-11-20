@@ -9,7 +9,7 @@ export default async function AdminLayout({
   return (
     <>
       <div className="flex flex-col min-h-screen">
-        <div className="border-b bg-white">
+        <div className="border-b bg-white mt-20">
           <div className="flex h-16 items-center px-4">
             <div className="ml-auto flex items-center space-x-4">
             </div>
