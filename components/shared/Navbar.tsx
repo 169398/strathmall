@@ -17,8 +17,7 @@ export default async function Navbar() {
   const session = await auth();
   return (
     <NavbarWrapper>
-      
-      <div className="sticky top-0 z-50">
+      <div className="hidden lg:block sticky top-0 z-50">
         <AnnouncementBar />
       </div>
       <header className="relative bg-white">

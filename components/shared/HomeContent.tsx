@@ -19,6 +19,7 @@ import HowItWorks from "./HowItWorks";
 import Cakes from "./CakeSection";
 import LastViewedCarousel from "./product/last-viewed-product";
 import CommitmentBanner from "./CommitmentBanner";
+import AnnouncementBar from "@/components/shared/AnnouncementBar";
 
 const handleClick = () => {
   const duration = 5 * 1000;
@@ -60,7 +61,7 @@ const HomeContent: React.FC<HomeContentProps> = ({
   discountedProducts,
 }) => {
   return (
-    <div>
+    <div className="pt-[6rem]">
       <div className="bg-gradient-to-b   from-white to-blue-50">
         <MaxWidthWrapper>
           <div className="mx-auto flex max-w-3xl flex-col  items-center     py-20 text-center">
@@ -121,6 +122,11 @@ const HomeContent: React.FC<HomeContentProps> = ({
           </div>
         </MaxWidthWrapper>
       </div>
+      
+      <div className="lg:hidden mb-8">
+        <AnnouncementBar />
+      </div>
+      
       <CommitmentBanner />
       <HowItWorks />
 
