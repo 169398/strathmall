@@ -31,7 +31,8 @@ export default function Component() {
       <Alert variant="warning" className="rounded-none border-x-0 border-t-0">
         <AlertTriangle className="h-4 w-4 text-green-600" />
         <AlertDescription className="flex items-center text-green-600 justify-between">
-          Be wary of messages about delivery issues claiming to be from Strathmall.
+          Be wary of messages about delivery issues claiming to be from
+          Strathmall.
           <span className="text-primary text-green-600 hover:underline cursor-pointer">
             View
           </span>

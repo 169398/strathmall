@@ -22,14 +22,12 @@ import { round2 } from "@/lib/utils";
 import { getMyCart } from "@/lib/actions/sellercart.actions";
 import { Cart } from "@/types";
 
-
 const ProductCard = ({ product }: { product: product }) => {
   const { isAccessibilityMode, speak } = useAccessibility();
   const cardRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const [isHovered, setIsHovered] = useState(false);
-  const [cart, setCart] = useState<Cart
-    | undefined>(undefined);
+  const [cart, setCart] = useState<Cart | undefined>(undefined);
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const { data: session } = useSession();
   const userId = session?.user?.id;
@@ -51,6 +49,7 @@ const ProductCard = ({ product }: { product: product }) => {
   // Accessibility handlers
   useEffect(() => {
     if (isAccessibilityMode && cardRef.current) {
+      const element = cardRef.current;
       const handleFocus = () => {
         const priceText = isDiscounted
           ? `Original price ${product.price} shillings, discounted to ${discountedPrice} shillings`
@@ -62,12 +61,12 @@ const ProductCard = ({ product }: { product: product }) => {
         );
       };
 
-      cardRef.current.addEventListener("focus", handleFocus);
-      cardRef.current.addEventListener("mouseenter", handleFocus);
+      element.addEventListener("focus", handleFocus);
+      element.addEventListener("mouseenter", handleFocus);
 
       return () => {
-        cardRef.current?.removeEventListener("focus", handleFocus);
-        cardRef.current?.removeEventListener("mouseenter", handleFocus);
+        element.removeEventListener("focus", handleFocus);
+        element.removeEventListener("mouseenter", handleFocus);
       };
     }
   }, [isAccessibilityMode, product, speak, discountedPrice, isDiscounted]);
@@ -76,7 +75,6 @@ const ProductCard = ({ product }: { product: product }) => {
     if (userId) {
       await logProductView(userId, product.id);
     }
-    
   };
 
   return (
@@ -85,14 +83,14 @@ const ProductCard = ({ product }: { product: product }) => {
       tabIndex={0}
       role="article"
       aria-label={`Product: ${product.name}`}
-      className="group w-full max-w-sm sm:max-w-xs relative focus:outline-none focus:ring-2 focus:ring-primary"
+      className="group w-full max-w-[160px] sm:max-w-xs relative focus:outline-none focus:ring-2 focus:ring-primary"
       onMouseEnter={() => !isMobile && setIsHovered(true)}
       onMouseLeave={() => !isMobile && setIsHovered(false)}
       onClick={() => isMobile && setIsHovered(!isHovered)}
     >
       <Suspense
         fallback={
-          <div className="flex justify-center items-center h-[200px] sm:h-[300px] w-full bg-muted animate-pulse rounded">
+          <div className="flex justify-center items-center h-[160px] sm:h-[300px] w-full bg-muted animate-pulse rounded">
             <div className="aspect-square object-cover rounded" />
           </div>
         }
@@ -100,7 +98,7 @@ const ProductCard = ({ product }: { product: product }) => {
         <CardHeader className="p-1 relative">
           {/* Discount Badge */}
           {isDiscounted && (
-            <Badge className="absolute top-2 left-2 z-20 bg-red-600 text-white">
+            <Badge className="absolute top-1 left-1 z-20 bg-red-600 text-white text-xs sm:text-sm">
               {parseFloat(product.discount ?? "0").toFixed(0)}% OFF
             </Badge>
           )}
@@ -109,19 +107,19 @@ const ProductCard = ({ product }: { product: product }) => {
           <Button
             variant="secondary"
             size="sm"
-            className={`absolute bottom-4 left-4 z-20 transition-opacity duration-300 ${
+            className={`absolute bottom-2 left-2 z-20 transition-opacity duration-300 text-xs sm:text-sm ${
               isHovered ? "opacity-100" : "opacity-0"
             }`}
             onClick={() => router.push(`/quickview/product/${product.slug}`)}
             aria-label={`Quick view ${product.name}`}
           >
-            <Eye className="w-4 h-4 mr-2" />
+            <Eye className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
             Quick View
           </Button>
 
           {/* Favorite Button */}
           <div
-            className={`absolute top-2 right-2 z-20 transition-opacity duration-300 ${
+            className={`absolute top-1 right-1 z-20 transition-opacity duration-300 ${
               isHovered ? "opacity-100" : "opacity-0"
             }`}
           >
@@ -142,49 +140,55 @@ const ProductCard = ({ product }: { product: product }) => {
 
       <Suspense
         fallback={
-          <div className="p-2 sm:p-4 grid gap-1 sm:gap-4">
-            <Skeleton className="w-full h-6" />
-            <Skeleton className="w-full h-6" />
-            <Skeleton className="w-full h-6" />
+          <div className="p-2 grid gap-1">
+            <Skeleton className="w-full h-4 sm:h-6" />
+            <Skeleton className="w-full h-4 sm:h-6" />
+            <Skeleton className="w-full h-4 sm:h-6" />
           </div>
         }
       >
-        <CardContent className="p-3 grid gap-2 relative">
+        <CardContent className="p-2 sm:p-3 grid gap-1 sm:gap-2 relative">
           <Link
             href={`/product/${product.slug}`}
             onClick={handleProductView}
             className="group-hover:text-primary transition-colors"
           >
-            <h2 className="text-sm font-medium line-clamp-2">{product.name}</h2>
+            <h2 className="text-xs sm:text-sm font-medium line-clamp-2">
+              {product.name.length > (isMobile ? 20 : 30) ? `${product.name.slice(0, isMobile ? 20 : 30)}...` : product.name}
+            </h2>
           </Link>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-2">
             <Rating value={Number(product.rating)} />
-            <span className="text-xs text-muted-foreground">
+            <span className="text-[10px] sm:text-xs text-muted-foreground">
               {product.rating} ({product.numReviews} reviews)
             </span>
           </div>
 
-          <div className="flex items-baseline gap-2">
+          <div className="flex items-baseline gap-1 sm:gap-2">
             {isDiscounted && (
-              <span className="text-sm text-muted-foreground line-through">
+              <span className="text-xs sm:text-sm text-muted-foreground line-through">
                 Ksh {product.price}
               </span>
             )}
             <ProductPrice
               value={Number(discountedPrice)}
-              className="text-lg font-bold text-primary"
+              className="text-sm sm:text-lg font-bold text-primary"
             />
           </div>
 
           {product.stock <= 10 && product.stock > 0 && (
-            <p className="text-xs text-orange-500">Only {product.stock} left</p>
+            <p className="text-[10px] sm:text-xs text-orange-500">
+              Only {product.stock} left
+            </p>
           )}
           {product.stock === 0 && (
-            <p className="text-xs text-destructive">Out of Stock</p>
+            <p className="text-[10px] sm:text-xs text-destructive">
+              Out of Stock
+            </p>
           )}
 
-          <div className="absolute bottom-2 right-2">
+          <div className="absolute bottom-1 right-1 sm:bottom-2 sm:right-2">
             <AddToCart
               cart={cart}
               item={{

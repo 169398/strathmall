@@ -10,69 +10,61 @@ import { buttonVariants } from "../ui/button";
 import { auth } from "@/auth";
 
 export default async function MobileNav() {
-  const session = await auth(); // Fetch session server-side
-  const categories = await getAllCategories(); // Fetch categories server-side
+  const session = await auth();
+  const categories = await getAllCategories();
 
   return (
-    <div className="lg:hidden fixed inset-x-0 top-0 z-50 bg-white shadow-md">
-      <div className="flex flex-col items-center border-b border-gray-200 p-2">
-        {" "}
-        {/* Reduced padding */}
-        <div className="flex items-center justify-between w-full">
-          <Link href="/">
-            <Image
-              src="https://res.cloudinary.com/db0i0umxn/image/upload/v1728757714/logo_bxjyga.png"
-              alt="strathmall logo"
-              width={80} // Reduced logo size
-              height={80}
-              className="h-12 w-12" // Smaller logo dimensions
-            />
-          </Link>
-          <div className="flex items-center space-x-1">
-            {" "}
-            {/* Reduced space between icons */}
-            <FavoriteProductsSheet />
+    <div className="lg:hidden fixed inset-x-0 top-0 z-50">
+      {/* Top Bar */}
+      <div className="bg-white shadow-sm border-b transition-all duration-300 ease-in-out">
+        <div className="flex items-center justify-between px-4 h-14">
+          <div className="flex items-center gap-3">
+            <HoverDrawer categories={categories} />
+            <Link
+              href="/"
+              className="transition-transform duration-200 hover:scale-105 active:scale-95"
+            >
+              <Image
+                src="https://res.cloudinary.com/db0i0umxn/image/upload/v1728757714/logo_bxjyga.png"
+                alt="strathmall logo"
+                width={48}
+                height={48}
+                className="h-12 w-12"
+              />
+            </Link>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <div className="transition-transform duration-200 hover:scale-105 active:scale-95">
+              <FavoriteProductsSheet />
+            </div>
+
             {session ? (
-              <div className="h-6 w-6 flex items-center justify-center">
-                {" "}
-                {/* Smaller buttons */}
+              <div className="transition-transform duration-200 hover:scale-105 active:scale-95">
                 <UserButton />
               </div>
             ) : (
-              <>
-                <Link
-                  href="/sign-in"
-                  className={buttonVariants({
-                    variant: "secondary",
-                    className: "text-xs", // Smaller text for links
-                  })}
-                >
-                  Log in
-                </Link>
-                <span className="h-3 w-px bg-gray-200" aria-hidden="true" />{" "}
-                {/* Thinner separator */}
-                <Link
-                  href="/sign-up"
-                  className={buttonVariants({
-                    variant: "default",
-                    className: "text-xs", // Smaller text for links
-                  })}
-                >
-                  Sign up
-                </Link>
-              </>
+              <Link
+                href="/sign-in"
+                className={buttonVariants({
+                  variant: "ghost",
+                  size: "sm",
+                  className:
+                    "text-xs hover:bg-blue-50 text-blue-600 transition-colors duration-200",
+                })}
+              >
+                Sign in
+              </Link>
             )}
-            <div className="h-6 w-6 flex items-center justify-center">
-              {" "}
-              {/* Smaller cart button */}
+
+            <div className="transition-transform duration-200 hover:scale-105 active:scale-95">
               <CartButton />
             </div>
           </div>
         </div>
-        <div className="flex items-center w-full mt-1 space-x-1">
-          {" "}
-          {/* Reduced space */}
-          <HoverDrawer categories={categories} />
+
+        {/* Search Bar */}
+        <div className="px-4 pb-2 opacity-100 transition-opacity duration-300">
           <Search />
         </div>
       </div>
