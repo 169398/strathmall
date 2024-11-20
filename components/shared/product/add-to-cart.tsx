@@ -6,16 +6,18 @@ import { useToast } from '@/components/ui/use-toast'
 import { addItemToCart, removeItemFromCart } from '@/lib/actions/sellercart.actions'
 import { towns } from '@/lib/address'
 import { cart, cartItem } from '@/types/sellerindex'
-import { Loader, Minus, Plus } from 'lucide-react'
+import { Loader, Minus, Plus, ShoppingCart } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useTransition } from 'react'
 
 export default function AddToCart({
   cart,
   item,
+  variant = "default"
 }: {
   cart?: cart
   item: Omit<cartItem, 'cartId'>
+  variant?: "default" | "icon"
 }) {
   const router = useRouter()
   const { toast } = useToast()
@@ -73,9 +75,10 @@ export default function AddToCart({
     </div>
   ) : (
     <Button
-      className="w-full"
-        type="button"
-        aria-label='Add to cart'
+      className={variant === "icon" ? "w-8 h-8" : "w-full"}
+      size={variant === "icon" ? "icon" : "default"}
+      type="button"
+      aria-label='Add to cart'
       disabled={isPending}
       onClick={() => {
         startTransition(async () => {
@@ -102,8 +105,19 @@ export default function AddToCart({
         })
       }}
     >
-      {isPending ? <Loader className="animate-spin" /> : <Plus />}
-      Add to cart
+      {isPending ? (
+        <Loader className="animate-spin h-4 w-4" />
+      ) : variant === "icon" ? (
+        <>
+          <ShoppingCart className="h-4 w-4" />
+          <Plus className="h-3 w-3 absolute -top-1 -right-1 bg-primary text-primary-foreground rounded-full" />
+        </>
+      ) : (
+        <>
+          <Plus className="mr-2 h-4 w-4" />
+          Add to cart
+        </>
+      )}
     </Button>
   )
 }

@@ -10,12 +10,17 @@ import Header from "./header";
 import FavoriteProductsSheet from "./product/favoriteProducts";
 import { NavbarWrapper } from "./NavbarWrapper";
 import { auth } from "@/auth";
+import AnnouncementBar from "./AnnouncementBar";
 
 
 export default async function Navbar() {
   const session = await auth();
   return (
     <NavbarWrapper>
+      
+      <div className="sticky top-0 z-50">
+        <AnnouncementBar />
+      </div>
       <header className="relative bg-white">
         <MaxWidthWrapper>
           <div className="border-b border-gray-200">

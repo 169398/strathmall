@@ -13,7 +13,6 @@ import Navbar from "@/components/shared/Navbar";
 import FeedbackModal from "@/components/shared/Feedback-Modal";
 import { AccessibilityProvider } from "@/lib/context/AccessibilityContext";
 import SkipToContent from "@/components/shared/SkipToContent";
-import AccessibilityButton from "@/components/shared/AccessibilityButton";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -41,7 +40,6 @@ export default function RootLayout({
       >
         <SessionProvider>
           <AccessibilityProvider>
-            <AccessibilityButton />
             <Navbar />
             <main>
               <SkipToContent />
