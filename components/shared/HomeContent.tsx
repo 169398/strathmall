@@ -15,7 +15,6 @@ import ShoesCategory from "./product/shoesCategory";
 import Electronics from "./product/techCategory";
 import CategoryCarousel from "./product/categoryCarousel";
 import Image from "next/image";
-import HowItWorks from "./HowItWorks";
 import Cakes from "./CakeSection";
 import LastViewedCarousel from "./product/last-viewed-product";
 import CommitmentBanner from "./CommitmentBanner";
@@ -128,7 +127,6 @@ const HomeContent: React.FC<HomeContentProps> = ({
       </div>
       
       <CommitmentBanner />
-      <HowItWorks />
 
       <div className="space-y-8 bg-gradient-to-b from-white to-blue-50 ">
         <ProductList title="Newest Arrivals ✨" data={latestProducts} />
