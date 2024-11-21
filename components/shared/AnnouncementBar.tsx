@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 const announcements = [
   {
     icon: Truck,
-    text: "Free Shipping on First Order",
+    text: "Fast and Secure Shipping ",
   },
   {
     icon: Shield,
