@@ -30,7 +30,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session = await getAuthWithTimeout();
-  
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -42,7 +42,7 @@ export default async function RootLayout({
         <SessionProvider session={session as Session | null}>
           <AccessibilityProvider>
             <Navbar session={session as Session | null} />
-            <main>
+            <main className="pt-20">
               <SkipToContent />
               {children}
               <WelcomeToast />

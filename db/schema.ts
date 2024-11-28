@@ -355,3 +355,51 @@ export const sellersRelations = relations(sellers, ({ one, many }) => ({
   user: one(users, { fields: [sellers.userId], references: [users.id] }),
   products: many(products),
 }));
+
+// REFERRALS
+export const referrals = pgTable("referrals", {
+  id: uuid("id").defaultRandom().primaryKey().notNull(),
+  referrerId: uuid("referrerId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  referredId: uuid("referredId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  referralCode: text("referralCode").notNull(),
+  status: text("status").notNull().default("pending"), // pending, completed
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+// REFERRAL REWARDS
+export const referralRewards = pgTable("referral_rewards", {
+  id: uuid("id").defaultRandom().primaryKey().notNull(),
+  userId: uuid("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  mpesaNumber: text("mpesaNumber"),
+  totalEarnings: numeric("totalEarnings", { precision: 10, scale: 2 }).default("0"),
+  pendingPayment: numeric("pendingPayment", { precision: 10, scale: 2 }).default("0"),
+  totalReferrals: integer("totalReferrals").default(0),
+  lastPaidAt: timestamp("lastPaidAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  referralCode: text("referral_code").notNull(),
+});
+
+// Add relations
+export const referralRelations = relations(referrals, ({ one }) => ({
+  referrer: one(users, {
+    fields: [referrals.referrerId],
+    references: [users.id],
+  }),
+  referred: one(users, {
+    fields: [referrals.referredId],
+    references: [users.id],
+  }),
+}));
+
+export const referralRewardsRelations = relations(referralRewards, ({ one }) => ({
+  user: one(users, {
+    fields: [referralRewards.userId],
+    references: [users.id],
+  }),
+}));

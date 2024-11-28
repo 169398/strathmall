@@ -23,6 +23,7 @@ import db from "@/db/drizzle";
 import { sendVerificationEmail } from '@/emailverify'
 import { sendResetPasswordEmail } from '@/emailreset-password'
 import { addMinutes } from 'date-fns'
+import { processReferral } from './referral.actions'
 
 
 
@@ -46,7 +47,12 @@ try {
 
     await db.insert(users).values(values);
 
- 
+    const referralCode = formData.get('referralCode');
+    
+    if (referralCode) {
+      await processReferral(referralCode as string, values.id);
+    }
+
     await sendVerificationEmail({
       name: user.name ?? "",
       resetToken: "",

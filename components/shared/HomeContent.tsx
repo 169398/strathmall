@@ -19,6 +19,7 @@ import Cakes from "./CakeSection";
 import LastViewedCarousel from "./product/last-viewed-product";
 import CommitmentBanner from "./CommitmentBanner";
 import AnnouncementBar from "@/components/shared/AnnouncementBar";
+import ReferralAnnouncement from "./ReferralAnnouncement";
 
 const handleClick = () => {
   const duration = 5 * 1000;
@@ -60,7 +61,7 @@ const HomeContent: React.FC<HomeContentProps> = ({
   discountedProducts,
 }) => {
   return (
-    <div className="pt-[6rem]">
+    <div className="pt-[2rem]">
       <div className="bg-gradient-to-b   from-white to-blue-50">
         <MaxWidthWrapper>
           <div className="mx-auto flex max-w-3xl flex-col  items-center     py-20 text-center">
@@ -89,23 +90,7 @@ const HomeContent: React.FC<HomeContentProps> = ({
                   className="text-base text-blue-500"
                 />
               </Link>
-              {/* <Link
-                href="/services"
-                onClick={(e) => {
-                  e.preventDefault();
-                  fireToolsConfetti();
-                  setTimeout(() => {
-                    window.location.href = '/services';
-                  }, 500);
-                }}
-                className={buttonVariants({
-                  variant: "outline",
-                }) + " text-base text-blue-600 hover:bg-blue-50"}
-              >
-                <span className="flex items-center">
-                  🔧 Browse Services
-                </span>
-              </Link> */}
+             
             </div>
 
             <div className="mt-8 flex items-center justify-center">
@@ -125,7 +110,7 @@ const HomeContent: React.FC<HomeContentProps> = ({
       <div className="lg:hidden mb-8">
         <AnnouncementBar />
       </div>
-      
+      <ReferralAnnouncement />
       <CommitmentBanner />
 
       <div className="space-y-8 bg-gradient-to-b from-white to-blue-50 ">

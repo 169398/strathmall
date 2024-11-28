@@ -1,36 +1,40 @@
-import { Metadata } from 'next'
-import Image from 'next/image'
-import Link from 'next/link'
-import { redirect } from 'next/navigation'
+import { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
+import { redirect } from "next/navigation";
 
-import { auth } from '@/auth'
+import { auth } from "@/auth";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
-import { APP_NAME } from '@/lib/constants'
+} from "@/components/ui/card";
+import { APP_NAME } from "@/lib/constants";
 
-import SignUpForm from './signup-form'
+import SignUpForm from "./signup-form";
+import { Session } from "next-auth";
+import { ReferralHandler } from "./referral-handler";
 
 interface SignUpPageProps {
   searchParams: Promise<{
     callbackUrl?: string;
     error?: string;
+    ref?: string;
     [key: string]: string | undefined;
   }>;
 }
 
 export const metadata: Metadata = {
   title: `Sign Up - ${APP_NAME}`,
-}
+};
 
 export default async function SignUpPage({ searchParams }: SignUpPageProps) {
-  const session = await auth();
+  const session = (await auth()) as Session | null;
   const params = await searchParams;
   const callbackUrl = params?.callbackUrl;
+  const referralCode = params?.ref;
 
   if (session) {
     redirect(callbackUrl || "/");
@@ -55,9 +59,16 @@ export default async function SignUpPage({ searchParams }: SignUpPageProps) {
           <CardDescription className="text-center">
             Enter your information below to create your account
           </CardDescription>
+          {referralCode && (
+            <div className="text-sm text-center text-green-600 bg-green-100 p-2 rounded">
+              🎉 You were referred by a friend! Create your account to get
+              started.
+            </div>
+          )}
         </CardHeader>
         <CardContent>
           <SignUpForm />
+          <ReferralHandler/>
         </CardContent>
       </Card>
     </div>

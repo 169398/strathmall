@@ -1,18 +1,12 @@
-
-
 import Link from "next/link";
 import { signOut } from "next-auth/react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { UserAvatar } from "./UserAvatar";
 import { auth } from "@/auth";
-
-
+import { Gift } from "lucide-react";
 
 export default async function UserAccountNav() {
-
- const session =  await auth()
- 
-
+  const session = await auth();
 
   return (
     <>
@@ -21,8 +15,7 @@ export default async function UserAccountNav() {
           <UserAvatar
             user={{
               name: session?.user.name || null,
-               image : session?.user.image ?? 
-                "https://avatar.vercel.sh/${user.name}",
+              image: session?.user.image ?? "https://avatar.vercel.sh/${user.name}",
             }}
             className="h-8 w-8"
           />
@@ -60,6 +53,12 @@ export default async function UserAccountNav() {
               </Link>
             </DropdownMenuItem>
           )}
+          <DropdownMenuItem asChild>
+            <Link href="/referrals" className="w-full">
+              <Gift className="mr-2 h-4 w-4" />
+              <span>Referral Rewards</span>
+            </Link>
+          </DropdownMenuItem>
           <DropdownMenuItem
             className="cursor-pointer"
             onSelect={(event) => {
