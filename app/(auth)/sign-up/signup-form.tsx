@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useFormState, useFormStatus } from "react-dom";
+import {  useFormStatus } from "react-dom";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { signUp } from "@/lib/actions/user.actions";
 import { signUpDefaultValues } from "@/lib/constants";
-import { useState } from "react";
+import { useActionState, useState } from "react";
 
 export default function SignUpForm() {
   const router = useRouter();
@@ -17,7 +17,7 @@ export default function SignUpForm() {
   const callbackUrl = searchParams.get("callbackUrl") || "/";
 
 
-  const [data, action] = useFormState(signUp, {
+  const [data, action] = useActionState(signUp, {
     success: false,
     message: "",
   });

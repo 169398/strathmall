@@ -12,7 +12,6 @@ import { NavbarWrapper } from "./NavbarWrapper";
 import { auth } from "@/auth";
 import AnnouncementBar from "./AnnouncementBar";
 
-
 export default async function Navbar() {
   const session = await auth();
   return (

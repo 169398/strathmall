@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 
 export default async function SignIn({ searchParams }: SignInPageProps) {
   const session = await auth();
-  const callbackUrl = searchParams.callbackUrl;
+  const callbackUrl = (await searchParams)?.callbackUrl;
 
   if (session) {
     return redirect(callbackUrl || "/");

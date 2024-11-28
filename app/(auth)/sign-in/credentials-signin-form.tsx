@@ -1,6 +1,6 @@
 'use client'
 import { useSearchParams } from 'next/navigation'
-import { useFormState, useFormStatus } from 'react-dom'
+import {  useFormStatus } from 'react-dom'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -8,9 +8,10 @@ import { Label } from '@/components/ui/label'
 import { signInWithCredentials } from '@/lib/actions/user.actions'
 import { signInDefaultValues } from '@/lib/constants'
 import Link from 'next/link'
+import { useActionState } from 'react'
 
 export default function CredentialsSignInForm() {
-  const [data, action] = useFormState(signInWithCredentials, {
+  const [data, action] = useActionState(signInWithCredentials, {
     message: '',
     success: false,
   })
