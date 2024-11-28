@@ -1,5 +1,11 @@
-import { redirect } from 'next/navigation'
+import { redirect } from "next/navigation";
 
-export default function QuickViewPage(context: { params: { slug: string } }) {
-  redirect(`/product/${context.params.slug}`)
+interface QuickViewPageProps {
+  params: Promise<{ slug: string }>;
 }
+
+export default async function QuickViewPage({ params }: QuickViewPageProps) {
+  const { slug } = await params;
+  redirect(`/product/${slug}`);
+}
+  

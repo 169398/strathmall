@@ -20,30 +20,31 @@ export const metadata: Metadata = {
   title: `Seller Products - ${APP_NAME}`,
 }
 
-export default async function AdminProductsPage({
+interface AdminProductsPageProps {
+  searchParams: Promise<{
+    page: string;
+    query: string;
+    category: string;
+  }>;
+}
 
+export default async function AdminProductsPage({ searchParams }: AdminProductsPageProps) {
+  const { 
+    page = '1', 
+    query = '', 
+    category = '' 
+  } = await searchParams;
 
-
-  searchParams,
-}: {
-  searchParams: {
-    page: string
-    query: string
-    category: string
-  }
-}) {
-  const page = Number(searchParams.page) || 1
-  const searchText = searchParams.query || ''
-  const category = searchParams.category || ''
-const session = await auth()
-const sellerId = session?.user.id || ""
+  const session = await auth();
+  const sellerId = session?.user.id || "";
+  
   const products = await getAllproducts({
-    query: searchText,
+    query,
     category,
-    page,
+    page: Number(page),
     sellerId,
+  });
 
-  })
   return (
     <div className="space-y-2">
       <div className="flex-between">
@@ -88,7 +89,7 @@ const sellerId = session?.user.id || ""
           </TableBody>
         </Table>
         {products?.totalPages! > 1 && (
-          <Pagination page={page} totalPages={products?.totalPages!} />
+          <Pagination page={Number(page)} totalPages={products?.totalPages!} />
         )}
       </div>
     </div>

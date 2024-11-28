@@ -19,18 +19,22 @@ export const metadata: Metadata = {
   title: `Admin Orders - ${APP_NAME}`,
 }
 
-export default async function OrdersPage({
-  searchParams: { page = '1' },
-}: {
-  searchParams: { page: string }
-}) {
-  const session = await auth()
+interface OrdersPageProps {
+  searchParams: Promise<{
+    page?: string;
+  }>;
+}
+
+export default async function OrdersPage({ searchParams }: OrdersPageProps) {
+  const { page = '1' } = await searchParams;
+  
+  const session = await auth();
   if (session?.user.role !== 'delivery')
-    throw new Error('delivery  permission required')
+    throw new Error('delivery permission required');
 
   const orders = await getAllOrders({
     page: Number(page),
-  })
+  });
 
   return (
     <div className="space-y-2">

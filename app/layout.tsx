@@ -13,6 +13,8 @@ import Navbar from "@/components/shared/Navbar";
 import FeedbackModal from "@/components/shared/Feedback-Modal";
 import { AccessibilityProvider } from "@/lib/context/AccessibilityContext";
 import SkipToContent from "@/components/shared/SkipToContent";
+import { getAuthWithTimeout } from "@/lib/auth-helpers";
+import { Session } from "next-auth";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -22,25 +24,24 @@ const fontSans = FontSans({
 
 export const metadata: Metadata = constructMetadata();
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await getAuthWithTimeout();
+  
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <title>StrathMall - Your Campus Marketplace</title>
-      </head>
       <body
         className={cn(
-          "min-h-screen bg-background font-sans antialiased bg-neutral-50 text-black selection:bg-teal-300 dark:bg-neutral-900 dark:text-white dark:selection:bg-pink-500 dark:selection:text-white",
+          "min-h-screen bg-background font-sans antialiased bg-neutral-50",
           fontSans.variable
         )}
       >
-        <SessionProvider>
+        <SessionProvider session={session as Session | null}>
           <AccessibilityProvider>
-            <Navbar />
+            <Navbar session={session as Session | null} />
             <main>
               <SkipToContent />
               {children}

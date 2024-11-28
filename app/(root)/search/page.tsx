@@ -18,56 +18,45 @@ const prices = [
 ];
 const ratings = [4, 3, 2, 1];
 
-export async function generateMetadata({
-  searchParams: { q = "all", category = "all", price = "all", rating = "all" },
-}: {
-  searchParams: {
-    q: string;
-    category: string;
-    price: string;
-    rating: string;
-    sort: string;
-    page: string;
-  };
-}) {
-  if (
-    (q !== "all" && q !== "") ||
-    category !== "all" ||
-    rating !== "all" ||
-    price !== "all"
-  ) {
-    return {
-      title: `Search ${q !== "all" ? q : ""}${
-        category !== "all" ? ` : Category ${category}` : ""
-      }${price !== "all" ? ` : Price ${price}` : ""}${
-        rating !== "all" ? ` : Rating ${rating}` : ""
-      } - ${APP_NAME}`,
-    };
-  } else {
-    return {
-      title: `Search Products - ${APP_NAME}`,
-    };
-  }
+interface SearchPageProps {
+  searchParams: Promise<{
+    q?: string;
+    category?: string;
+    price?: string;
+    rating?: string;
+    sort?: string;
+    page?: string;
+  }>;
 }
 
-export default async function SearchPage({
-  searchParams: {
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<{
+    q?: string;
+    category?: string;
+    price?: string;
+    rating?: string;
+    sort?: string;
+  }>;
+}) {
+  const { q = "all", category = "all" } = await searchParams;
+  return {
+    title: `${q !== "all" ? q : "Search"} ${
+      category !== "all" ? `in ${category}` : ""
+    } - ${APP_NAME}`,
+  };
+}
+
+export default async function SearchPage({ searchParams }: SearchPageProps) {
+  const {
     q = "all",
     category = "all",
     price = "all",
     rating = "all",
-    sort = "newest",
-  },
-}: {
-  searchParams: {
-    q: string;
-    category: string;
-    price: string;
-    rating: string;
-    sort: string;
-    page: string;
-  };
-}) {
+    sort = "featured",
+  } = await searchParams;
+
   const categories = await getAllCategories();
   const products = await getAllSearchProducts({
     category,

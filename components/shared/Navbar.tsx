@@ -9,12 +9,14 @@ import Search from "./header/search";
 import Header from "./header";
 import FavoriteProductsSheet from "./product/favoriteProducts";
 import { NavbarWrapper } from "./NavbarWrapper";
-import { auth } from "@/auth";
 import AnnouncementBar from "./AnnouncementBar";
+import { Session } from "next-auth";
 
+interface NavbarProps {
+  session: Session | null;
+}
 
-export default async function Navbar() {
-  const session = await auth();
+export default function Navbar({ session }: NavbarProps) {
   return (
     <NavbarWrapper>
       <div className="hidden lg:block sticky top-0 z-50">
@@ -91,7 +93,7 @@ export default async function Navbar() {
                 </div>
               </div>
             </div>
-            <MobileNav />
+            <MobileNav session={session} />
           </div>
         </MaxWidthWrapper>
       </header>

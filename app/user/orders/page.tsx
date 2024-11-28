@@ -21,14 +21,19 @@ export const metadata: Metadata = {
   title: `My Orders - ${APP_NAME}`,
 };
 
-export default async function OrdersPage({
-  searchParams: { page = "1" },
-}: {
-  searchParams: { page: string };
-}) {
+interface OrdersPageProps {
+  searchParams: Promise<{
+    page?: string;
+  }>;
+}
+
+export default async function OrdersPage({ searchParams }: OrdersPageProps) {
+  const { page = '1' } = await searchParams;
+  
   const session = await auth();
   if (session?.user.role !== "user"&&session?.user.role !== "seller"&&session?.user.role !== "admin")
     throw new Error("user permission required");
+  
   const sellerId = session.user.id || "";
   const orders = await getUserOrders({
     page: Number(page),
