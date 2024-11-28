@@ -7,8 +7,8 @@ import { carts } from '@/db/schema'
 export async function POST(request: Request) {
   try {
     const { userId } = await request.json()
-    const cookieStore = cookies()
-    const sessionCartId = cookieStore.get('sessionCartId')?.value
+    const cookieStore = await cookies()
+    const sessionCartId = await cookieStore.get('sessionCartId')?.value
 
     if (!sessionCartId) {
       const newSessionCartId = crypto.randomUUID()

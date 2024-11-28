@@ -1,5 +1,10 @@
 import { redirect } from "next/navigation";
 
-export default function QuickViewPage(context: { params: { slug: string } }) {
-  redirect(`/product/${context.params.slug}`);
+interface CakeViewPageProps {
+  params: Promise<{ slug: string }>;
+}
+
+export default async function CakeViewPage({ params }: CakeViewPageProps) {
+  const { slug } = await params;
+  redirect(`/product/${slug}`);
 }

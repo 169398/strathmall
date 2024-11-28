@@ -20,9 +20,10 @@ import Image from "next/image";
 export async function generateMetadata({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  const product = await getProductBySlug(params.slug);
+  const { slug } = await params;
+  const product = await getProductBySlug(slug);
   if (!product) {
     return { title: "Product not found" };
   }
@@ -32,11 +33,15 @@ export async function generateMetadata({
   };
 }
 
-const ProductDetails = async ({
-  params: { slug },
-}: {
-  params: { slug: string };
-}) => {
+interface ProductPageProps {
+  params: Promise<{
+    slug: string;
+  }>;
+}
+
+export default async function ProductDetails({ params }: ProductPageProps) {
+  const { slug } = await params;
+
   const product = await getProductBySlug(slug);
   if (!product) notFound();
 
@@ -217,6 +222,4 @@ const ProductDetails = async ({
       )}
     </>
   );
-};
-
-export default ProductDetails;
+}

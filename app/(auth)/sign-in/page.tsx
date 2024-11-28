@@ -12,15 +12,22 @@ import {
 } from "@/components/ui/card";
 import { APP_NAME } from "@/lib/constants";
 import CredentialsSignInForm from "./credentials-signin-form";
-import { SignInPageProps } from "./types";
+
+interface SignInPageProps {
+  searchParams: Promise<{
+    callbackUrl?: string;
+    error?: string;
+  }>;
+}
 
 export const metadata: Metadata = {
   title: `Sign In - ${APP_NAME}`,
 };
 
-export default async function SignIn({ searchParams }: SignInPageProps) {
+export default async function SignInPage({ searchParams }: SignInPageProps) {
   const session = await auth();
-  const callbackUrl = (await searchParams)?.callbackUrl;
+  const params = await searchParams;
+  const callbackUrl = params?.callbackUrl;
 
   if (session) {
     return redirect(callbackUrl || "/");

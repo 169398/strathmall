@@ -20,19 +20,20 @@ export const metadata: Metadata = {
   title: `Admin Users - ${APP_NAME}`,
 }
 
-export default async function AdminUser({
-  searchParams,
-}: {
-  searchParams: { page: string }
-}) {
-  const session = await auth()
-  if (session?.user.role !== 'admin')
-    throw new Error('admin permission required')
+interface AdminUserProps {
+  searchParams: Promise<{ page: string }>;
+}
 
-  const page = Number(searchParams.page) || 1
+export default async function AdminUser({ searchParams }: AdminUserProps) {
+  const session = await auth();
+  if (session?.user.role !== 'admin')
+    throw new Error('admin permission required');
+
+  const { page = '1' } = await searchParams;
   const users = await getAllUsers({
-    page,
-  })
+    page: Number(page),
+  });
+
   return (
     <div className="space-y-2">
       <h1 className="h2-bold">Users</h1>

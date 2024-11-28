@@ -7,10 +7,12 @@ import CartButton from "./header/cart-button";
 import UserButton from "./header/user-button";
 import FavoriteProductsSheet from "./product/favoriteProducts";
 import { buttonVariants } from "../ui/button";
-import { auth } from "@/auth";
 
-export default async function MobileNav() {
-  const session = await auth();
+interface MobileNavProps {
+  session: any; // Replace with your session type
+}
+
+export default async function MobileNav({ session }: MobileNavProps) {
   const categories = await getAllCategories();
 
   return (

@@ -27,8 +27,8 @@ const calcPrice = (items: cartItem[], townName: string) => {
 
 export const addItemToCart = async (data: cartItem, townName: string) => {
   try {
-    const cookieStore = cookies();
-    let sessionCartId = cookieStore.get("sessionCartId")?.value;
+    const cookieStore = await cookies();
+    let sessionCartId = await cookieStore.get("sessionCartId")?.value;
     
     // If no sessionCartId exists, create one
     if (!sessionCartId) {

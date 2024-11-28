@@ -15,20 +15,25 @@ import { APP_NAME } from '@/lib/constants'
 
 import SignUpForm from './signup-form'
 
+interface SignUpPageProps {
+  searchParams: Promise<{
+    callbackUrl?: string;
+    error?: string;
+    [key: string]: string | undefined;
+  }>;
+}
+
 export const metadata: Metadata = {
   title: `Sign Up - ${APP_NAME}`,
 }
 
-export default async function SignUp({
-  searchParams: { callbackUrl },
-}: {
-  searchParams: {
-    callbackUrl: string
-  }
-}) {
-  const session = await auth()
+export default async function SignUpPage({ searchParams }: SignUpPageProps) {
+  const session = await auth();
+  const params = await searchParams;
+  const callbackUrl = params?.callbackUrl;
+
   if (session) {
-    return redirect(callbackUrl || '/')
+    redirect(callbackUrl || "/");
   }
 
   return (
@@ -43,11 +48,10 @@ export default async function SignUp({
               alt={`${APP_NAME} logo`}
             />
           </Link>
-          <div className="text-xs text-center  text-muted-foreground bg-blue-200 mt-4">
+          <div className="text-xs text-center text-muted-foreground bg-blue-200 mt-4">
             🛡️Your information is protected{" "}
           </div>
           <CardTitle className="text-center">Create Account</CardTitle>
-
           <CardDescription className="text-center">
             Enter your information below to create your account
           </CardDescription>
