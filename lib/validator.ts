@@ -87,6 +87,11 @@ export const cartItemSchema = z.object({
     ),
 });
 
+export const phoneNumberSchema = z.string().regex(
+  /^(07|\+254)\d{8}$/,
+  "Phone number must start with 01, 07, or +254 and be followed by 8 digits"
+);
+
 export const shippingAddressSchema = z.object({
   fullName: z.string().min(3, "Name must be at least 3 characters"),
   phoneNumber: z

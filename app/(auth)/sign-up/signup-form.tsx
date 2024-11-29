@@ -15,6 +15,7 @@ export default function SignUpForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/";
+  const referralCode = searchParams.get('ref');
 
 
   const [data, action] = useActionState(signUp, {
@@ -46,6 +47,7 @@ export default function SignUpForm() {
   return (
     <form action={action}>
       <input type="hidden" name="callbackUrl" value={callbackUrl} />
+      <input type="hidden" name="referralCode" value={referralCode || ""} />
       <div className="space-y-6">
         <div>
           <Label htmlFor="name">Name</Label>
@@ -120,6 +122,11 @@ export default function SignUpForm() {
             Sign In
           </Link>
         </div>
+        {referralCode && (
+          <div className="text-sm text-green-600 mb-4">
+            You can also earn money when you refer a friend💰.
+          </div>
+        )}
       </div>
     </form>
   );
