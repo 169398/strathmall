@@ -27,7 +27,6 @@ import {
 import { UserCard } from "@/components/shared/card";
 import { UserCard2 } from "@/components/shared/WhyStrathCard";
 import { createSeller } from "@/lib/actions/selleractions";
-import { CardSpot } from "@/components/shared/how-to-start";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
 import { universities } from "@/lib/universities";
 import { shopCategories } from "@/lib/shopCategories";
@@ -40,7 +39,6 @@ import { UploadButton } from "@/lib/uploadthing";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-
 
 
 
@@ -244,7 +242,7 @@ const OnboardingForm = () => {
                       </SelectTrigger>
                       <SelectContent>
                         {universities.map((university, index) => (
-                          <SelectItem key={index} value={university}>
+                          <SelectItem key={`${university}-${index}`} value={university}>
                             {university}
                           </SelectItem>
                         ))}
@@ -512,30 +510,12 @@ const OnboardingForm = () => {
     </div>
   );
 
-  const GetStarted = () => (
-    <div className="container max-auto rounded-sm bg-slate-50">
-      <div className="container mx-auto flex flex-col md:flex-row items-center">
-        <div className="md:w-1/2">
-          <Image
-            src="https://res.cloudinary.com/db0i0umxn/image/upload/v1728757715/get-started_smdhep.png" // Get started image
-            alt="Get Started"
-            width={500}
-            height={300}
-            className="rounded-lg"
-          />
-        </div>
-        <div className="md:w-1/2  mx-auto">
-          <CardSpot />
-        </div>
-      </div>
-    </div>
-  );
+  
 
   const OnboardingPage = () => {
     return (
       <div className="min-h-screen space-y-6">
         <OnboardingForm />
-        <GetStarted />
         <WhyStrathmall />
         <HowItWorks />
         <Testimonial />

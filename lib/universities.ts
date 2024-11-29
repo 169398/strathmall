@@ -17,7 +17,6 @@ export const universities = [
   "KCA University",
   "Aga Khan University",
   "Technical University of Mombasa",
-  "Mount Kenya University",
   "Pan Africa Christian University",
   "Scott Christian University",
 
@@ -25,8 +24,6 @@ export const universities = [
   "Moi University",
   "Maseno University",
 
-  "Kisii University",
-  "Karatina University",
   "Murang'a University of Technology",
   "University of Eldoret",
   "University of Kabianga",
@@ -39,5 +36,4 @@ export const universities = [
   "Rongo University",
   "Maasai Mara University",
   "Kisii University",
-  "Karatina University",
 ];
