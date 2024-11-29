@@ -9,6 +9,7 @@ import { signInWithCredentials } from '@/lib/actions/user.actions'
 import { signInDefaultValues } from '@/lib/constants'
 import Link from 'next/link'
 import { useActionState } from 'react'
+import { PasswordInput } from "@/components/shared/PasswordInput";
 
 export default function CredentialsSignInForm() {
   const [data, action] = useActionState(signInWithCredentials, {
@@ -45,11 +46,10 @@ export default function CredentialsSignInForm() {
         </div>
         <div>
           <Label htmlFor="password">Password</Label>
-          <Input
+          <PasswordInput
             id="password"
             name="password"
             required
-            type="password"
             defaultValue={signInDefaultValues.password}
           />
         </div>

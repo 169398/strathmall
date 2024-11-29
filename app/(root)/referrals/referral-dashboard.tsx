@@ -4,7 +4,6 @@ import React,{ useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Confetti from "react-confetti";
 import {
-  MessageCircle,
   Copy,
   Coins,
   Users,
@@ -16,6 +15,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { ReferralNumberModal } from "@/components/shared/modals/referral-modal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { FaWhatsapp } from "react-icons/fa";
 
 export function ReferralDashboard({
   stats,
@@ -195,7 +195,7 @@ export function ReferralDashboard({
                       onClick={handleWhatsAppShare}
                       className="flex-1 sm:flex-none bg-green-500 hover:bg-green-600 text-white"
                     >
-                      <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+                      <FaWhatsapp className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                       Share
                     </Button>
                   </div>
