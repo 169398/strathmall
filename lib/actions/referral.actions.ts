@@ -11,16 +11,17 @@ import { z } from "zod";
 
 export async function getReferralStats(userId: string) {
   try {
-    const user = await db.query.users.findFirst({
+     // First check if user exists
+     const user = await db.query.users.findFirst({
       where: (users, { eq }) => eq(users.id, userId),
-    });
+     });
     //TODO: Remove this after testing
 
-    // if (!user || !isStrathmoreEmail(user.email)) {
-    //   throw new Error(
-    //     "Referral program is only available for Strathmore University students"
-    //   );
-    // }
+     if (!user || !isStrathmoreEmail(user.email)) {
+      throw new Error(
+        "Referral program is only available for Strathmore University students"
+      );
+    }
 
     let rewards = await db.query.referralRewards.findFirst({
       where: (rewards, { eq }) => eq(rewards.userId, userId),
@@ -28,7 +29,8 @@ export async function getReferralStats(userId: string) {
 
     if (!rewards) {
       const referralCode = crypto.randomBytes(4).toString("hex");
-      rewards = {
+      // Create new rewards record
+      const newRewards = {
         id: crypto.randomUUID(),
         userId,
         mpesaNumber: null,
@@ -39,7 +41,14 @@ export async function getReferralStats(userId: string) {
         createdAt: new Date(),
         referralCode: referralCode,
       };
-      await db.insert(referralRewards).values(rewards);
+
+      try {
+        await db.insert(referralRewards).values(newRewards);
+        rewards = newRewards;
+      } catch (insertError) {
+        console.error("Error inserting referral rewards:", insertError);
+        throw new Error("Failed to create referral rewards");
+      }
     }
 
     return rewards;
