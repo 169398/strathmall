@@ -2,7 +2,7 @@
 
 import db from "@/db/drizzle";
 import { referralRewards, referrals } from "@/db/schema";
-import { eq, and } from "drizzle-orm";
+import { eq, and, or } from "drizzle-orm";
 import { formatError } from "../utils";
 import crypto from "crypto";
 import { isStrathmoreEmail } from "../utils";
@@ -19,13 +19,13 @@ export async function getReferralStats(userId: string) {
       throw new Error("User not found");
     }
 
-    // if (!isStrathmoreEmail(user.email)) {
-    //   throw new Error(
-    //     'Referral program is only available for Strathmore University students'
-    //   );
-    // }
+    if (!isStrathmoreEmail(user.email)) {
+      return {
+        restricted: true,
+        redirectUrl: "/referral-restricted"
+      };
+    }
 
-    // Get or create rewards record
     let rewards = await db.query.referralRewards.findFirst({
       where: (rewards, { eq }) => eq(rewards.userId, userId),
       with: {
@@ -33,19 +33,16 @@ export async function getReferralStats(userId: string) {
       },
     });
 
-    // Get all referrals for this user
     const referrals = await db.query.referrals.findMany({
       where: (referrals, { eq }) => eq(referrals.referrerId, userId),
     });
 
-    // Calculate actual totals from referrals
     const totalReferrals = referrals.length;
     const pendingReferrals = referrals.filter(
       (ref) => ref.status === "pending"
     ).length;
 
     if (!rewards) {
-      // Create new rewards record with correct totals
       const referralCode = crypto.randomBytes(4).toString("hex");
       const newRewards = {
         id: crypto.randomUUID(),
@@ -62,7 +59,6 @@ export async function getReferralStats(userId: string) {
       await db.insert(referralRewards).values(newRewards);
       rewards = { ...newRewards, user };
     } else {
-      // Update rewards with correct totals if they don't match
       if (rewards.totalReferrals !== totalReferrals) {
         await db
           .update(referralRewards)
@@ -72,16 +68,19 @@ export async function getReferralStats(userId: string) {
       }
     }
 
-    return {
+    const result = {
       ...rewards,
       pendingReferrals,
       totalReferrals,
+      totalEarned: rewards.totalEarnings,
     };
+    return result;
   } catch (error) {
     console.error("Error getting referral stats:", error);
     throw error;
   }
 }
+
 export async function updateMpesaNumber(userId: string, mpesaNumber: string) {
   try {
     // Validate the M-Pesa number
@@ -93,6 +92,7 @@ export async function updateMpesaNumber(userId: string, mpesaNumber: string) {
 
     return { success: true };
   } catch (error) {
+    console.error("Error updating M-Pesa number:", error);
     // If validation fails, return a specific error message
     if (error instanceof z.ZodError) {
       return { success: false, message: error.errors[0].message };
@@ -158,20 +158,23 @@ export async function processReferral(referralCode: string, newUserId: string) {
         status: "pending",
         createdAt: new Date(),
       });
-
-      // Remove the stats update from here as it will be handled by completeReferral
     });
 
     return { success: true };
   } catch (error) {
+    console.error("Error processing referral:", error);
     return { success: false, message: formatError(error) };
   }
 }
+
 export async function completeReferral(userId: string) {
   try {
     const pendingReferral = await db.query.referrals.findFirst({
       where: (referrals, { and, eq }) =>
-        and(eq(referrals.referredId, userId), eq(referrals.status, "pending")),
+        and(
+          eq(referrals.referredId, userId),
+          eq(referrals.status, "pending")
+        ),
       with: {
         referrer: true,
       },
@@ -189,21 +192,18 @@ export async function completeReferral(userId: string) {
       return { success: false, message: "Referrer rewards record not found" };
     }
 
-    const REFERRAL_AMOUNT = 10; // KES per referral
-
     await db.transaction(async (tx) => {
-      // Update referral status
+      // Update referral status to completed
       await tx
         .update(referrals)
         .set({ status: "completed" })
         .where(eq(referrals.id, pendingReferral.id));
 
-      // Update referrer's rewards
+      // Update total referrals count only
       await tx
         .update(referralRewards)
         .set({
-          pendingPayment: (Number(referrerRewards.pendingPayment) + REFERRAL_AMOUNT).toString(),
-          totalReferrals: referrerRewards.totalReferrals ? referrerRewards.totalReferrals + 1 : 1,
+          totalReferrals: (referrerRewards.totalReferrals || 0) + 1,
         })
         .where(eq(referralRewards.userId, pendingReferral.referrerId));
     });
@@ -214,68 +214,128 @@ export async function completeReferral(userId: string) {
     return { success: false, message: formatError(error) };
   }
 }
+
 export async function getReferralPayments() {
   const payments = await db.query.referralRewards.findMany({
     with: {
       user: true,
     },
-    orderBy: (rewards, { desc }) => [desc(rewards.pendingPayment)],
+    orderBy: (rewards, { desc }) => [desc(rewards.totalReferrals)],
   });
 
-  return payments.map((payment) => ({
-    userId: payment.userId,
-    userName: payment.user?.name,
-    mpesaNumber: payment.mpesaNumber,
-    totalReferrals: payment.totalReferrals,
-    pendingPayment: Number(payment.pendingPayment),
-    totalEarnings: Number(payment.totalEarnings),
-    lastPaidAt: payment.lastPaidAt,
-    status: Number(payment.pendingPayment) > 0 ? "pending" : "paid",
-  }));
+  const mappedPayments = payments
+    .filter(payment => payment.totalReferrals && payment.totalReferrals > 0)
+    .map(async (payment) => {
+      const unpaidReferrals = await db.query.referrals.findMany({
+        where: (referrals, { and, eq, or }) => 
+          and(
+            eq(referrals.referrerId, payment.userId),
+            or(
+              eq(referrals.status, "pending"),
+              eq(referrals.status, "completed")
+            )
+          ),
+      });
+
+      const pendingPaymentAmount = unpaidReferrals.length * 10; 
+
+      return {
+        userId: payment.userId,
+        userName: payment.user?.name,
+        mpesaNumber: payment.mpesaNumber,
+        totalReferrals: payment.totalReferrals,
+        pendingPayment: pendingPaymentAmount,
+        totalEarnings: Number(payment.totalEarnings),
+        lastPaidAt: payment.lastPaidAt,
+        status: pendingPaymentAmount > 0 ? "pending" : "paid",
+      };
+    });
+
+  const resolvedPayments = await Promise.all(mappedPayments);
+  return resolvedPayments;
 }
 
 export async function markReferralAsPaid(userId: string) {
+  if (!userId) {
+    return { success: false, message: "User ID is required" };
+  }
+
   try {
+    const unpaidReferrals = await db.query.referrals.findMany({
+      where: (referrals, { and, eq, or }) => 
+        and(
+          eq(referrals.referrerId, userId),
+          or(
+            eq(referrals.status, "pending"),
+            eq(referrals.status, "completed")
+          )
+        ),
+    });
+
+
+    if (!unpaidReferrals.length) {
+      return { 
+        success: false, 
+        message: "No unpaid referrals found to process" 
+      };
+    }
+
     return await db.transaction(async (tx) => {
       const reward = await tx.query.referralRewards.findFirst({
         where: (rewards, { eq }) => eq(rewards.userId, userId),
       });
 
+
       if (!reward) {
-        return { success: false, message: "Reward record not found" };
+        throw new Error("Reward record not found");
       }
 
-      if (Number(reward.pendingPayment) <= 0) {
-        return { success: false, message: "No pending payment to process" };
-      }
+      const pendingAmount = (unpaidReferrals.length * 10).toFixed(2);
+      const currentEarnings = Number(reward.totalEarnings || 0);
+      const newTotalEarnings = (currentEarnings + Number(pendingAmount)).toFixed(2);
 
-      // Add pending payment to total earnings and reset pending payment
-      const newTotalEarnings = (Number(reward.totalEarnings) + Number(reward.pendingPayment)).toString();
+      
 
       await tx
         .update(referralRewards)
         .set({
           totalEarnings: newTotalEarnings,
-          pendingPayment: "0",
           lastPaidAt: new Date(),
         })
         .where(eq(referralRewards.userId, userId));
 
-      // Update all completed referrals to paid status
-      await tx
+      const updateResult = await tx
         .update(referrals)
         .set({ status: "paid" })
         .where(
           and(
             eq(referrals.referrerId, userId),
-            eq(referrals.status, "completed")
+            or(
+              eq(referrals.status, "pending"),
+              eq(referrals.status, "completed")
+            )
           )
         );
 
-      return { success: true };
+      if (!updateResult.rowCount) {
+        throw new Error("Failed to update referral statuses");
+      }
+
+      return { 
+        success: true,
+        message: `Successfully processed payment of KES ${pendingAmount} for ${unpaidReferrals.length} referrals`,
+        data: {
+          amount: pendingAmount,
+          referralsCount: unpaidReferrals.length,
+          newTotalEarnings
+        }
+      };
     });
   } catch (error) {
-    console.error("Error marking referral as paid:", error);
-    return { success: false, message: formatError(error) };
+    console.error("Error in markReferralAsPaid:", error);
+    return { 
+      success: false, 
+      message: error instanceof Error ? error.message : "Failed to process payment"
+    };
   }
 }
