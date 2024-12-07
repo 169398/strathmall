@@ -40,7 +40,6 @@ export default function SignUpForm() {
     );
   };
 
-  // Redirect to the verification page if sign up is successful
   if (data.success) {
     router.push(`/verify-email?email=${signUpDefaultValues.email}`);
   }

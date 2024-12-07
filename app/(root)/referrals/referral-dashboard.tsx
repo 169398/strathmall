@@ -42,7 +42,8 @@ export function ReferralDashboard({
     if (!stats.mpesaNumber && !stats.restricted) {
       toast({
         title: "M-Pesa Number Required",
-        description: "Please enter your M-Pesa number to continue.",
+        description:
+          "Please enter your M-Pesa number for recieving money.",
       });
     }
   }, [stats.mpesaNumber, toast, stats.restricted]);
@@ -68,7 +69,7 @@ export function ReferralDashboard({
 
   const handleWhatsAppShare = () => {
     const message = encodeURIComponent(
-      `Join Strathmall using my referral link and let's  earn rewards! \n\n${referralLink}`
+      `Join Strathmall using my referral link and let's  earn rewards \n\n${referralLink}`
     );
     window.open(`https://wa.me/?text=${message}`, "_blank");
   };
@@ -80,7 +81,7 @@ export function ReferralDashboard({
     if (result.success) {
       toast({
         title: "Success",
-        description: "M-Pesa number updated successfully!",
+        description: "M-Pesa number updated successfully",
       });
     } else {
       toast({
