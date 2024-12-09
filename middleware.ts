@@ -1,25 +1,30 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-export async function middleware(request: NextRequest) {
-  const requestHeaders = new Headers(request.headers);
-  requestHeaders.set('x-url', request.url);
+export function middleware(request: NextRequest) {
+  const response = NextResponse.next();
   
-  // Ensure cookies are properly handled
-  const cookieHeader = request.headers.get('cookie');
-  if (cookieHeader) {
-    requestHeaders.set('cookie', cookieHeader);
+  // Get referral code from URL params
+  const searchParams = request.nextUrl.searchParams;
+  const referralCode = searchParams.get('ref');
+  
+  if (referralCode) {
+    // Store referral code in a secure HTTP-only cookie
+    response.cookies.set('referral_code', referralCode, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 3600 // 1 hour expiry
+    });
   }
-
-  const response = NextResponse.next({
-    request: {
-      headers: requestHeaders,
-    },
-  });
-
+  
   return response;
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  matcher: [
+    '/sign-up',
+    '/api/auth/callback/:path*',
+    '/api/auth/signin/:path*'
+  ],
 };

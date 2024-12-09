@@ -2,7 +2,7 @@
 
 import db from "@/db/drizzle";
 import { referralRewards, referrals } from "@/db/schema";
-import { eq, and, or, sql } from "drizzle-orm";
+import { eq, and, sql } from "drizzle-orm";
 import { formatError } from "../utils";
 import crypto from "crypto";
 import { isStrathmoreEmail } from "../utils";
@@ -95,20 +95,19 @@ export async function updateMpesaNumber(userId: string, mpesaNumber: string) {
 }
 
 export async function processReferral(referralCode: string, newUserId: string) {
+  console.log('🚀 Starting processReferral:', { referralCode, newUserId });
+  
   try {
-    // Check if user was already referred
-    const existingReferral = await db.query.referrals.findFirst({
-      where: (referrals, { eq }) => eq(referrals.referredId, newUserId),
-    });
-
-    if (existingReferral) {
+    // Validate inputs
+    if (!referralCode || !newUserId) {
+      console.error('❌ Invalid inputs:', { referralCode, newUserId });
       return {
         success: false,
-        message: "You have already used a referral link before",
+        message: "Missing required parameters",
       };
     }
 
-    // Get the referrer's rewards record
+    // Get the referrer's rewards record first
     const referrer = await db.query.referralRewards.findFirst({
       where: (rewards, { eq }) => eq(rewards.referralCode, referralCode),
       with: {
@@ -117,21 +116,36 @@ export async function processReferral(referralCode: string, newUserId: string) {
     });
 
     if (!referrer) {
+      console.error('❌ Invalid referral code:', referralCode);
       return { success: false, message: "Invalid referral code" };
     }
 
     // Prevent self-referral
     if (referrer.userId === newUserId) {
+      console.warn('⚠️ Self-referral attempt detected');
       return {
         success: false,
         message: "You cannot use your own referral code",
       };
     }
 
-    // Create referral record and update rewards in a transaction
+    // Check if user was already referred
+    const existingReferral = await db.query.referrals.findFirst({
+      where: (referrals, { eq }) => eq(referrals.referredId, newUserId),
+    });
+
+    if (existingReferral) {
+      console.log('⚠️ User already referred:', existingReferral);
+      return {
+        success: false,
+        message: "You have already used a referral link before",
+      };
+    }
+
+    // Create referral and update rewards in a transaction
     await db.transaction(async (tx) => {
       // Create the referral record
-      await tx.insert(referrals).values({
+      const newReferral = {
         id: crypto.randomUUID(),
         referrerId: referrer.userId,
         referredId: newUserId,
@@ -139,26 +153,34 @@ export async function processReferral(referralCode: string, newUserId: string) {
         status: "pending",
         amount: "10.00",
         createdAt: new Date(),
-      });
+      };
 
-      // Update the referrer's pending payment and total referrals
+      await tx.insert(referrals).values(newReferral);
+      console.log('✅ Created referral record:', newReferral);
+
+      // Update referrer's rewards
       await tx
         .update(referralRewards)
         .set({
-          totalReferrals: (referrer.totalReferrals || 0) + 1,
-          pendingPayment: ((Number(referrer.pendingPayment) || 0) + 10).toFixed(2),
+          totalReferrals: sql`${referralRewards.totalReferrals} + 1`,
+          pendingPayment: sql`COALESCE(${referralRewards.pendingPayment}, 0) + 10.00`,
         })
         .where(eq(referralRewards.userId, referrer.userId));
     });
 
     return { success: true };
   } catch (error) {
-    console.error("Error processing referral:", error);
-    return { success: false, message: formatError(error) };
+    console.error('🔥 Error in processReferral:', error);
+    return { 
+      success: false, 
+      message: error instanceof Error ? error.message : "Failed to process referral" 
+    };
   }
 }
 
 export async function completeReferral(userId: string) {
+  console.log('🚀 Starting completeReferral for user:', userId);
+
   try {
     const pendingReferral = await db.query.referrals.findFirst({
       where: (referrals, { and, eq }) =>
@@ -171,7 +193,10 @@ export async function completeReferral(userId: string) {
       },
     });
 
+    console.log('📝 Found pending referral:', pendingReferral);
+
     if (!pendingReferral) {
+      console.log('⚠️ No pending referral found for user:', userId);
       return { success: false, message: "No pending referral found" };
     }
 
@@ -179,33 +204,46 @@ export async function completeReferral(userId: string) {
       where: (rewards, { eq }) => eq(rewards.userId, pendingReferral.referrerId),
     });
 
+    console.log('👤 Referrer rewards:', referrerRewards);
+
     if (!referrerRewards) {
+      console.error('❌ Referrer rewards not found for:', pendingReferral.referrerId);
       return { success: false, message: "Referrer rewards record not found" };
     }
 
     await db.transaction(async (tx) => {
-      // Update referral status to completed
+      console.log('🔄 Starting transaction');
+
+      // Update referral status
       await tx
         .update(referrals)
         .set({ 
           status: "completed",
-          amount: "10.00" // Ensure amount is set to 10 KES
+          amount: "10.00"
         })
         .where(eq(referrals.id, pendingReferral.id));
 
+      console.log('✅ Updated referral status to completed');
+
       // Update referrer's rewards
+      const updatedRewards = {
+        totalReferrals: (referrerRewards.totalReferrals || 0) + 1,
+        pendingPayment: ((Number(referrerRewards.pendingPayment) || 0) + 10).toFixed(2),
+      };
+
       await tx
         .update(referralRewards)
-        .set({
-          totalReferrals: (referrerRewards.totalReferrals || 0) + 1,
-          pendingPayment: ((Number(referrerRewards.pendingPayment) || 0) + 10).toFixed(2),
-        })
+        .set(updatedRewards)
         .where(eq(referralRewards.userId, pendingReferral.referrerId));
+
+      console.log('✅ Updated referrer rewards:', updatedRewards);
     });
 
+    console.log('✨ Successfully completed referral');
     return { success: true };
+
   } catch (error) {
-    console.error("Error completing referral:", error);
+    console.error('🔥 Error in completeReferral:', error);
     return { success: false, message: formatError(error) };
   }
 }
@@ -271,26 +309,23 @@ export async function markReferralAsPaid(userId: string) {
 
   try {
     return await db.transaction(async (tx) => {
-      // Get all unpaid referrals
-      const unpaidReferrals = await tx.query.referrals.findMany({
-        where: (referrals, { and, eq, or }) => 
+      // Get all pending referrals
+      const pendingReferrals = await tx.query.referrals.findMany({
+        where: (referrals, { and, eq }) => 
           and(
             eq(referrals.referrerId, userId),
-            or(
-              eq(referrals.status, "pending"),
-              eq(referrals.status, "completed")
-            )
+            eq(referrals.status, "pending")
           ),
       });
 
-      if (!unpaidReferrals.length) {
+      if (!pendingReferrals.length) {
         return { 
           success: false, 
-          message: "No unpaid referrals found to process" 
+          message: "No pending referrals found to process" 
         };
       }
 
-      const pendingAmount = (unpaidReferrals.length * 10).toFixed(2);
+      const pendingAmount = (pendingReferrals.length * 10).toFixed(2);
 
       // Update referral statuses to paid
       await tx
@@ -299,10 +334,7 @@ export async function markReferralAsPaid(userId: string) {
         .where(
           and(
             eq(referrals.referrerId, userId),
-            or(
-              eq(referrals.status, "pending"),
-              eq(referrals.status, "completed")
-            )
+            eq(referrals.status, "pending")
           )
         );
 
@@ -310,7 +342,7 @@ export async function markReferralAsPaid(userId: string) {
       await tx
         .update(referralRewards)
         .set({
-          totalEarnings: sql`${referralRewards.totalEarnings} + ${pendingAmount}::numeric`,
+          totalEarnings: sql`COALESCE(${referralRewards.totalEarnings}, 0) + ${pendingAmount}::numeric`,
           pendingPayment: "0.00",
           lastPaidAt: new Date(),
         })
@@ -318,10 +350,10 @@ export async function markReferralAsPaid(userId: string) {
 
       return { 
         success: true,
-        message: `Successfully processed payment of KES ${pendingAmount} for ${unpaidReferrals.length} referrals`,
+        message: `Successfully processed payment of KES ${pendingAmount} for ${pendingReferrals.length} referrals`,
         data: {
           amount: pendingAmount,
-          referralsCount: unpaidReferrals.length
+          referralsCount: pendingReferrals.length
         }
       };
     });

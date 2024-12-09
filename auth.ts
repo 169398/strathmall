@@ -32,7 +32,7 @@ export const config = {
     }),
   ],
   callbacks: {
-    jwt: async ({ token, user, trigger, session, account }: any) => {
+    jwt: async ({ token, user, trigger, session, account, request, response }: any) => {
       if (user) {
         if (account?.provider === 'google') {
           const existingUser = await db.query.users.findFirst({
@@ -61,10 +61,18 @@ export const config = {
               }
             });
 
-            const searchParams = new URLSearchParams(window.location.search);
-            const referralCode = searchParams.get('ref');
-            if (referralCode) {
-              await processReferral(referralCode, userId);
+            // Handle referral after user creation
+            try {
+              const cookies = request?.cookies;
+              const referralCode = cookies?.get('referral_code')?.value;
+              
+              if (referralCode) {
+                await processReferral(referralCode, userId);
+                // Clear the referral cookie after processing
+                response?.cookies.delete('referral_code');
+              }
+            } catch (error) {
+              console.error('Error processing referral:', error);
             }
           }
         } else {
@@ -81,7 +89,7 @@ export const config = {
 
         if (trigger === 'signIn' || trigger === 'signUp') {
           try {
-            const response = await fetch('/api/cart/merge', {
+            const response = await fetch(new URL('/api/cart/merge', process.env.NEXTAUTH_URL).toString(), {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ userId: user.id }),
@@ -120,6 +128,24 @@ export const config = {
       ]
       const { pathname } = request.nextUrl
       return !protectedPaths.some((p) => p.test(pathname)) || !!auth
+    },
+    signIn: async ({ user, account, request }: any) => {
+      console.log('🔑 Sign in callback triggered:', { user, account });
+      
+      try {
+        const cookies = request?.cookies;
+        const referralCode = cookies?.get('referral_code')?.value;
+
+        if (referralCode && user.id) {
+          console.log('📨 Processing referral:', { referralCode, userId: user.id });
+          await processReferral(referralCode, user.id);
+        }
+
+        return true;
+      } catch (error) {
+        console.error('🔥 Error in signIn callback:', error);
+        return true; // Still allow sign in even if referral processing fails
+      }
     },
   },
 } satisfies NextAuthConfig
