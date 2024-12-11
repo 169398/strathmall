@@ -20,6 +20,7 @@ import LastViewedCarousel from "./product/last-viewed-product";
 import CommitmentBanner from "./CommitmentBanner";
 import AnnouncementBar from "@/components/shared/AnnouncementBar";
 
+
 const handleClick = () => {
   const duration = 5 * 1000;
   const animationEnd = Date.now() + duration;
@@ -109,7 +110,7 @@ const HomeContent: React.FC<HomeContentProps> = ({
       <div className="lg:hidden mb-8">
         <AnnouncementBar />
       </div>
-      {/* <ReferralAnnouncement /> */}
+
       <CommitmentBanner />
 
       <div className="space-y-8 bg-gradient-to-b from-white to-blue-50 ">
