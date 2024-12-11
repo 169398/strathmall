@@ -22,9 +22,8 @@ export const metadata: Metadata = {
 
 export default async function SignUpPage({ searchParams }: SignUpPageProps) {
   const session = await auth();
-  const params = await searchParams;
-  const callbackUrl = params?.callbackUrl;
-  const referralCode = params?.ref;
+  const callbackUrl = searchParams.callbackUrl;
+  const referralCode = searchParams.ref;
 
   if (session) {
     return redirect(callbackUrl || "/");
