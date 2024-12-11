@@ -253,56 +253,22 @@ export async function completeReferral(userId: string) {
 
 export async function getReferralPayments() {
   try {
-    // First, get all referral records with their referrers
-    const allReferrals = await db.query.referrals.findMany({
-      with: {
-        referrer: true,
-      },
-    });
+    const result = await db
+      .select({
+        id: referrals.id,
+        referrerId: referrals.referrerId,
+        referredId: referrals.referredId,
+        amount: referrals.amount,
+        status: referrals.status,
+        createdAt: referrals.createdAt,
+      })
+      .from(referrals)
+      .where(eq(referrals.status, 'PENDING'));
 
-    // Get unique referrer IDs
-    const referrerIds = [...new Set(allReferrals.map((ref) => ref.referrerId))];
-
-    // Get all rewards records for these referrers
-    const rewardsPromises = referrerIds.map(async (referrerId) => {
-      const referrerRewards = await db.query.referralRewards.findFirst({
-        where: (rewards, { eq }) => eq(rewards.userId, referrerId),
-        with: {
-          user: true,
-        },
-      });
-
-      if (!referrerRewards) return null;
-
-      // Count unpaid referrals for this referrer
-      const unpaidReferrals = allReferrals.filter(
-        (ref) =>
-          ref.referrerId === referrerId &&
-          (ref.status === "pending" || ref.status === "completed")
-      );
-
-      const pendingPaymentAmount = unpaidReferrals.length * 10;
-
-      return {
-        userId: referrerRewards.userId,
-        userName: referrerRewards.user?.name,
-        mpesaNumber: referrerRewards.mpesaNumber,
-        totalReferrals: referrerRewards.totalReferrals || 0,
-        pendingPayment: pendingPaymentAmount,
-        totalEarnings: Number(referrerRewards.totalEarnings || 0),
-        lastPaidAt: referrerRewards.lastPaidAt,
-        status: pendingPaymentAmount > 0 ? "pending" : "paid",
-      };
-    });
-
-    const resolvedPayments = (await Promise.all(rewardsPromises)).filter(
-      (payment): payment is NonNullable<typeof payment> => payment !== null
-    );
-
-    return resolvedPayments;
+    return result;
   } catch (error) {
-    console.error("Error getting referral payments:", error);
-    throw error;
+    console.error('Error getting referral payments:', error);
+    return [];
   }
 }
 
