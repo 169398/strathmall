@@ -18,6 +18,8 @@ import { getOrderSummary } from '@/lib/actions/adminorder.action'
 import { ReferralsCard } from './referrals-card'
 import { getReferralPayments } from '@/lib/actions/referral.actions'
 
+export const dynamic = 'force-dynamic'
+
 export  const metadata: Metadata = {
   title: `Admin Dashboard - ${APP_NAME}`,
 }

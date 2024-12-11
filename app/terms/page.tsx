@@ -12,13 +12,12 @@ const TermsAndConditions: React.FC = () => {
           1. Introduction
         </h2>
         <p className="text-sm">
-          1.1 “Strathmall” is the trading name for the Strathmall
-           
-          (“Strathmall” or “we”) operates an e-commerce platform consisting of a
-          website and mobile application (“marketplace”), together with
+          1.1 &quot;Strathmall&quot; is the trading name for the Strathmall. Strathmall 
+          (&quot;Strathmall&quot; or &quot;we&quot;) operates an e-commerce platform consisting of a
+          website and mobile application (&quot;marketplace&quot;), together with
           supporting IT, logistics, and payment infrastructure, for the sale and
-          purchase of consumer products and services (“products”) in its
-          allocated territory 
+          purchase of consumer products and services (&quot;products&quot;) in its
+          allocated territory.
         </p>
         <p className="text-sm">
           1.2 These general terms and conditions shall apply to buyers and
@@ -31,7 +30,7 @@ const TermsAndConditions: React.FC = () => {
           conditions or any part of these general terms and conditions, you must
           not use our marketplace.
         </p>
-        <p className="text-sm">
+        <div className="text-sm">
           1.4 If you use our marketplace in the course of a business or other
           organizational project, then by so doing you:
           <ul className="list-disc list-inside ml-6">
@@ -51,7 +50,7 @@ const TermsAndConditions: React.FC = () => {
               requires otherwise.
             </li>
           </ul>
-        </p>
+        </div>
       </section>
 
       <section className="mb-8">
@@ -64,7 +63,7 @@ const TermsAndConditions: React.FC = () => {
           terms and conditions, you warrant and represent to us that you are at
           least 18 years of age).
         </p>
-        <p className="text-sm">
+        <div className="text-sm">
           2.2 If you register for an account with our marketplace, you will be
           asked to provide an email address/user ID and password, and you agree
           to:
@@ -82,7 +81,7 @@ const TermsAndConditions: React.FC = () => {
               of such a failure.
             </li>
           </ul>
-        </p>
+        </div>
         <p className="text-sm">
           2.3 Your account shall be used exclusively by you, and you shall not
           transfer your account to any third party. If you authorize any third
@@ -107,7 +106,7 @@ const TermsAndConditions: React.FC = () => {
         <h2 className="text-xl font-medium text-gray-800 mb-4">
           3. Terms and Conditions of Sale
         </h2>
-        <p className="text-sm">
+        <div className="text-sm">
           3.1 You acknowledge and agree that:
           <ul className="list-disc list-inside ml-6">
             <li className="text-sm">
@@ -127,8 +126,8 @@ const TermsAndConditions: React.FC = () => {
               marketplace.
             </li>
           </ul>
-        </p>
-        <p className="text-sm">
+        </div>
+        <div className="text-sm">
           3.2 Subject to these general terms and conditions, the seller&apos;s
           terms of business shall govern the contract for sale and purchase
           between the buyer and the seller. Notwithstanding this, the following
@@ -175,7 +174,7 @@ const TermsAndConditions: React.FC = () => {
               specification section provided on each product page.
             </li>
           </ul>
-        </p>
+        </div>
       </section>
 
       <section className="mb-8">
@@ -189,7 +188,7 @@ const TermsAndConditions: React.FC = () => {
           returns shall be in our discretion, subject to compliance with
           applicable laws of the territory.
         </p>
-        <p className="text-sm">
+        <div className="text-sm">
           4.2 Refunds in respect of returned products shall be managed in
           accordance with the refunds page on the marketplace, as may be amended
           from time to time. Our rules on refunds shall be exercised in our
@@ -207,7 +206,7 @@ const TermsAndConditions: React.FC = () => {
               time to time.
             </li>
           </ul>
-        </p>
+        </div>
         <p className="text-sm">
           4.3 Returned products shall be accepted and refunds issued by
           Strathmall, acting for and on behalf of the seller. Notwithstanding

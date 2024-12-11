@@ -1,7 +1,5 @@
 'use server'
 
-import { isRedirectError } from 'next/dist/client/components/redirect'
-
 import { auth, signIn, signOut } from '@/auth'
 import {
   paymentMethodSchema,
@@ -91,13 +89,11 @@ export async function signInWithCredentials(
       email: formData.get('email'),
       password: formData.get('password'),
     })
-        console.log("Attempting sign-in for:", user.email);
 
     await signIn('credentials', user)
-    console.log("Sign-in successful for:", user.email);
     return { success: true, message: 'Sign in successfully' }
   } catch (error) {
-    if (isRedirectError(error)) {
+    if (error instanceof Error && error.message.includes('NEXT_REDIRECT')) {
       throw error
     }
     return { success: false, message: 'Invalid email or password' }

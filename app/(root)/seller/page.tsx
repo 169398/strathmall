@@ -101,7 +101,7 @@ const OnboardingForm = () => {
     }
   }
   return (
-    <div className="relative min-h-screen py-9 lg:py-0 md:py-9">
+    <div className="relative pt-[2rem] min-h-screen py-9 lg:py-0 md:py-9">
       <Banner />
       <div className="relative container mx-auto rounded-sm p-10 bg-slate-50 bg-opacity-90">
         <Form {...form}>

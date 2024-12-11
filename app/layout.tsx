@@ -15,6 +15,7 @@ import { AccessibilityProvider } from "@/lib/context/AccessibilityContext";
 import SkipToContent from "@/components/shared/SkipToContent";
 import { getAuthWithTimeout } from "@/lib/auth-helpers";
 import { Session } from "next-auth";
+import AuthModalProvider from "@/components/providers/auth-modal-provider";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -49,6 +50,7 @@ export default async function RootLayout({
               <Toaster />
               <Analytics />
               <FeedbackModal />
+              <AuthModalProvider />
             </main>
           </AccessibilityProvider>
         </SessionProvider>
