@@ -52,6 +52,14 @@ export const sellers = pgTable("sellerShop", {
   university: text("university").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   shopCategory: text("shopCategory").array().notNull(),
+  offersServices: boolean("offersServices").default(false).notNull(),
+  services: json("services").$type<{
+    name: string;
+    description: string;
+    price: number | null;
+    hasCustomPrice: boolean;
+    images: string[];
+  }[]>().default([]),
 });
 
 export const feedbacks = pgTable("feedbacks", {
@@ -346,4 +354,53 @@ export const sellerProductsRelations = relations(
 export const sellersRelations = relations(sellers, ({ one, many }) => ({
   user: one(users, { fields: [sellers.userId], references: [users.id] }),
   products: many(products),
+}));
+
+// REFERRALS
+export const referrals = pgTable('referrals', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  referrerId: uuid('referrer_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  referredId: uuid('referred_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  referralCode: text('referral_code').notNull(),
+  status: text('status').notNull().default('pending'),
+  amount: numeric('amount', { precision: 10, scale: 2 }).notNull().default('10.00'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+// REFERRAL REWARDS
+export const referralRewards = pgTable('referral_rewards', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  referralCode: text('referral_code').notNull().unique(),
+  mpesaNumber: text('mpesa_number'),
+  totalReferrals: integer('total_referrals').notNull().default(0),
+  pendingPayment: numeric('pending_payment', { precision: 10, scale: 2 }).notNull().default('0.00'),
+  totalEarnings: numeric('total_earnings', { precision: 10, scale: 2 }).notNull().default('0.00'),
+  lastPaidAt: timestamp('last_paid_at'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+// Add relations
+export const referralRelations = relations(referrals, ({ one }) => ({
+  referrer: one(users, {
+    fields: [referrals.referrerId],
+    references: [users.id],
+  }),
+  referred: one(users, {
+    fields: [referrals.referredId],
+    references: [users.id],
+  }),
+}));
+
+export const referralRewardsRelations = relations(referralRewards, ({ one }) => ({
+  user: one(users, {
+    fields: [referralRewards.userId],
+    references: [users.id],
+  }),
 }));

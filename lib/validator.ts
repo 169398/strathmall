@@ -87,6 +87,11 @@ export const cartItemSchema = z.object({
     ),
 });
 
+export const phoneNumberSchema = z.string().regex(
+  /^(07|\+254)\d{8}$/,
+  "Phone number must start with 01, 07, or +254 and be followed by 8 digits"
+);
+
 export const shippingAddressSchema = z.object({
   fullName: z.string().min(3, "Name must be at least 3 characters"),
   phoneNumber: z
@@ -152,24 +157,19 @@ export const insertOrderItemSchema = createInsertSchema(orderItems, {
 });
 
 export const createSellerSchema = z.object({
-  shopName: z.string().min(3, "Shop name must be at least 3 characters"),
-  shopCategory: z.array(z.string()).min(1, "Shop category required"),
-  email: z
-    .string()
-    .email("Invalid email address")
-    .regex(
-      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-      "Enter a valid email address"
-    ),
-  phoneNumber: z
-    .string()
-    .regex(
-      /^(01|07|\+254)\d{8}$/,
-      "Phone number must start with 01, 07, or +254 and be followed by 8 digits"
-    ),
-  university: z
-    .string()
-    .min(1, "University required"),
+  shopName: z.string().min(1, "Shop name is required"),
+  email: z.string().email("Invalid email address"),
+  phoneNumber: z.string().min(10, "Phone number must be at least 10 digits"),
+  university: z.string().min(1, "University is required"),
+  shopCategory: z.array(z.string()).min(1, "At least one category is required"),
+  offersServices: z.boolean().default(false),
+  services: z.array(z.object({
+    name: z.string().min(1, "Service name is required"),
+    description: z.string().min(1, "Description is required"),
+    price: z.coerce.number().nullable(),
+    hasCustomPrice: z.boolean(),
+    images: z.array(z.string())
+  })).default([])
 });
 
 export const updateSellerSchema = createSellerSchema.extend({

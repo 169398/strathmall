@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useFormState, useFormStatus } from "react-dom";
+import {  useFormStatus } from "react-dom";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,15 +9,17 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { signUp } from "@/lib/actions/user.actions";
 import { signUpDefaultValues } from "@/lib/constants";
-import { useState } from "react";
+import { useActionState, useState } from "react";
+import { PasswordInput } from "@/components/shared/PasswordInput";
 
 export default function SignUpForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/";
+  const referralCode = searchParams.get('ref');
 
 
-  const [data, action] = useFormState(signUp, {
+  const [data, action] = useActionState(signUp, {
     success: false,
     message: "",
   });
@@ -38,7 +40,6 @@ export default function SignUpForm() {
     );
   };
 
-  // Redirect to the verification page if sign up is successful
   if (data.success) {
     router.push(`/verify-email?email=${signUpDefaultValues.email}`);
   }
@@ -46,6 +47,7 @@ export default function SignUpForm() {
   return (
     <form action={action}>
       <input type="hidden" name="callbackUrl" value={callbackUrl} />
+      <input type="hidden" name="referralCode" value={referralCode || ""} />
       <div className="space-y-6">
         <div>
           <Label htmlFor="name">Name</Label>
@@ -71,21 +73,20 @@ export default function SignUpForm() {
         </div>
         <div>
           <Label htmlFor="password">Password</Label>
-          <Input
+          <PasswordInput
             id="password"
             name="password"
             required
-            type="password"
             defaultValue={signUpDefaultValues.password}
+            showStrengthIndicator={true}
           />
         </div>
         <div>
           <Label htmlFor="confirmPassword">Confirm Password</Label>
-          <Input
+          <PasswordInput
             id="confirmPassword"
             name="confirmPassword"
             required
-            type="password"
             defaultValue={signUpDefaultValues.confirmPassword}
           />
         </div>
@@ -120,6 +121,11 @@ export default function SignUpForm() {
             Sign In
           </Link>
         </div>
+        {referralCode && (
+          <div className="text-sm text-green-600 mb-4">
+            You can also earn money when you refer a friend💰.
+          </div>
+        )}
       </div>
     </form>
   );

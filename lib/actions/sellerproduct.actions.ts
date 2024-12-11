@@ -2,7 +2,13 @@
 
 import { desc } from "drizzle-orm";
 import db from "@/db/drizzle";
-import { favorites, lastViewedProducts, products } from "@/db/schema";
+import {
+  favorites,
+  lastViewedProducts,
+  products,
+  sellers,
+  users,
+} from "@/db/schema";
 import { and, asc, count, eq, ilike, sql } from "drizzle-orm/sql";
 import { PAGE_SIZE } from "../constants";
 import { revalidatePath } from "next/cache";
@@ -10,7 +16,7 @@ import { formatError } from "../utils";
 import { z } from "zod";
 import { insertProductSchema, updateProductSchema } from "../validator";
 import { auth } from "@/auth";
-import redis from "../redis";
+import { CacheService } from "@/lib/cache-utils";
 
 // CREATE
 export async function createProduct(data: z.infer<typeof insertProductSchema>) {
@@ -313,7 +319,7 @@ export async function getProductById(productId: string) {
 
 export async function getLatestProducts() {
   const data = await db.query.products.findMany({
-    where: sql`${products.category} != 'Food-Bakery'`, 
+    where: sql`${products.category} != 'Food-Bakery'`,
     orderBy: [desc(products.createdAt)],
     limit: 10,
   });
@@ -478,57 +484,61 @@ export async function deleteProduct(id: string) {
     return { success: false, message: formatError(error) };
   }
 }
-const CACHE_EXPIRATION_TIME = 60 * 30;
 
 export async function getHomePageData() {
-  try {
-    // Try fetching cached homepage data from Redis
-    const cachedData = await redis.get("homepage:data");
+  return CacheService.getOrSet(
+    "homepage:data",
+    async () => {
+      const latestProducts = await db
+        .select({
+          id: products.id,
+          slug: products.slug,
+          images: products.images,
+          name: products.name,
+          stock: products.stock,
+          price: products.price,
+          discount: products.discount,
+          discountedPrice:
+            sql<number>`(${products.price} - (${products.price} * ${products.discount} / 100))`.as(
+              "discountedPrice"
+            ),
+        })
+        .from(products)
+        .where(sql`${products.category} != 'Food-Bakery'`)
+        .orderBy(desc(products.createdAt))
+        .limit(10);
 
-    if (cachedData) {
-      try {
-        const parsedData = JSON.parse(cachedData as string);
-        return parsedData;
-      } catch (parseError) {
-        console.error("Error parsing cached homepage data:", parseError);
+      const discountedProducts = await db
+        .select({
+          id: products.id,
+          slug: products.slug,
+          images: products.images,
+          name: products.name,
+          price: products.price,
+          discount: products.discount,
+          discountedPrice:
+            sql<number>`(${products.price} - (${products.price} * ${products.discount} / 100))`.as(
+              "discountedPrice"
+            ),
+        })
+        .from(products)
+        .where(sql`${products.discount} > 0`)
+        .orderBy(desc(products.createdAt))
+        .limit(10);
+
+      if (!latestProducts || !discountedProducts) {
+        throw new Error("Missing homepage product data from the database");
       }
+
+      return {
+        latestProducts,
+        discountedProducts,
+      };
+    },
+    {
+      expirationTime: 60 * 30, // 30 minutes
     }
-
-    const latestProducts = await getLatestProducts();
-    const allProducts = await getAllProducts();
-    const discountedProducts = await getDiscountedProducts();
-    const Ads = null;
-
-    if (!latestProducts || !allProducts || !discountedProducts) {
-      throw new Error("Missing homepage product data from the database");
-    }
-
-    // Structure the data
-    const homePageData = {
-      latestProducts,
-      allProducts,
-      discountedProducts,
-      Ads,
-    };
-
-    // Try to cache the data in Redis
-    try {
-      await redis.set("homepage:data", JSON.stringify(homePageData), {
-        ex: CACHE_EXPIRATION_TIME,
-      });
-    } catch (redisError) {
-      console.error("Error caching homepage data in Redis:", redisError);
-    }
-
-    return homePageData;
-  } catch (error) {
-    console.error("Error fetching or caching homepage data:", error);
-    if (error instanceof Error) {
-      throw new Error(`Failed to fetch homepage data: ${error.message}`);
-    } else {
-      throw new Error("Failed to fetch homepage data: Unknown error");
-    }
-  }
+  );
 }
 
 export async function logProductView(userId: string, productId: string) {
@@ -613,5 +623,29 @@ export async function getLastViewedProducts(userId: string, limit = 10) {
   } catch (error) {
     console.error("Error fetching last viewed products:", error);
     return { success: false, message: "Failed to fetch last viewed products" };
+  }
+}
+
+export async function getAllServices() {
+  try {
+    const sellersWithServices = await db
+      .select({
+        id: sellers.id,
+        shopName: sellers.shopName,
+        sellerName: users.name,
+        phoneNumber: sellers.phoneNumber,
+        services: sellers.services,
+      })
+      .from(sellers)
+      .innerJoin(users, eq(sellers.userId, users.id))
+      .where(eq(sellers.offersServices, true));
+
+    return {
+      success: true,
+      data: sellersWithServices,
+    };
+  } catch (error) {
+    console.error("Error fetching services:", error);
+    return { success: false, message: formatError(error) };
   }
 }

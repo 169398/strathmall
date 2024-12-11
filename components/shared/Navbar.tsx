@@ -8,17 +8,30 @@ import MobileNav from "./MobileNav";
 import Search from "./header/search";
 import Header from "./header";
 import FavoriteProductsSheet from "./product/favoriteProducts";
-import { auth } from "@/auth";
-export default async function Navbar() {
-  const session = await auth();
+import { NavbarWrapper } from "./NavbarWrapper";
+import AnnouncementBar from "./AnnouncementBar";
+import { Session } from "next-auth";
+
+interface NavbarProps {
+  session: Session | null;
+}
+
+export default function Navbar({ session }: NavbarProps) {
   return (
-    <div className="sticky top-0 inset-x-0 z-50 bg-white shadow-md">
+    <NavbarWrapper>
+      <div className="hidden lg:block sticky top-0 z-50">
+        <AnnouncementBar />
+      </div>
       <header className="relative bg-white">
         <MaxWidthWrapper>
           <div className="border-b border-gray-200">
             <div className="flex h-16 items-center justify-between lg:justify-start lg:py-4">
               <div className="flex items-center lg:ml-4">
-                <Link href="/">
+                <Link
+                  href="/"
+                  aria-label="StrathMall Home"
+                  className="focus:outline-none focus:ring-2"
+                >
                   <Image
                     src="https://res.cloudinary.com/db0i0umxn/image/upload/v1728757714/logo_bxjyga.png"
                     alt="strathmall logo"
@@ -31,10 +44,14 @@ export default async function Navbar() {
               <div className="hidden lg:flex lg:flex-1 lg:ml-8 lg:space-x-8 items-center">
                 <Header />
                 <div className="flex-1 max-w-md">
-                  <Search />
+                  <Search aria-label="Search products" />
                 </div>
               </div>
-              <div className="hidden lg:flex lg:items-center lg:space-x-6 ">
+              <div
+                className="hidden lg:flex lg:items-center lg:space-x-6"
+                role="group"
+                aria-label="User actions"
+              >
                 <div className="ml-9">
                   <FavoriteProductsSheet />
                 </div>
@@ -49,8 +66,9 @@ export default async function Navbar() {
                         href="/sign-in"
                         className={buttonVariants({
                           variant: "secondary",
-                          className: "text-sm",
+                          className: "text-sm focus:outline-none focus:ring-2",
                         })}
+                        aria-label="Log in to your account"
                       >
                         Log in
                       </Link>
@@ -63,8 +81,9 @@ export default async function Navbar() {
                         href="/sign-up"
                         className={buttonVariants({
                           variant: "default",
-                          className: "text-sm",
+                          className: "text-sm focus:outline-none focus:ring-2",
                         })}
+                        aria-label="Create a new account"
                       >
                         Sign up
                       </Link>
@@ -74,10 +93,10 @@ export default async function Navbar() {
                 </div>
               </div>
             </div>
-            <MobileNav />
+            <MobileNav session={session} />
           </div>
         </MaxWidthWrapper>
       </header>
-    </div>
+    </NavbarWrapper>
   );
 }

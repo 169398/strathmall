@@ -15,13 +15,19 @@ import {
 } from '@/components/ui/table'
 import Link from 'next/link'
 import { getOrderSummary } from '@/lib/actions/adminorder.action'
+import { ReferralsCard } from './referrals-card'
+import { getReferralPayments } from '@/lib/actions/referral.actions'
 
-export const metadata: Metadata = {
+export const dynamic = 'force-dynamic'
+
+export  const metadata: Metadata = {
   title: `Admin Dashboard - ${APP_NAME}`,
 }
 
 export default async function DashboardPage() {
-  const session = await auth()
+    const referrals = await getReferralPayments();
+
+  const session = await auth();
   if (session?.user.role !== 'admin')
     throw new Error('admin permission required')
 
@@ -128,6 +134,7 @@ export default async function DashboardPage() {
             </Table>
           </CardContent>
         </Card>
+        <ReferralsCard referrals={referrals}/>
       </div>
     </div>
   )

@@ -10,12 +10,13 @@ export const metadata = {
 };
 
 const OrderDetailsPage = async ({
-  params: { id },
+  params,
 }: {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }) => {
+  const { id } = await params;
   const session = await auth();
   const order = await getOrderById(id);
   if (!order) notFound();

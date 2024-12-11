@@ -7,10 +7,9 @@ const HomeLoader = ({
   latestProducts,
   allProducts,
   discountedProducts,
-  
-  // Ads,
+  servicesData,
 }: any) => {
-  if (!latestProducts || !allProducts || !discountedProducts)
+  if (!latestProducts || !allProducts || !discountedProducts || !servicesData)
     return <HomeSkeleton />;
 
   return (
@@ -18,8 +17,7 @@ const HomeLoader = ({
       latestProducts={latestProducts}
       allProducts={allProducts}
       discountedProducts={discountedProducts}
-      // Ads={Ads}
-
+      servicesData={servicesData}
     />
   );
 };

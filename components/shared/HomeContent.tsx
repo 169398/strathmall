@@ -13,12 +13,13 @@ import { buttonVariants } from "../ui/button";
 import { Infinitetestimonials } from "./Testimonials";
 import ShoesCategory from "./product/shoesCategory";
 import Electronics from "./product/techCategory";
-import Watches from "./product/watchesCategory";
 import CategoryCarousel from "./product/categoryCarousel";
 import Image from "next/image";
-import HowItWorks from "./HowItWorks";
 import Cakes from "./CakeSection";
 import LastViewedCarousel from "./product/last-viewed-product";
+import CommitmentBanner from "./CommitmentBanner";
+import AnnouncementBar from "@/components/shared/AnnouncementBar";
+
 
 const handleClick = () => {
   const duration = 5 * 1000;
@@ -51,6 +52,7 @@ interface HomeContentProps {
   latestProducts: any;
   allProducts: any;
   discountedProducts: any;
+  servicesData: any;
 }
 
 const HomeContent: React.FC<HomeContentProps> = ({
@@ -59,7 +61,7 @@ const HomeContent: React.FC<HomeContentProps> = ({
   discountedProducts,
 }) => {
   return (
-    <div>
+    <div className="pt-[2rem]">
       <div className="bg-gradient-to-b   from-white to-blue-50">
         <MaxWidthWrapper>
           <div className="mx-auto flex max-w-3xl flex-col  items-center     py-20 text-center">
@@ -75,9 +77,12 @@ const HomeContent: React.FC<HomeContentProps> = ({
             <div className="mt-6 flex flex-col gap-4 sm:flex-row">
               <Link
                 href="/seller"
-                className={`${buttonVariants({
-                  variant: "secondary",
-                })} text-base text-blue-500 bg-yellow-400 hover:bg-yellow-300`}
+                className={
+                  buttonVariants({
+                    variant: "secondary",
+                  }) +
+                  " text-base text-blue-500 bg-yellow-400 hover:bg-yellow-300"
+                }
               >
                 <SparklesText
                   onClick={handleClick}
@@ -85,6 +90,7 @@ const HomeContent: React.FC<HomeContentProps> = ({
                   className="text-base text-blue-500"
                 />
               </Link>
+             
             </div>
 
             <div className="mt-8 flex items-center justify-center">
@@ -100,21 +106,26 @@ const HomeContent: React.FC<HomeContentProps> = ({
           </div>
         </MaxWidthWrapper>
       </div>
-      <HowItWorks />
+      
+      <div className="lg:hidden mb-8">
+        <AnnouncementBar />
+      </div>
+
+      <CommitmentBanner />
 
       <div className="space-y-8 bg-gradient-to-b from-white to-blue-50 ">
         <ProductList title="Newest Arrivals ✨" data={latestProducts} />
         <ProductPromotion />
         <LastViewedCarousel />
-        <ShoesCategory />
-        <Cakes />
-
-        <Electronics />
-        <Watches />
         <DiscountProductList
           title="Discounted Products 💸"
           data={discountedProducts.data || []}
         />
+        <ShoesCategory />
+        <Cakes />
+
+        <Electronics />
+
         <CategoryCarousel />
         <AllProductList title="More to love 💖" data={allProducts.data || []} />
         <EcommerceFeatures />

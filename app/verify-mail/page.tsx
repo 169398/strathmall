@@ -3,13 +3,17 @@ import db from "@/db/drizzle";
 import { verificationTokens, users } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 
+interface VerifyEmailPageProps {
+  searchParams: Promise<{
+    identifier?: string;
+    token?: string;
+  }>;
+}
+
 export default async function VerifyEmailPage({
   searchParams,
-}: {
-  searchParams: { identifier?: string; token?: string };
-}) {
-  const identifier = searchParams.identifier;
-  const token = searchParams.token;
+}: VerifyEmailPageProps) {
+  const { identifier, token } = await searchParams;
 
   if (!identifier || !token) {
     return (

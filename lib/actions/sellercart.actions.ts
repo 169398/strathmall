@@ -27,16 +27,30 @@ const calcPrice = (items: cartItem[], townName: string) => {
 
 export const addItemToCart = async (data: cartItem, townName: string) => {
   try {
-    const sessionCartId = (await cookies()).get("sessionCartId")?.value;
-    if (!sessionCartId) throw new Error("Cart Session not found");
+    const cookieStore = await cookies();
+    let sessionCartId = await cookieStore.get("sessionCartId")?.value;
+    
+    // If no sessionCartId exists, create one
+    if (!sessionCartId) {
+      sessionCartId = crypto.randomUUID();
+      cookieStore.set("sessionCartId", sessionCartId, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+        maxAge: 60 * 60 * 24 * 30, // 30 days
+      });
+    }
 
     const session = await auth();
-    const userId = session?.user.id as string | undefined;
+    const userId = session?.user.id;
     const cart = await getMyCart();
     const item = cartItemSchema.parse(data);
+    
     const product = await db.query.products.findFirst({
       where: eq(products.id, item.productId),
     });
+    
     if (!product) throw new Error("Product not found");
 
     if (!cart) {
@@ -44,12 +58,14 @@ export const addItemToCart = async (data: cartItem, townName: string) => {
 
       await db.insert(carts).values({
         userId: userId,
-        items: [{ ...item, productId: item.productId }],
         sessionCartId: sessionCartId,
+        items: [{ ...item, productId: item.productId }],
         ...calcPrice([item], townName),
       });
 
+      revalidatePath("/cart");
       revalidatePath(`/product/${product.slug}`);
+      
       return {
         success: true,
         message: "Item added to cart successfully",
@@ -85,6 +101,7 @@ export const addItemToCart = async (data: cartItem, townName: string) => {
       };
     }
   } catch (error) {
+    console.error("Cart error:", error); // Add error logging
     return { success: false, message: formatError(error) };
   }
 };

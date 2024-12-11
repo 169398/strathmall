@@ -1,19 +1,13 @@
-
-
 import { DrizzleAdapter } from '@auth/drizzle-adapter'
-import { compareSync } from 'bcrypt-ts-edge'
 import { eq } from 'drizzle-orm'
 import type { NextAuthConfig } from 'next-auth'
 import NextAuth from 'next-auth'
-import CredentialsProvider from 'next-auth/providers/credentials'
-import Resend from 'next-auth/providers/resend'
+
 import Google from 'next-auth/providers/google'
 
 import db from './db/drizzle'
-import { carts, users } from './db/schema'
-import { cookies } from 'next/headers'
-import { NextResponse } from 'next/server'
-import { APP_NAME, SENDER_EMAIL } from './lib/constants'
+import {  users } from './db/schema'
+import { processReferral } from './lib/actions/referral.actions'
 
 export const config = {
   pages: {
@@ -26,48 +20,65 @@ export const config = {
   },
   adapter: DrizzleAdapter(db),
   providers: [
-    CredentialsProvider({
-      credentials: {
-        email: {
-          type: 'email',
-        },
-        password: { type: 'password' },
-      },
-      async authorize(credentials) {
-        if (credentials == null) return null
-
-        const user = await db.query.users.findFirst({
-          where: eq(users.email, credentials.email as string),
-        })
-        if (user && user.password) {
-          const isMatch = compareSync(
-            credentials.password as string,
-            user.password
-          )
-          if (isMatch) {
-            return {
-              id: user.id,
-              name: user.name,
-              email: user.email,
-              role: user.role,
-            }
-          }
-        }
-        return null
-      },
-    }),
-    Resend({
-      name: 'Email',
-      from: `${APP_NAME} <${SENDER_EMAIL}>`,
-      id: 'email',
-    }),
     Google({
       allowDangerousEmailAccountLinking: true,
+      authorization: {
+        params: {
+          prompt: "select_account",
+          access_type: "offline",
+          response_type: "code"
+        }
+      }
     }),
   ],
   callbacks: {
-    jwt: async ({ token, user, trigger, session }: any) => {
+    jwt: async ({ token, user, trigger, session, account, request, response }: any) => {
       if (user) {
+        if (account?.provider === 'google') {
+          const existingUser = await db.query.users.findFirst({
+            where: (users, { eq }) => eq(users.email, user.email),
+          });
+
+          if (existingUser) {
+            token.role = existingUser.role;
+          } else {
+            token.role = 'user';
+            
+            const userId = crypto.randomUUID();
+            await db.insert(users).values({
+              id: userId,
+              name: user.name,
+              email: user.email,
+              emailVerified: new Date(),
+              image: user.image,
+              role: 'user'
+            }).onConflictDoUpdate({
+              target: users.email,
+              set: {
+                name: user.name,
+                image: user.image,
+                emailVerified: new Date()
+              }
+            });
+
+            // Handle referral after user creation
+            try {
+              const cookies = request?.cookies;
+              const referralCode = cookies?.get('referral_code')?.value;
+              
+              if (referralCode) {
+                await processReferral(referralCode, userId);
+                // Clear the referral cookie after processing
+                response?.cookies.delete('referral_code');
+              }
+            } catch (error) {
+              console.error('Error processing referral:', error);
+            }
+          }
+        } else {
+          token.role = user.role;
+        }
+
         if (user.name === 'NO_NAME') {
           token.name = user.email!.split('@')[0];
           await db
@@ -76,45 +87,18 @@ export const config = {
             .where(eq(users.id, user.id));
         }
 
-        token.role = user.role;
-
         if (trigger === 'signIn' || trigger === 'signUp') {
-          const sessionCartCookies = await cookies();
-          let sessionCartId = sessionCartCookies.get('sessionCartId')?.value;
-
-          if (sessionCartId) {
-            const sessionCartExists = await db.query.carts.findFirst({
-              where: eq(carts.sessionCartId, sessionCartId),
+          try {
+            const response = await fetch(new URL('/api/cart/merge', process.env.NEXTAUTH_URL).toString(), {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ userId: user.id }),
             });
-
-            if (sessionCartExists && !sessionCartExists.userId) {
-              const userCartExists = await db.query.carts.findFirst({
-                where: eq(carts.userId, user.id),
-              });
-
-              if (userCartExists) {
-                sessionCartCookies.set('beforeSigninSessionCartId', sessionCartId);
-                sessionCartCookies.set('sessionCartId', userCartExists.sessionCartId);
-              } else {
-                await db.update(carts)
-                  .set({ userId: user.id })
-                  .where(eq(carts.id, sessionCartExists.id));
-              }
+            if (!response.ok) {
+              console.error('Failed to merge carts');
             }
-          } else {
-            // **New Behavior:** Create a new cart if sessionCartId doesn't exist
-            const newSessionCartId = crypto.randomUUID();
-            await db.insert(carts).values({
-              id: crypto.randomUUID(),
-              userId: user.id,
-              sessionCartId: newSessionCartId,
-              itemsPrice: "0",
-              shippingPrice: "0",
-              totalPrice: "0",  
-            });
-
-            // Set the new sessionCartId in cookies
-            sessionCartCookies.set('sessionCartId', newSessionCartId);
+          } catch (error) {
+            console.error('Error merging carts:', error);
           }
         }
       }
@@ -125,12 +109,9 @@ export const config = {
 
       return token;
     },
-    session: async ({ session, user, trigger, token }: any) => {
+    session: async ({ session, token }: any) => {
       session.user.id = token.sub
       session.user.role = token.role
-      if (trigger === 'update') {
-        session.user.name = user.name
-      }
       return session
     },
     authorized({ request, auth }: any) {
@@ -146,21 +127,27 @@ export const config = {
         /\/admin/,
       ]
       const { pathname } = request.nextUrl
-      if (!auth && protectedPaths.some((p) => p.test(pathname))) return false
-      if (!request.cookies.get('sessionCartId')) {
-        const sessionCartId = crypto.randomUUID()
-        const newRequestHeaders = new Headers(request.headers)
-        const response = NextResponse.next({
-          request: {
-            headers: newRequestHeaders,
-          },
-        })
-        response.cookies.set('sessionCartId', sessionCartId)
-        return response
-      } else {
-        return true
+      return !protectedPaths.some((p) => p.test(pathname)) || !!auth
+    },
+    signIn: async ({ user, account, request }: any) => {
+      console.log('🔑 Sign in callback triggered:', { user, account });
+      
+      try {
+        const cookies = request?.cookies;
+        const referralCode = cookies?.get('referral_code')?.value;
+
+        if (referralCode && user.id) {
+          console.log('📨 Processing referral:', { referralCode, userId: user.id });
+          await processReferral(referralCode, user.id);
+        }
+
+        return true;
+      } catch (error) {
+        console.error('🔥 Error in signIn callback:', error);
+        return true; // Still allow sign in even if referral processing fails
       }
     },
   },
 } satisfies NextAuthConfig
+
 export const { handlers, auth, signIn, signOut } = NextAuth(config)

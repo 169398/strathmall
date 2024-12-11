@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -76,6 +76,7 @@ export default function FeedbackModal() {
           </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px] bg-white text-black border-gray-700">
+          <DialogTitle className="text-xl text-blue-600 font-bold mb-4">Feedback</DialogTitle>
           <div className="grid gap-4">
             {successMessage ? (
               <p className="text-green-600 text-sm">{successMessage}</p>

@@ -95,6 +95,14 @@ const config = withUt({
             backgroundPosition: "var(--bg-size) 0",
           },
         },
+        fadeIn: {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
+        slideUp: {
+          "0%": { transform: "translateY(20px)", opacity: "0" },
+          "100%": { transform: "translateY(0)", opacity: "1" },
+        },
       },
       animation: {
         scroll:
@@ -103,6 +111,8 @@ const config = withUt({
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         gradient: "gradient 8s linear infinite",
+        fadeIn: "fadeIn 0.5s ease-in-out forwards",
+        slideUp: "slideUp 0.5s ease-in-out forwards",
       },
     },
   },

@@ -1,7 +1,5 @@
 'use server'
 
-import { isRedirectError } from 'next/dist/client/components/redirect'
-
 import { auth, signIn, signOut } from '@/auth'
 import {
   paymentMethodSchema,
@@ -23,6 +21,7 @@ import db from "@/db/drizzle";
 import { sendVerificationEmail } from '@/emailverify'
 import { sendResetPasswordEmail } from '@/emailreset-password'
 import { addMinutes } from 'date-fns'
+import { processReferral } from './referral.actions'
 
 
 
@@ -46,7 +45,12 @@ try {
 
     await db.insert(users).values(values);
 
- 
+    const referralCode = formData.get('referralCode');
+    
+    if (referralCode) {
+      await processReferral(referralCode as string, values.id);
+    }
+
     await sendVerificationEmail({
       name: user.name ?? "",
       resetToken: "",
@@ -85,13 +89,11 @@ export async function signInWithCredentials(
       email: formData.get('email'),
       password: formData.get('password'),
     })
-        console.log("Attempting sign-in for:", user.email);
 
     await signIn('credentials', user)
-    console.log("Sign-in successful for:", user.email);
     return { success: true, message: 'Sign in successfully' }
   } catch (error) {
-    if (isRedirectError(error)) {
+    if (error instanceof Error && error.message.includes('NEXT_REDIRECT')) {
       throw error
     }
     return { success: false, message: 'Invalid email or password' }
