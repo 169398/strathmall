@@ -8,7 +8,7 @@ export default async function ReferralsPage() {
   const session = await auth();
   
   if (!session?.user) {
-    redirect("/signin");
+    redirect("/sign-in");
   }
 
   return (

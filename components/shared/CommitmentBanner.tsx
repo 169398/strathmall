@@ -18,11 +18,11 @@ export default function Component() {
               </div>
               <div className="flex items-center gap-2">
                 <CreditCard className="h-5 w-5" />
-                <span>Safe payments</span>
+                <span>Quality products</span>
               </div>
               <div className="flex items-center gap-2">
                 <Truck className="h-5 w-5" />
-                <span>Delivery guarantee</span>
+                <span>Trusted vendors</span>
               </div>
             </div>
           </div>

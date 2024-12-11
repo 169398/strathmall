@@ -357,32 +357,33 @@ export const sellersRelations = relations(sellers, ({ one, many }) => ({
 }));
 
 // REFERRALS
-export const referrals = pgTable("referrals", {
-  id: uuid("id").defaultRandom().primaryKey().notNull(),
-  referrerId: uuid("referrerId")
+export const referrals = pgTable('referrals', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  referrerId: uuid('referrer_id')
     .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
-  referredId: uuid("referredId")
+    .references(() => users.id, { onDelete: 'cascade' }),
+  referredId: uuid('referred_id')
     .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
-  referralCode: text("referralCode").notNull(),
-  status: text("status").notNull().default("pending"), // pending, completed
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
+    .references(() => users.id, { onDelete: 'cascade' }),
+  referralCode: text('referral_code').notNull(),
+  status: text('status').notNull().default('pending'),
+  amount: numeric('amount', { precision: 10, scale: 2 }).notNull().default('10.00'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
 // REFERRAL REWARDS
-export const referralRewards = pgTable("referral_rewards", {
-  id: uuid("id").defaultRandom().primaryKey().notNull(),
-  userId: uuid("userId")
+export const referralRewards = pgTable('referral_rewards', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id')
     .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
-  mpesaNumber: text("mpesaNumber"),
-  totalEarnings: numeric("totalEarnings", { precision: 10, scale: 2 }).default("0"),
-  pendingPayment: numeric("pendingPayment", { precision: 10, scale: 2 }).default("0"),
-  totalReferrals: integer("totalReferrals").default(0),
-  lastPaidAt: timestamp("lastPaidAt"),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  referralCode: text("referral_code").notNull(),
+    .references(() => users.id, { onDelete: 'cascade' }),
+  referralCode: text('referral_code').notNull().unique(),
+  mpesaNumber: text('mpesa_number'),
+  totalReferrals: integer('total_referrals').notNull().default(0),
+  pendingPayment: numeric('pending_payment', { precision: 10, scale: 2 }).notNull().default('0.00'),
+  totalEarnings: numeric('total_earnings', { precision: 10, scale: 2 }).notNull().default('0.00'),
+  lastPaidAt: timestamp('last_paid_at'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
 // Add relations

@@ -3,24 +3,25 @@ import { auth } from "@/auth";
 import { getMyCart } from "./sellercart.actions";
 import { getUserById } from "./user.actions";
 import { redirect } from "next/navigation";
-import {  insertOrderSchema,  } from "../validator";
+import { insertOrderSchema } from "../validator";
 
 import db from "@/db/drizzle";
 
 import { count, desc, eq, sql, sum, and } from "drizzle-orm";
-import { isRedirectError } from "next/dist/client/components/redirect";
-import { formatError } from "../utils";
 import { paypal } from "../paypal";
 import { revalidatePath } from "next/cache";
 import { PaymentResult } from "@/types/sellerindex";
 import { PAGE_SIZE } from "../constants";
 import { sendPurchaseReceipt } from "@/emails";
-import {   carts, orderItems, orders, products, sellers, users } from "@/db/schema";
+import {
+  carts,
+  orderItems,
+  orders,
+  products,
+  sellers,
+  users,
+} from "@/db/schema";
 import { sendSellerNotification } from "@/emailseller/page";
-
-
-
-
 
 export async function getSellerOrderSummary(sellerId: string) {
   const ordersCount = await db
@@ -28,14 +29,18 @@ export async function getSellerOrderSummary(sellerId: string) {
     .from(orders)
     .innerJoin(orderItems, eq(orderItems.orderId, orders.id))
     .innerJoin(products, eq(orderItems.productId, products.id))
-    .where(and(eq(products.sellerId, sellerId), sql`${orders.userId} != ${sellerId}`));
+    .where(
+      and(eq(products.sellerId, sellerId), sql`${orders.userId} != ${sellerId}`)
+    );
 
   const ordersPrice = await db
     .select({ sum: sum(orderItems.price) })
     .from(orders)
     .innerJoin(orderItems, eq(orderItems.orderId, orders.id))
     .innerJoin(products, eq(orderItems.productId, products.id))
-    .where(and(eq(products.sellerId, sellerId), sql`${orders.userId} != ${sellerId}`));
+    .where(
+      and(eq(products.sellerId, sellerId), sql`${orders.userId} != ${sellerId}`)
+    );
 
   const productsCount = await db
     .select({ count: count() })
@@ -94,8 +99,8 @@ export async function getAllSellerOrders({
       createdAt: orders.createdAt,
       totalPrice: orders.totalPrice,
       isDelivered: orders.isDelivered,
-      deliveredAt:orders.deliveredAt,
-      paidAt:orders.paidAt,
+      deliveredAt: orders.deliveredAt,
+      paidAt: orders.paidAt,
     })
     .from(orders)
     .innerJoin(orderItems, eq(orderItems.orderId, orders.id))
@@ -147,7 +152,7 @@ export async function getUserOrders({
 }
 
 // CREATE
-export const createOrder = async () => {
+export const createOrder = async (): Promise<{ success: boolean; message: string }> => {
   try {
     const session = await auth();
     if (!session) throw new Error("User is not authenticated");
@@ -174,7 +179,6 @@ export const createOrder = async () => {
           price: item.price.toFixed(2),
           orderId: insertedOrder[0].id,
           sellerId: user.id,
-
         });
       }
       await db
@@ -190,15 +194,14 @@ export const createOrder = async () => {
     });
     if (!insertedOrderId) throw new Error("Order not created");
     redirect(`/order/${insertedOrderId}`);
+    return { success: true, message: "Order created successfully" };
   } catch (error) {
-    if (isRedirectError(error)) {
-      throw error;
+    if (error instanceof Error && error.message.includes('NEXT_REDIRECT')) {
+      return { success: true, message: "Redirecting..." };
     }
-    return { success: false, message: formatError(error) };
+    return { success: false, message: error instanceof Error ? error.message : "Failed to create order" };
   }
 };
-
-
 
 // GET
 export async function getOrderById(orderId: string) {
@@ -208,7 +211,7 @@ export async function getOrderById(orderId: string) {
       orderItems: true,
       user: { columns: { name: true, email: true } },
     },
-  })
+  });
 }
 // DELETE
 export async function deleteSellerOrder(id: string, sellerId: string) {
@@ -224,7 +227,10 @@ export async function deleteSellerOrder(id: string, sellerId: string) {
       message: "Order deleted successfully",
     };
   } catch (error) {
-    return { success: false, message: formatError(error) };
+    if (error instanceof Error && error.message.includes('NEXT_REDIRECT')) {
+      return;
+    }
+    throw error;
   }
 }
 
@@ -233,30 +239,33 @@ export async function createPayPalOrder(orderId: string) {
   try {
     const order = await db.query.orders.findFirst({
       where: eq(orders.id, orderId),
-    })
+    });
     if (order) {
-      const paypalOrder = await paypal.createOrder(Number(order.totalPrice))
+      const paypalOrder = await paypal.createOrder(Number(order.totalPrice));
       await db
         .update(orders)
         .set({
           paymentResult: {
             id: paypalOrder.id,
-            email_address: '',
-            status: '',
-            pricePaid: '0',
+            email_address: "",
+            status: "",
+            pricePaid: "0",
           },
         })
-        .where(eq(orders.id, orderId))
+        .where(eq(orders.id, orderId));
       return {
         success: true,
-        message: 'PayPal order created successfully',
+        message: "PayPal order created successfully",
         data: paypalOrder.id,
-      }
+      };
     } else {
-      throw new Error('Order not found')
+      throw new Error("Order not found");
     }
   } catch (err) {
-    return { success: false, message: formatError(err) }
+    if (err instanceof Error && err.message.includes('NEXT_REDIRECT')) {
+      return;
+    }
+    throw err;
   }
 }
 
@@ -267,16 +276,16 @@ export async function approvePayPalOrder(
   try {
     const order = await db.query.orders.findFirst({
       where: eq(orders.id, orderId),
-    })
-    if (!order) throw new Error('Order not found')
+    });
+    if (!order) throw new Error("Order not found");
 
-    const captureData = await paypal.capturePayment(data.orderID)
+    const captureData = await paypal.capturePayment(data.orderID);
     if (
       !captureData ||
       captureData.id !== order.paymentResult?.id ||
-      captureData.status !== 'COMPLETED'
+      captureData.status !== "COMPLETED"
     )
-      throw new Error('Error in paypal payment')
+      throw new Error("Error in paypal payment");
     await updateOrderToPaid({
       orderId,
       paymentResult: {
@@ -286,14 +295,17 @@ export async function approvePayPalOrder(
         pricePaid:
           captureData.purchase_units[0]?.payments?.captures[0]?.amount?.value,
       },
-    })
-    revalidatePath(`/order/${orderId}`)
+    });
+    revalidatePath(`/order/${orderId}`);
     return {
       success: true,
-      message: 'Your order has been successfully paid by PayPal',
-    }
+      message: "Your order has been successfully paid by PayPal",
+    };
   } catch (err) {
-    return { success: false, message: formatError(err) }
+    if (err instanceof Error && err.message.includes('NEXT_REDIRECT')) {
+      return;
+    }
+    throw err;
   }
 }
 
@@ -310,7 +322,6 @@ export const updateOrderToPaid = async ({
   orderId: string;
   paymentResult?: PaymentResult;
 }) => {
-
   const order = await db.query.orders.findFirst({
     columns: { isPaid: true },
     where: and(eq(orders.id, orderId)),
@@ -359,7 +370,6 @@ export const updateOrderToPaid = async ({
       columns: { email: true, shopName: true },
     });
     if (seller) {
-      
       await sendSellerNotification({
         order: updatedOrder,
         sellerEmail: seller.email,
@@ -375,15 +385,16 @@ export const updateOrderToPaid = async ({
   });
 };
 
-
-
 export async function updateOrderToPaidByCOD(orderId: string) {
   try {
     await updateOrderToPaid({ orderId });
     revalidatePath(`/sellerOrder/${orderId}`);
     return { success: true, message: "Order paid successfully" };
   } catch (err) {
-    return { success: false, message: formatError(err) };
+    if (err instanceof Error && err.message.includes('NEXT_REDIRECT')) {
+      return;
+    }
+    throw err;
   }
 }
 
@@ -405,6 +416,9 @@ export async function deliverOrder(orderId: string) {
     revalidatePath(`/order/${orderId}`);
     return { success: true, message: "Order delivered successfully" };
   } catch (err) {
-    return { success: false, message: formatError(err) };
+    if (err instanceof Error && err.message.includes('NEXT_REDIRECT')) {
+      return;
+    }
+    throw err;
   }
 }

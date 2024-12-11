@@ -10,6 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { signUp } from "@/lib/actions/user.actions";
 import { signUpDefaultValues } from "@/lib/constants";
 import { useActionState, useState } from "react";
+import { PasswordInput } from "@/components/shared/PasswordInput";
 
 export default function SignUpForm() {
   const router = useRouter();
@@ -39,7 +40,6 @@ export default function SignUpForm() {
     );
   };
 
-  // Redirect to the verification page if sign up is successful
   if (data.success) {
     router.push(`/verify-email?email=${signUpDefaultValues.email}`);
   }
@@ -73,21 +73,20 @@ export default function SignUpForm() {
         </div>
         <div>
           <Label htmlFor="password">Password</Label>
-          <Input
+          <PasswordInput
             id="password"
             name="password"
             required
-            type="password"
             defaultValue={signUpDefaultValues.password}
+            showStrengthIndicator={true}
           />
         </div>
         <div>
           <Label htmlFor="confirmPassword">Confirm Password</Label>
-          <Input
+          <PasswordInput
             id="confirmPassword"
             name="confirmPassword"
             required
-            type="password"
             defaultValue={signUpDefaultValues.confirmPassword}
           />
         </div>

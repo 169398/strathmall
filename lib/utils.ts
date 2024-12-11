@@ -129,5 +129,7 @@ export function formUrlQuery({
 }
 
 export function isStrathmoreEmail(email: string) {
-  return email.toLowerCase().endsWith('@strathmore.edu');
+  if (!email) return false;
+  const result = email.toLowerCase().endsWith('@strathmore.edu');
+  return result;
 }

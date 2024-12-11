@@ -4,7 +4,6 @@ import React,{ useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Confetti from "react-confetti";
 import {
-  MessageCircle,
   Copy,
   Coins,
   Users,
@@ -16,6 +15,8 @@ import { useToast } from "@/components/ui/use-toast";
 import { ReferralNumberModal } from "@/components/shared/modals/referral-modal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { FaWhatsapp } from "react-icons/fa";
+import { useRouter } from "next/navigation";
 
 export function ReferralDashboard({
   stats,
@@ -24,6 +25,7 @@ export function ReferralDashboard({
   stats: any;
   userId: string;
 }) {
+  const router = useRouter();
   const [mpesaNumber, setMpesaNumber] = useState(stats.mpesaNumber || "");
   const [showConfetti, setShowConfetti] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -31,13 +33,24 @@ export function ReferralDashboard({
   const { toast } = useToast();
 
   useEffect(() => {
-    if (!stats.mpesaNumber) {
+    if (stats?.restricted) {
+      router.push(stats.redirectUrl);
+    }
+  }, [stats, router]);
+
+  useEffect(() => {
+    if (!stats.mpesaNumber && !stats.restricted) {
       toast({
         title: "M-Pesa Number Required",
-        description: "Please enter your M-Pesa number to continue.",
+        description:
+          "Please enter your M-Pesa number for recieving money.",
       });
     }
-  }, [stats.mpesaNumber, toast]);
+  }, [stats.mpesaNumber, toast, stats.restricted]);
+
+  if (stats?.restricted) {
+    return null;
+  }
 
   const referralLink =
     process.env.NODE_ENV === "production"
@@ -56,7 +69,7 @@ export function ReferralDashboard({
 
   const handleWhatsAppShare = () => {
     const message = encodeURIComponent(
-      `Join Strathmall using my referral link and let's both earn rewards! \n\n${referralLink}`
+      `Join Strathmall using my referral link and let's  earn rewards \n\n${referralLink}`
     );
     window.open(`https://wa.me/?text=${message}`, "_blank");
   };
@@ -68,7 +81,7 @@ export function ReferralDashboard({
     if (result.success) {
       toast({
         title: "Success",
-        description: "M-Pesa number updated successfully!",
+        description: "M-Pesa number updated successfully",
       });
     } else {
       toast({
@@ -88,7 +101,7 @@ export function ReferralDashboard({
       toast({
         title: "Success",
         description:
-          "M-Pesa number updated successfully. Enjoy your money 💰🎉",
+          "M-Pesa number updated successfully. Get ready to earn money 💰🎉",
       });
     } else {
       toast({
@@ -99,7 +112,7 @@ export function ReferralDashboard({
   };
 
   return (
-    <div className="min-h-screen  rounded-sm  bg-gradient-to-br from-purple-400 via-pink-500 to-red-500 p-4 sm:p-8">
+    <div className="min-h-screen rounded-sm bg-gradient-to-br from-purple-400 via-pink-500 to-red-500 p-4 sm:p-8">
       {isModalOpen && <ReferralNumberModal onSave={handleSaveMpesaNumber} />}
       {!isModalOpen && (
         <>
@@ -156,15 +169,16 @@ export function ReferralDashboard({
                 />
                 <StatsCard
                   icon={<Coins className="w-6 h-6 sm:w-8 sm:h-8" />}
-                  title="Total Earnings"
-                  value={`KES ${stats.totalEarnings}`}
+                  title="Total Earned"
+                  value={`KES ${stats.totalEarned}`}
                   color="from-yellow-400 to-orange-500"
                 />
                 <StatsCard
                   icon={<Gift className="w-6 h-6 sm:w-8 sm:h-8" />}
                   title="Pending Payment"
-                  value={`KES ${stats.pendingPayment}`}
+                  value={stats.pendingReferrals}
                   color="from-pink-400 to-rose-500"
+                  subtitle="Will be paid after verification"
                 />
               </div>
 
@@ -195,7 +209,7 @@ export function ReferralDashboard({
                       onClick={handleWhatsAppShare}
                       className="flex-1 sm:flex-none bg-green-500 hover:bg-green-600 text-white"
                     >
-                      <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+                      <FaWhatsapp className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                       Share
                     </Button>
                   </div>
@@ -209,7 +223,10 @@ export function ReferralDashboard({
               >
                 <h2 className="text-xl sm:text-2xl font-bold mb-4 text-white flex items-center">
                   <Gift className="w-5 h-5 sm:w-6 sm:h-6 mr-2" />
-                  Treasure Chest (Payment Details) <span className="text-xs text-blue-600">*Payments are  made  via M-pesa at the end of the day </span>
+                  Payment Details
+                  <span className="text-xs ml-2 text-blue-200">
+                    *Payments are processed daily via M-pesa
+                  </span>
                 </h2>
                 <div className="flex flex-col sm:flex-row gap-2">
                   <Input
@@ -248,11 +265,13 @@ function StatsCard({
   title,
   value,
   color,
+  subtitle,
 }: {
   icon: React.ReactNode;
   title: string;
   value: string | number;
   color: string;
+  subtitle?: string;
 }) {
   return (
     <motion.div
@@ -272,6 +291,11 @@ function StatsCard({
       >
         {value}
       </motion.p>
+      {subtitle && (
+        <p className="text-xs mt-2 text-white/80 italic">
+          {subtitle}
+        </p>
+      )}
     </motion.div>
   );
 }

@@ -1,21 +1,21 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Truck, Shield, CreditCard } from "lucide-react";
+import {  Shield, HeadphonesIcon } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const announcements = [
   {
-    icon: Truck,
-    text: "Fast and Secure Shipping ",
+    icon: Shield,
+    text: "Trusted Vendors",
   },
   {
     icon: Shield,
-    text: ["Free Returns up to 30 Days", "Delivery Guarantee"],
+    text: ["Verified Products", "Quality Assurance"],
   },
   {
-    icon: CreditCard,
-    text: "Secure Payment",
+    icon: HeadphonesIcon,
+    text: "Customer Support",
   },
 ];
 

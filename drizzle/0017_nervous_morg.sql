@@ -1,0 +1,1 @@
+ALTER TABLE "referrals" ADD COLUMN "amount" numeric(10, 2) DEFAULT '0';
