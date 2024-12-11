@@ -68,18 +68,18 @@ export default function OrderDetailsForm({
 
   const handleCreatePayPalOrder = async () => {
     const res = await createPayPalOrder(order.id);
-    if (!res.success) {
-      toast({ description: res.message, variant: "destructive" });
+    if (!res?.success) {
+      toast({ description: res?.message, variant: "destructive" });
       return null;
     }
-    return res.data;
+    return res?.data;
   };
 
   const handleApprovePayPalOrder = async (data: { orderID: string }) => {
     const res = await approvePayPalOrder(order.id, data);
     toast({
-      description: res.message,
-      variant: res.success ? "default" : "destructive",
+      description: res?.message,
+      variant: res?.success ? "default" : "destructive",
     });
   };
 
@@ -91,7 +91,7 @@ export default function OrderDetailsForm({
         startTransition(async () => {
           const res = await updateOrderToPaidByCOD(order.id);
           toast({
-            variant: res.success ? "default" : "destructive",
+            variant: res?.success ? "default" : "destructive",
             description:"An error occured, please try again",
           });
         })
@@ -110,7 +110,7 @@ export default function OrderDetailsForm({
         startTransition(async () => {
           const res = await deliverOrder(order.id);
           toast({
-            variant: res.success ? "default" : "destructive",
+            variant: res?.success ? "default" : "destructive",
             description: "An error occured, please try again",
           });
         })

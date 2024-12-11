@@ -7,13 +7,14 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { APP_NAME } from "@/lib/constants";
 import GoogleSignUpForm from "./google-signup-form";
 import { ReferralHandler } from "./referral-handler";
+import { Session } from "next-auth";
 
 interface SignUpPageProps {
-  searchParams: {
+  searchParams: Promise<{
     callbackUrl?: string;
     error?: string;
     ref?: string;
-  };
+  }>;
 }
 
 export const metadata: Metadata = {
@@ -21,9 +22,10 @@ export const metadata: Metadata = {
 };
 
 export default async function SignUpPage({ searchParams }: SignUpPageProps) {
-  const session = await auth();
-  const callbackUrl = searchParams.callbackUrl;
-  const referralCode = searchParams.ref;
+  const session = (await auth()) as Session | null;
+  const params = await searchParams;
+  const callbackUrl = params?.callbackUrl;
+  const referralCode = params?.ref;
 
   if (session) {
     return redirect(callbackUrl || "/");
@@ -105,7 +107,7 @@ export default async function SignUpPage({ searchParams }: SignUpPageProps) {
           </div>
         </CardContent>
       </Card>
-      <ReferralHandler />
+      <ReferralHandler  />
     </div>
   );
 }
