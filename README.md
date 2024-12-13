@@ -1,5 +1,5 @@
 # Welcome to the StrathMall 🫠 
-Here you'll find all the documentation related to the StrathMall project.
+Here you'll find all the documentation related to the  fullStrathMall project.
 
 ## Table of Contents 📑
 
