@@ -1,9 +1,6 @@
 "use server";
 import { auth } from "@/auth";
-import { getMyCart } from "./sellercart.actions";
-import { getUserById } from "./user.actions";
-import { redirect } from "next/navigation";
-import { insertOrderSchema } from "../validator";
+
 
 import db from "@/db/drizzle";
 
@@ -14,7 +11,6 @@ import { PaymentResult } from "@/types/sellerindex";
 import { PAGE_SIZE } from "../constants";
 import { sendPurchaseReceipt } from "@/emails";
 import {
-  carts,
   orderItems,
   orders,
   products,
@@ -152,56 +148,9 @@ export async function getUserOrders({
 }
 
 // CREATE
-export const createOrder = async (): Promise<{ success: boolean; message: string }> => {
-  try {
-    const session = await auth();
-    if (!session) throw new Error("User is not authenticated");
-    const cart = await getMyCart();
-    const user = await getUserById(session?.user.id!);
-    if (!cart || cart.items.length === 0) redirect("/cart");
-    if (!user.address) redirect("/shipping-address");
-    if (!user.paymentMethod) redirect("/payment-method");
-
-    const order = insertOrderSchema.parse({
-      userId: user.id,
-      shippingAddress: user.address,
-      paymentMethod: user.paymentMethod,
-      itemsPrice: cart.itemsPrice,
-      shippingPrice: cart.shippingPrice,
-      totalPrice: cart.totalPrice,
-      sellerId: user.id,
-    });
-    const insertedOrderId = await db.transaction(async (tx) => {
-      const insertedOrder = await tx.insert(orders).values(order).returning();
-      for (const item of cart.items) {
-        await tx.insert(orderItems).values({
-          ...item,
-          price: item.price.toFixed(2),
-          orderId: insertedOrder[0].id,
-          sellerId: user.id,
-        });
-      }
-      await db
-        .update(carts)
-        .set({
-          items: [],
-          totalPrice: "0",
-          shippingPrice: "0",
-          itemsPrice: "0",
-        })
-        .where(eq(carts.id, cart.id));
-      return insertedOrder[0].id;
-    });
-    if (!insertedOrderId) throw new Error("Order not created");
-    redirect(`/order/${insertedOrderId}`);
-    return { success: true, message: "Order created successfully" };
-  } catch (error) {
-    if (error instanceof Error && error.message.includes('NEXT_REDIRECT')) {
-      return { success: true, message: "Redirecting..." };
-    }
-    return { success: false, message: error instanceof Error ? error.message : "Failed to create order" };
-  }
-};
+export const createOrder = async () => {
+  return { success: false, message: "Ordering is temporarily disabled. Please contact the seller directly via WhatsApp." }
+}
 
 // GET
 export async function getOrderById(orderId: string) {
